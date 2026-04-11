@@ -17,7 +17,7 @@ namespace EngineGDI
         public static int SCREEN_WIDTH = 1024;
         public static int SCREEN_HEIGHT = 544;
 
-        public static Player p1 = new Player("messi.png", 5, 10);
+        public static Player p1 = new Player("Assets/Imgs/messi.png", 5, 10);
         private static float xMov = 0f;
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace EngineGDI
 
         static void Render()
         {
-            Engine.Draw("cancha.png", 0, 0);
+            Engine.Draw("Assets/Imgs/cancha.png", 0, 0);
             Engine.Draw(p1.Sprite, p1.posX, SCREEN_HEIGHT / 2, 1, 1, 0, .5f, .5f);
         }
     }

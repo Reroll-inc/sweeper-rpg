@@ -1,5 +1,9 @@
 # Sweeper RPG
 
+## Usefull tools
+
+- Developer Powershell for VS
+
 ## Commands to run
 
 ## Install dotnet tools
