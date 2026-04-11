@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
-
 
 namespace EngineGDI
 {
@@ -12,11 +10,18 @@ namespace EngineGDI
         private class DrawCommand
         {
             public string TexturePath;
-            public float X, Y, ScaleX, ScaleY;
-            public float Angle, OffsetX, OffsetY;
+            public float X,
+                Y,
+                ScaleX,
+                ScaleY;
+            public float Angle,
+                OffsetX,
+                OffsetY;
         }
+
         private static Dictionary<string, Image> textures = new Dictionary<string, Image>();
-        private static Dictionary<string, SoundPlayer> sounds = new Dictionary<string, SoundPlayer>();
+        private static Dictionary<string, SoundPlayer> sounds =
+            new Dictionary<string, SoundPlayer>();
         private static List<DrawCommand> drawQueue = new List<DrawCommand>();
         private static GameForm window;
         public static bool IsWindowOpen { get; private set; } = false;
@@ -30,7 +35,13 @@ namespace EngineGDI
         private static List<string> debugMessages = new List<string>();
         private static Font debugFont = new Font("Consolas", 10);
         private static Brush debugBrush = Brushes.White;
-        public static void Initialize(string title = "Game", int width = 800, int height = 600, bool fullscreen = false)
+
+        public static void Initialize(
+            string title = "Game",
+            int width = 800,
+            int height = 600,
+            bool fullscreen = false
+        )
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -38,7 +49,7 @@ namespace EngineGDI
             {
                 Text = title,
                 ClientSize = new Size(width, height),
-                StartPosition = FormStartPosition.CenterScreen
+                StartPosition = FormStartPosition.CenterScreen,
             };
             if (fullscreen)
                 window.WindowState = FormWindowState.Maximized;
@@ -66,33 +77,48 @@ namespace EngineGDI
             window.KeyPreview = true;
             IsWindowOpen = true;
         }
+
         public static void UpdateWindow()
         {
             if (window != null && window.Created)
                 Application.DoEvents();
         }
+
         public static void PlaySound(string path)
         {
             if (!sounds.ContainsKey(path))
                 sounds[path] = new SoundPlayer(path);
             sounds[path].Play();
         }
-        public static void Draw(string path, float x, float y, float scaleX = 1f, float scaleY = 1f, float angle = 0f, float offsetX = 0f, float offsetY = 0f)
+
+        public static void Draw(
+            string path,
+            float x,
+            float y,
+            float scaleX = 1f,
+            float scaleY = 1f,
+            float angle = 0f,
+            float offsetX = 0f,
+            float offsetY = 0f
+        )
         {
             if (!textures.ContainsKey(path))
                 textures[path] = Image.FromFile(path);
-            drawQueue.Add(new DrawCommand
-            {
-                TexturePath = path,
-                X = x,
-                Y = y,
-                ScaleX = scaleX,
-                ScaleY = scaleY,
-                Angle = angle,
-                OffsetX = offsetX,
-                OffsetY = offsetY
-            });
+            drawQueue.Add(
+                new DrawCommand
+                {
+                    TexturePath = path,
+                    X = x,
+                    Y = y,
+                    ScaleX = scaleX,
+                    ScaleY = scaleY,
+                    Angle = angle,
+                    OffsetX = offsetX,
+                    OffsetY = offsetY,
+                }
+            );
         }
+
         public static void Clear(Color color)
         {
             window.ClearColor = color;
@@ -117,30 +143,37 @@ namespace EngineGDI
             }
             return false;
         }
+
         public static bool IsKeyDown(Keys key)
         {
             return pressedKeys.Contains(key);
         }
+
         // Alias de compatibilidad: mismo comportamiento que OnKeyDown
         public static bool IsKeyPressed(Keys key)
         {
             return OnKeyDown(key);
         }
+
         public static void DebugLog(string message)
         {
             debugMessages.Add(message);
         }
+
         public static void ClearDebug()
         {
             debugMessages.Clear();
         }
+
         private class GameForm : Form
         {
             public Color ClearColor = Color.Black;
+
             public GameForm()
             {
                 DoubleBuffered = true;
             }
+
             protected override void OnPaint(PaintEventArgs e)
             {
                 base.OnPaint(e);

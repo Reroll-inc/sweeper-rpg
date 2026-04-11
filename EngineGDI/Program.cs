@@ -1,9 +1,6 @@
-
 using System;
 using System.Drawing;
-using System.Security.Cryptography;
 using System.Windows.Forms;
-
 
 namespace EngineGDI
 {
@@ -22,13 +19,13 @@ namespace EngineGDI
 
         public static Player p1 = new Player("messi.png", 5, 10);
         private static float xMov = 0f;
+
         /// <summary>
         /// Punto de entrada principal para la aplicación.
         /// </summary>
         [STAThread]
         static void Main()
         {
-
             Engine.Initialize("IERVA ENGINE", SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
             while (Engine.IsWindowOpen)
@@ -43,7 +40,6 @@ namespace EngineGDI
                 Update();
                 Render();
 
-
                 #region Engine Window Control
                 Engine.Clear(Color.Black);
                 currentMsg = deltaTime.ToString();
@@ -52,7 +48,6 @@ namespace EngineGDI
                 {
                     Engine.ClearDebug();
                     Engine.DebugLog(currentMsg);
-
                 }
                 Engine.Window.Invalidate();
                 #endregion
@@ -65,7 +60,6 @@ namespace EngineGDI
             deltaTime = (float)deltaSpan.TotalSeconds;
             lastFrameTime = DateTime.Now;
         }
-
 
         static void Input()
         {
@@ -90,6 +84,5 @@ namespace EngineGDI
             Engine.Draw("cancha.png", 0, 0);
             Engine.Draw(p1.Sprite, p1.posX, SCREEN_HEIGHT / 2, 1, 1, 0, .5f, .5f);
         }
-
     }
 }

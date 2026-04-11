@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET Framework Debug",
+      "type": "clr",
+      "request": "launch",
+      "program": "${workspaceFolder}/EngineGDI/bin/Debug/net48/EngineGDI.exe",
+      "args": [],
+      "cwd": "${workspaceFolder}/EngineGDI",
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    }
+  ]
+}

@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace EngineGDI
 {
     public class Player
@@ -14,7 +8,6 @@ namespace EngineGDI
         private string sprite;
 
         public string Sprite => sprite;
-
 
         public Player(string sprite, int posX, int posY)
         {
