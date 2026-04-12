@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using System.Windows.Forms;
 
 namespace EngineGDI.Src
 {
@@ -17,7 +16,18 @@ namespace EngineGDI.Src
         public static int SCREEN_WIDTH = 1024;
         public static int SCREEN_HEIGHT = 544;
 
-        public static Player p1 = new Player(1, 1);
+        private static readonly Player p1 = new Player(x: 1, y: 1);
+        private static readonly Enemy[] enemies =
+        {
+            new Enemy(x: 16, y: 16, 2, 1),
+            new Enemy(x: 24, y: 1, 1, 1),
+            new Enemy(x: 3, y: 8, 0, 4),
+            new Enemy(x: 12, y: 12, 4, 3),
+            new Enemy(x: 13, y: 7, 5, 2),
+            new Enemy(x: 1, y: 5, 6, 7),
+            new Enemy(x: 17, y: 2, 7, 4),
+            new Enemy(x: 16, y: 10, 8, 4),
+        };
 
         /// <summary>
         /// Punto de entrada principal para la aplicación.
@@ -25,7 +35,7 @@ namespace EngineGDI.Src
         [STAThread]
         static void Main()
         {
-            Engine.Initialize("IERVA ENGINE", SCREEN_WIDTH, SCREEN_HEIGHT, false);
+            Engine.Initialize("Sweeper RPG", SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
             while (Engine.IsWindowOpen)
             {
@@ -67,11 +77,17 @@ namespace EngineGDI.Src
 
         static void Update()
         {
+            foreach (Enemy enemy in enemies)
+                enemy.Update(deltaTime: deltaTime);
+
             p1.Update(deltaTime: deltaTime);
         }
 
         static void Render()
         {
+            foreach (Enemy enemy in enemies)
+                enemy.Draw();
+
             p1.Draw();
         }
     }

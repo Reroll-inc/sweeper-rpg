@@ -11,6 +11,7 @@ namespace EngineGDI.Src
 
         public Player(int x, int y)
         {
+            // 7x7
             position = new Vector2(x: x, y: y);
             tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
         }
