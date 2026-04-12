@@ -14,9 +14,9 @@ namespace EngineGDI.Src
         public static string currentMsg = "";
 
         public static int SCREEN_WIDTH = 1024;
-        public static int SCREEN_HEIGHT = 544;
+        public static int SCREEN_HEIGHT = 500;
 
-        private static readonly Player p1 = new Player(x: 1, y: 1);
+        private static readonly Node p1 = new Player(x: 1, y: 1);
         private static readonly Enemy[] enemies =
         {
             new Enemy(x: 16, y: 16, 2, 1),
@@ -28,6 +28,8 @@ namespace EngineGDI.Src
             new Enemy(x: 17, y: 2, 7, 4),
             new Enemy(x: 16, y: 10, 8, 4),
         };
+        public static Cell[,] grid = new Cell[7, 7];
+        private static Image gridTexture = Image.FromFile("Assets/Imgs/gridUndiscovered.png");
 
         /// <summary>
         /// Punto de entrada principal para la aplicación.
@@ -37,6 +39,13 @@ namespace EngineGDI.Src
         {
             Engine.Initialize("Sweeper RPG", SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
+            for (int x = 0; x < 7; x++)
+            {
+                for (int y = 0; y < 7; y++)
+                {
+                    grid[x, y] = new Cell(48, x, y, "Assets/Imgs/gridUndiscovered.png");
+                }
+            }
             while (Engine.IsWindowOpen)
             {
                 #region Engine Window Control
@@ -85,6 +94,24 @@ namespace EngineGDI.Src
 
         static void Render()
         {
+            for (int x = 0; x < grid.GetLength(0); x++)
+            {
+                for (int y = 0; y < grid.GetLength(1); y++)
+                {
+                    Cell g = grid[x, y];
+
+                    Engine.Draw(
+                        offsetX: 0,
+                        offsetY: 0,
+                        texture: gridTexture,
+                        x: g.posX,
+                        y: g.posY,
+                        scaleX: 1,
+                        scaleY: 1,
+                        angle: 0
+                    );
+                }
+            }
             foreach (Enemy enemy in enemies)
                 enemy.Draw();
 
