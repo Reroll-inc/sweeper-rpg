@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace EngineGDI
+namespace EngineGDI.Src
 {
     static class Program
     {
@@ -17,8 +17,7 @@ namespace EngineGDI
         public static int SCREEN_WIDTH = 1024;
         public static int SCREEN_HEIGHT = 544;
 
-        public static Player p1 = new Player("Assets/Imgs/messi.png", 5, 10);
-        private static float xMov = 0f;
+        public static Player p1 = new Player(1, 1);
 
         /// <summary>
         /// Punto de entrada principal para la aplicación.
@@ -34,7 +33,7 @@ namespace EngineGDI
                 Engine.UpdateWindow();
                 #endregion
 
-                calcDeltatime();
+                CalcDeltatime();
 
                 Input();
                 Update();
@@ -54,7 +53,7 @@ namespace EngineGDI
             }
         }
 
-        static void calcDeltatime()
+        static void CalcDeltatime()
         {
             TimeSpan deltaSpan = DateTime.Now - lastFrameTime;
             deltaTime = (float)deltaSpan.TotalSeconds;
@@ -63,26 +62,17 @@ namespace EngineGDI
 
         static void Input()
         {
-            if (Engine.OnKeyDown(Keys.Space))
-            {
-                p1.posX = 0;
-            }
+            p1.Input();
         }
 
         static void Update()
         {
-            if (p1.posX > 1024)
-            {
-                p1.posX = 0;
-            }
-
-            p1.posX += 1;
+            p1.Update(deltaTime: deltaTime);
         }
 
         static void Render()
         {
-            Engine.Draw("Assets/Imgs/cancha.png", 0, 0);
-            Engine.Draw(p1.Sprite, p1.posX, SCREEN_HEIGHT / 2, 1, 1, 0, .5f, .5f);
+            p1.Draw();
         }
     }
 }

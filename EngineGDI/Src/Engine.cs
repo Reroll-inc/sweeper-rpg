@@ -3,13 +3,13 @@ using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
 
-namespace EngineGDI
+namespace EngineGDI.Src
 {
     public static class Engine
     {
         private class DrawCommand
         {
-            public string TexturePath;
+            public Image texture;
             public float X,
                 Y,
                 ScaleX,
@@ -19,22 +19,21 @@ namespace EngineGDI
                 OffsetY;
         }
 
-        private static Dictionary<string, Image> textures = new Dictionary<string, Image>();
-        private static Dictionary<string, SoundPlayer> sounds =
+        private static readonly Dictionary<string, SoundPlayer> sounds =
             new Dictionary<string, SoundPlayer>();
-        private static List<DrawCommand> drawQueue = new List<DrawCommand>();
+        private static readonly List<DrawCommand> drawQueue = new List<DrawCommand>();
         private static GameForm window;
         public static bool IsWindowOpen { get; private set; } = false;
         public static Form Window => window;
 
-        private static HashSet<Keys> pressedKeys = new HashSet<Keys>();
-        private static HashSet<Keys> handledKeys = new HashSet<Keys>();
-        private static HashSet<Keys> releasedKeys = new HashSet<Keys>();
-        private static HashSet<Keys> handledReleasedKeys = new HashSet<Keys>();
+        private static readonly HashSet<Keys> pressedKeys = new HashSet<Keys>();
+        private static readonly HashSet<Keys> handledKeys = new HashSet<Keys>();
+        private static readonly HashSet<Keys> releasedKeys = new HashSet<Keys>();
+        private static readonly HashSet<Keys> handledReleasedKeys = new HashSet<Keys>();
 
-        private static List<string> debugMessages = new List<string>();
-        private static Font debugFont = new Font("Consolas", 10);
-        private static Brush debugBrush = Brushes.White;
+        private static readonly List<string> debugMessages = new List<string>();
+        private static readonly Font debugFont = new Font("Consolas", 10);
+        private static readonly Brush debugBrush = Brushes.White;
 
         public static void Initialize(
             string title = "Game",
@@ -92,7 +91,7 @@ namespace EngineGDI
         }
 
         public static void Draw(
-            string path,
+            Image texture,
             float x,
             float y,
             float scaleX = 1f,
@@ -102,12 +101,10 @@ namespace EngineGDI
             float offsetY = 0f
         )
         {
-            if (!textures.ContainsKey(path))
-                textures[path] = Image.FromFile(path);
             drawQueue.Add(
                 new DrawCommand
                 {
-                    TexturePath = path,
+                    texture = texture,
                     X = x,
                     Y = y,
                     ScaleX = scaleX,
@@ -180,24 +177,22 @@ namespace EngineGDI
                 e.Graphics.Clear(ClearColor);
                 foreach (var cmd in drawQueue)
                 {
-                    if (textures.ContainsKey(cmd.TexturePath))
-                    {
-                        var img = textures[cmd.TexturePath];
-                        float width = img.Width * cmd.ScaleX;
-                        float height = img.Height * cmd.ScaleY;
-                        // Transformación: traslación al punto, rotación, luego dibujar con offset
-                        e.Graphics.TranslateTransform(cmd.X, cmd.Y);
-                        e.Graphics.RotateTransform(cmd.Angle);
-                        e.Graphics.DrawImage(
-                            img,
-                            -cmd.OffsetX * width,
-                            -cmd.OffsetY * height,
-                            width,
-                            height
-                        );
-                        e.Graphics.ResetTransform();
-                    }
+                    var img = cmd.texture;
+                    float width = img.Width * cmd.ScaleX;
+                    float height = img.Height * cmd.ScaleY;
+                    // Transformación: traslación al punto, rotación, luego dibujar con offset
+                    e.Graphics.TranslateTransform(cmd.X, cmd.Y);
+                    e.Graphics.RotateTransform(cmd.Angle);
+                    e.Graphics.DrawImage(
+                        img,
+                        -cmd.OffsetX * width,
+                        -cmd.OffsetY * height,
+                        width,
+                        height
+                    );
+                    e.Graphics.ResetTransform();
                 }
+
                 float debugY = 10;
                 foreach (var msg in debugMessages)
                 {
