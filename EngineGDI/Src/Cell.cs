@@ -1,4 +1,8 @@
-namespace EngineGDI
+using System.Drawing;
+using System.Numerics;
+using System.Windows.Forms;
+
+namespace EngineGDI.Src
 {
     public class Cell
     {
@@ -7,18 +11,31 @@ namespace EngineGDI
         public int posX;
         public int posY;
 
-        //undiscovered discovered playerIn
-        public string states = "Assets/Imgs/gridUndiscovered.png";
+        //public static Cell[,]  grid= new Cell[7, 7];
 
-        public Cell(int tilesize, int x, int y, string sprite)
+        //public Image gridTexture = Image.FromFile("Assets/Imgs/gridUndiscovered.png");
+
+        public Cell(int tilesize, int x, int y)
         {
             this.x = x;
             this.y = y;
 
             posX = x * tilesize;
             posY = y * tilesize;
+        }
 
-            states = "Assets/Imgs/gridUndiscovered.png";
+        public void Pintar()
+        {
+            Engine.Draw(
+                offsetX: 0,
+                offsetY: 0,
+                texture: gridTexture,
+                x: posX,
+                y: posY,
+                scaleX: 1,
+                scaleY: 1,
+                angle: 0
+            );
         }
     }
 }
