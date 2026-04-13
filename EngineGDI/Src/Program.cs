@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using EngineGDI.Src.UI;
 
 namespace EngineGDI.Src
 {
@@ -28,6 +29,8 @@ namespace EngineGDI.Src
             new Enemy(x: 17, y: 2, 7, 4),
             new Enemy(x: 16, y: 10, 8, 4),
         };
+
+        private static readonly Node victoryScreen = new VictoryScreen();
 
         /// <summary>
         /// Punto de entrada principal para la aplicación.
@@ -73,6 +76,7 @@ namespace EngineGDI.Src
         static void Input()
         {
             p1.Input();
+            victoryScreen.Input();
         }
 
         static void Update()
@@ -89,6 +93,7 @@ namespace EngineGDI.Src
                 enemy.Draw();
 
             p1.Draw();
+            victoryScreen.Draw();
         }
     }
 }
