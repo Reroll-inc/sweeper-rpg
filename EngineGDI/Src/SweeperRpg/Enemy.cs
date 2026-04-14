@@ -1,7 +1,6 @@
 using System.Drawing;
-using System.Numerics;
 
-namespace EngineGDI.Src
+namespace EngineGDI.Src.SweeperRpg
 {
     public class Enemy : Node
     {

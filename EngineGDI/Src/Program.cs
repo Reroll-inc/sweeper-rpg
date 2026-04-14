@@ -1,6 +1,6 @@
 using System;
 using System.Drawing;
-using EngineGDI.Src.UI;
+using EngineGDI.Src.SweeperRpg;
 
 namespace EngineGDI.Src
 {

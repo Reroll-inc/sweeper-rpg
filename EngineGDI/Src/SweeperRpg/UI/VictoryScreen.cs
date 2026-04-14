@@ -1,5 +1,4 @@
 using System.Drawing;
-using System.Numerics;
 using System.Windows.Forms;
 
 namespace EngineGDI.Src.UI

@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace EngineGDI.Src
+namespace EngineGDI.Src.SweeperRpg
 {
     public class Player : Node
     {

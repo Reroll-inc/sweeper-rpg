@@ -3,7 +3,7 @@ using System.Drawing;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace EngineGDI.Src
+namespace EngineGDI.Src.SweeperRpg
 {
     public class Grid : Node
     {
