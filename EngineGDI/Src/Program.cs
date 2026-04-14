@@ -17,6 +17,7 @@ namespace EngineGDI.Src
         public static int SCREEN_WIDTH = 1024;
         public static int SCREEN_HEIGHT = 500;
 
+        private static readonly CollisionManager collisionManager = CollisionManager.Instance();
         private static readonly Node p1 = new Player(x: 1, y: 1);
         private static readonly Grid grid = new Grid();
         private static readonly Node[] enemies =
@@ -30,8 +31,6 @@ namespace EngineGDI.Src
             new Enemy(x: 17, y: 2, 7, 4),
             new Enemy(x: 16, y: 10, 8, 4),
         };
-
-        private static readonly Node victoryScreen = new VictoryScreen();
 
         /// <summary>
         /// Punto de entrada principal para la aplicación.
@@ -77,7 +76,6 @@ namespace EngineGDI.Src
         static void Input()
         {
             p1.Input();
-            victoryScreen.Input();
         }
 
         static void Update()
@@ -86,6 +84,8 @@ namespace EngineGDI.Src
                 enemy.Update(deltaTime: deltaTime);
 
             p1.Update(deltaTime: deltaTime);
+
+            collisionManager.Update(deltaTime: deltaTime);
         }
 
         static void Render()
@@ -94,7 +94,8 @@ namespace EngineGDI.Src
                 enemy.Draw();
 
             p1.Draw();
-            victoryScreen.Draw();
+
+            collisionManager.Draw();
         }
     }
 }

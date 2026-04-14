@@ -6,6 +6,12 @@
 
 ## Commands to run
 
+## Restore deps
+
+```sh
+dotnet restore
+```
+
 ## Install dotnet tools
 
 ```sh

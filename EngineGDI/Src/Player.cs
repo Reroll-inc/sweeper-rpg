@@ -1,5 +1,4 @@
 using System.Drawing;
-using System.Numerics;
 using System.Windows.Forms;
 
 namespace EngineGDI.Src
@@ -8,16 +7,14 @@ namespace EngineGDI.Src
     {
         private Point position;
         private readonly Image tile;
-        private readonly Collisioner collision;
         private Point positionToUpdate;
 
         public Player(int x, int y)
         {
-            // 7x7
             position = new Point(x: x, y: y);
             tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
 
-            collision = new Collisioner(position: position, size: new Size(width: 32, height: 32));
+            CollisionManager.RegisterPlayer(position: position);
         }
 
         public override void Input()
@@ -41,14 +38,12 @@ namespace EngineGDI.Src
         {
             positionToUpdate = new Point(position.X * 32, position.Y * 32);
 
-            collision.UpdatePosition(position: positionToUpdate);
+            CollisionManager.UpdatePlayer(position: positionToUpdate);
         }
 
         public override void Draw()
         {
             Engine.Draw(texture: tile, x: positionToUpdate.X, y: positionToUpdate.Y);
-
-            collision.Draw();
         }
     }
 }
