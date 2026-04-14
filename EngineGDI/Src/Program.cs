@@ -15,9 +15,9 @@ namespace EngineGDI.Src
         public static string currentMsg = "";
 
         public static int SCREEN_WIDTH = 1024;
-        public static int SCREEN_HEIGHT = 500;
+        public static int SCREEN_HEIGHT = 720;
 
-        private static readonly CollisionManager collisionManager = CollisionManager.Instance();
+        private static readonly CollisionManager collisionManager = CollisionManager.Instance;
         private static readonly Node p1 = new Player(x: 1, y: 1);
         private static readonly Node grid = new Grid();
         private static readonly Node[] enemies =
@@ -38,7 +38,12 @@ namespace EngineGDI.Src
         [STAThread]
         static void Main()
         {
-            Engine.Initialize("Sweeper RPG", SCREEN_WIDTH, SCREEN_HEIGHT, false);
+            Engine.Initialize(
+                title: "Sweeper RPG",
+                width: SCREEN_WIDTH,
+                height: SCREEN_HEIGHT,
+                fullscreen: false
+            );
 
             while (Engine.IsWindowOpen)
             {
@@ -90,10 +95,11 @@ namespace EngineGDI.Src
 
         static void Render()
         {
+            grid.Draw();
+
             foreach (Node enemy in enemies)
                 enemy.Draw();
 
-            grid.Draw();
             p1.Draw();
 
             collisionManager.Draw();

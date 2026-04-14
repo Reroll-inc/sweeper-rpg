@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace EngineGDI.Src.UI
+namespace EngineGDI.Src.SweeperRpg.UI
 {
     public class VictoryScreen : Node
     {
@@ -19,17 +19,13 @@ namespace EngineGDI.Src.UI
         public override void Input()
         {
             if (Engine.OnKeyDown(Keys.Enter))
-            {
                 isActive = false;
-            }
         }
 
         public override void Draw()
         {
             if (isActive)
-            {
                 Engine.Draw(texture: backgroundImg, x: 0, y: 0);
-            }
         }
     }
 }

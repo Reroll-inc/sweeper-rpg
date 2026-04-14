@@ -191,6 +191,8 @@ namespace EngineGDI.Src
             public GameForm()
             {
                 DoubleBuffered = true;
+                FormBorderStyle = FormBorderStyle.FixedDialog;
+                MaximizeBox = false;
             }
 
             protected override void OnPaint(PaintEventArgs e)

@@ -1,20 +1,51 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace EngineGDI.Src.SweeperRpg
 {
+    /**
+     * El tamaño de la grilla máxima tiene 16x32 cuadrantes de 32px.
+     */
     public class Grid : Node
     {
         public Image undiscoveredCell = Image.FromFile("Assets/Imgs/gridUndiscovered.png");
         public Image discoveredCell = Image.FromFile("Assets/Imgs/gridDiscovered.png");
         public Image playerOnCell = Image.FromFile("Assets/Imgs/gridPlayer.png");
-        private List<List<CellData>> level;
+        private readonly List<List<CellData>> level;
+        private readonly int MAX_ROW = 16;
+        private readonly int MAX_COLUMN = 32;
+
+        private int lvlRow;
+        private int lvlColumn;
+        private int fillRows;
+        private int fillColumns;
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        private enum CellType
+        {
+            [EnumMember(Value = "N")]
+            NULL,
+
+            [EnumMember(Value = "E")]
+            ENEMY,
+
+            [EnumMember(Value = "C")]
+            COIN,
+
+            [EnumMember(Value = "S")]
+            START,
+
+            [EnumMember(Value = "D")]
+            END,
+        }
 
         private class CellData
         {
-            public string type = "NULL";
+            public CellType type = CellType.NULL;
             public string id = "NULL";
             public string enemy = "NULL";
             public int currency = 0;
@@ -22,50 +53,74 @@ namespace EngineGDI.Src.SweeperRpg
 
         public Grid()
         {
-            //aca metemos la logica de generacion del mapa
-            LoadJson();
+            level = LoadJson();
+            lvlRow = level.Count;
+            lvlColumn = level[0].Count;
+
+            if (lvlRow > 16 || lvlColumn > 32)
+                throw new System.Exception(
+                    $"Level size is [{lvlRow},{lvlColumn}] which is bigger than [16,32]"
+                );
+
+            fillRows = (MAX_ROW - lvlRow) / 2;
+            fillColumns = (MAX_COLUMN - lvlColumn) / 2;
         }
 
-        private void LoadJson()
+        private List<List<CellData>> LoadJson()
         {
             string jsonContent = File.ReadAllText("Assets/Levels/1.json");
 
-            level = JsonConvert.DeserializeObject<List<List<CellData>>>(jsonContent);
+            return JsonConvert.DeserializeObject<List<List<CellData>>>(jsonContent);
         }
 
         public override void Update(float deltaTime)
         {
             //aca metemos el posible chequeo de colicion con el player
-            base.Update(deltaTime);
         }
 
         public override void Draw()
         {
-            for (int y = 0; y < level.Count; y++)
+            // FIXME: Optimizar. Se dibuja todo el fondo para que luego
+            // El nivel redibuje las celdas del nivel.
+            for (int rowId = 0; rowId < MAX_ROW; rowId++)
+            for (int columnId = 0; columnId < MAX_COLUMN; columnId++)
+                Engine.Draw(texture: discoveredCell, x: columnId * 32, y: rowId * 32);
+
+            for (int rowId = 0; rowId < level.Count; rowId++)
             {
-                for (int x = 0; x < level[y].Count; x++)
+                List<CellData> row = level[rowId];
+
+                for (int columnId = 0; columnId < row.Count; columnId++)
                 {
-                    if (level[y][x].currency >= 0)
+                    CellData cell = row[columnId];
+
+                    switch (cell.type)
                     {
-                        //si la celda alguna moneda, los dibujamos :)
-                    }
-                    if (level[y][x].enemy != "NULL")
-                    {
-                        //si la celda tiene enemigos, dibujamos la casilla de combate
-                        //si distintos assets para distintos enemigos habria que repensarlo
-                        //o clavar alguna logica de que el string enemy sea el nombre del asset
-                        //mas ppractico
-                    }
-                    if (level[y][x].type == "START")
-                    {
-                        //dibujar la entrada
-                    }
-                    else if (level[y][x].type == "END")
-                    {
-                        //dibujar salida
+                        case CellType.COIN:
+                            //si la celda alguna moneda, los dibujamos :)
+                            break;
+                        case CellType.ENEMY:
+
+                            //si la celda tiene enemigos, dibujamos la casilla de combate
+                            //si distintos assets para distintos enemigos habria que repensarlo
+                            //o clavar alguna logica de que el string enemy sea el nombre del asset
+                            //mas ppractico
+                            break;
+                        case CellType.START:
+                            //dibujar la entrada
+                            break;
+                        case CellType.END:
+                            //dibujar salida
+                            break;
+                        case CellType.NULL:
+                            break;
                     }
 
-                    Engine.Draw(texture: undiscoveredCell, x: x * 32, y: y * 32);
+                    Engine.Draw(
+                        texture: undiscoveredCell,
+                        x: (columnId * 32) + (fillColumns * 32),
+                        y: (rowId * 32) + (fillRows * 32)
+                    );
                 }
             }
         }

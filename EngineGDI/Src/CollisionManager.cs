@@ -16,14 +16,17 @@ namespace EngineGDI.Src
 
         private CollisionManager() { }
 
-        public static CollisionManager Instance()
+        public static CollisionManager Instance
         {
-            if (self == null)
+            get
             {
-                self = new CollisionManager();
-            }
+                if (self == null)
+                {
+                    self = new CollisionManager();
+                }
 
-            return self;
+                return self;
+            }
         }
 
         public static void RegisterPlayer(Point position)
