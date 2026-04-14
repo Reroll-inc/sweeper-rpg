@@ -8,10 +8,8 @@ namespace EngineGDI.Src
         public readonly string id;
     }
 
-    public class CollisionManager
+    public class CollisionManager : Node
     {
-        public event System.EventHandler<CollisionEvent> CollisionIn;
-        public event System.EventHandler<CollisionEvent> CollisionOut;
         private readonly List<Collisioner> enemies = new List<Collisioner>();
         private Collisioner player;
         private static CollisionManager self;
@@ -35,17 +33,11 @@ namespace EngineGDI.Src
                 size: new Size(width: 32, height: 32),
                 brushColor: Color.DarkBlue
             );
-
-            self.CollisionIn += self.player.OnCollisionIn;
-            self.CollisionOut += self.player.OnCollisionOut;
         }
 
         public static void RegisterEnemy(Collisioner enemy)
         {
             self.enemies.Add(enemy);
-
-            self.CollisionIn += enemy.OnCollisionIn;
-            self.CollisionOut += enemy.OnCollisionOut;
         }
 
         public static void UnRegisterEnemy(Collisioner enemy)
@@ -57,40 +49,23 @@ namespace EngineGDI.Src
         public static void UpdatePlayer(Point position)
         {
             self.player.UpdatePosition(position: position);
-        }
 
-        public void Update(float deltaTime)
-        {
-            foreach (Collisioner enemy in enemies)
+            foreach (Collisioner enemy in self.enemies)
             {
-                if (player.ChecCollision(enemy))
-                {
-                    OnCollisionIn();
-
-                    return;
-                }
+                if (self.player.CheckCollision(enemy))
+                    enemy.OnCollisionIn();
+                else
+                    enemy.OnCollisionOut();
             }
-
-            OnCollisionOut();
         }
 
-        public void Draw()
+        public override void Draw()
         {
             player.Draw();
             foreach (Collisioner enemy in enemies)
             {
                 enemy.Draw();
             }
-        }
-
-        private void OnCollisionIn()
-        {
-            CollisionIn?.Invoke(this, new CollisionEvent());
-        }
-
-        private void OnCollisionOut()
-        {
-            CollisionOut?.Invoke(this, new CollisionEvent());
         }
     }
 }

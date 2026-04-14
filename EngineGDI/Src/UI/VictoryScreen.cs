@@ -6,7 +6,9 @@ namespace EngineGDI.Src.UI
 {
     public class VictoryScreen : Node
     {
-        private Image backgroundImg = Image.FromFile("Assets/Imgs/victory_Placeholder.png");
+        private readonly Image backgroundImg = Image.FromFile(
+            "Assets/Imgs/victory_Placeholder.png"
+        );
         private bool isActive = true;
 
         public VictoryScreen()

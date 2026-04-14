@@ -12,15 +12,21 @@ namespace EngineGDI.Src
 
         public Collisioner(Point position, Size size, Color brushColor)
         {
-            rect = new Rectangle(position, size);
+            rect = new Rectangle(
+                location: new Point(
+                    x: position.X + (size.Width / 4),
+                    y: position.Y + (size.Height / 4)
+                ),
+                size: new Size(width: size.Width / 2, height: size.Height / 2)
+            );
             pen = new Pen(color: Color.Red);
             brush = new SolidBrush(color: brushColor);
         }
 
         public void UpdatePosition(Point position)
         {
-            rect.X = position.X;
-            rect.Y = position.Y;
+            rect.X = position.X + (rect.Size.Width / 2);
+            rect.Y = position.Y + (rect.Size.Height / 2);
         }
 
         public Rectangle Rect()
@@ -28,17 +34,17 @@ namespace EngineGDI.Src
             return rect;
         }
 
-        public void OnCollisionIn(object s, CollisionEvent evt)
+        public void OnCollisionIn()
         {
             debugCollisioned = true;
         }
 
-        public void OnCollisionOut(object s, CollisionEvent evt)
+        public void OnCollisionOut()
         {
             debugCollisioned = false;
         }
 
-        public bool ChecCollision(Collisioner element)
+        public bool CheckCollision(Collisioner element)
         {
             return rect.X + rect.Width >= element.rect.X
                 && rect.X <= element.rect.X + element.rect.Width

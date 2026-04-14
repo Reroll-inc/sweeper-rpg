@@ -6,8 +6,8 @@ namespace EngineGDI.Src
     public class Player : Node
     {
         private Point position;
-        private readonly Image tile;
         private Point positionToUpdate;
+        private readonly Image tile;
 
         public Player(int x, int y)
         {
