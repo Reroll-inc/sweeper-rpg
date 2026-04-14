@@ -21,8 +21,11 @@
 
   <!-- This handles all your images and wav files automatically -->
   <ItemGroup>
-    <Content Include="**\*.png;**\*.wav" Exclude="bin\**;obj\**">
+    <Content Include="**\*.png;**\*.wav;**\*.json" Exclude="bin\**;obj\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 </Project>

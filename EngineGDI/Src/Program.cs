@@ -18,7 +18,8 @@ namespace EngineGDI.Src
         public static int SCREEN_HEIGHT = 500;
 
         private static readonly Node p1 = new Player(x: 1, y: 1);
-        private static readonly Enemy[] enemies =
+        private static readonly Grid grid = new Grid();
+        private static readonly Node[] enemies =
         {
             new Enemy(x: 16, y: 16, 2, 1),
             new Enemy(x: 24, y: 1, 1, 1),
@@ -81,7 +82,7 @@ namespace EngineGDI.Src
 
         static void Update()
         {
-            foreach (Enemy enemy in enemies)
+            foreach (Node enemy in enemies)
                 enemy.Update(deltaTime: deltaTime);
 
             p1.Update(deltaTime: deltaTime);
@@ -89,7 +90,7 @@ namespace EngineGDI.Src
 
         static void Render()
         {
-            foreach (Enemy enemy in enemies)
+            foreach (Node enemy in enemies)
                 enemy.Draw();
 
             p1.Draw();

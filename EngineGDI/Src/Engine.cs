@@ -19,9 +19,18 @@ namespace EngineGDI.Src
                 OffsetY;
         }
 
+        private class CollisionCommand
+        {
+            public Pen pen;
+            public Brush brush;
+            public Rectangle rect;
+        }
+
         private static readonly Dictionary<string, SoundPlayer> sounds =
             new Dictionary<string, SoundPlayer>();
         private static readonly List<DrawCommand> drawQueue = new List<DrawCommand>();
+        private static readonly List<CollisionCommand> collisionQueue =
+            new List<CollisionCommand>();
         private static GameForm window;
         public static bool IsWindowOpen { get; private set; } = false;
         public static Form Window => window;
@@ -116,6 +125,19 @@ namespace EngineGDI.Src
             );
         }
 
+        public static void DrawCollision(Pen pen, Rectangle rect, Brush brush = null)
+        {
+            // if (debugMessages.i)
+            collisionQueue.Add(
+                new CollisionCommand
+                {
+                    pen = pen,
+                    brush = brush,
+                    rect = rect,
+                }
+            );
+        }
+
         public static void Clear(Color color)
         {
             window.ClearColor = color;
@@ -192,6 +214,14 @@ namespace EngineGDI.Src
                     );
                     e.Graphics.ResetTransform();
                 }
+
+                foreach (var collision in collisionQueue)
+                {
+                    if (!(collision.brush is null))
+                        e.Graphics.FillRectangle(collision.brush, collision.rect);
+                    e.Graphics.DrawRectangle(collision.pen, collision.rect);
+                }
+                collisionQueue.Clear();
 
                 float debugY = 10;
                 foreach (var msg in debugMessages)

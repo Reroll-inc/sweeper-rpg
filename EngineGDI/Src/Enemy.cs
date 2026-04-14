@@ -21,16 +21,7 @@ namespace EngineGDI.Src
 
         public override void Draw()
         {
-            Engine.Draw(
-                texture: tile,
-                x: position.X * 32,
-                y: position.Y * 32,
-                scaleX: 1,
-                scaleY: 1,
-                angle: 0,
-                offsetX: .5f,
-                offsetY: .5f
-            );
+            Engine.Draw(texture: tile, x: position.X * 32, y: position.Y * 32);
         }
     }
 }

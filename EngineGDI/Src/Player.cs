@@ -6,14 +6,18 @@ namespace EngineGDI.Src
 {
     public class Player : Node
     {
-        private Vector2 position;
+        private Point position;
         private readonly Image tile;
+        private readonly Collisioner collision;
+        private Point positionToUpdate;
 
         public Player(int x, int y)
         {
             // 7x7
-            position = new Vector2(x: x, y: y);
+            position = new Point(x: x, y: y);
             tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
+
+            collision = new Collisioner(position: position, size: new Size(width: 32, height: 32));
         }
 
         public override void Input()
@@ -33,18 +37,18 @@ namespace EngineGDI.Src
             }
         }
 
+        public override void Update(float deltaTime)
+        {
+            positionToUpdate = new Point(position.X * 32, position.Y * 32);
+
+            collision.UpdatePosition(position: positionToUpdate);
+        }
+
         public override void Draw()
         {
-            Engine.Draw(
-                texture: tile,
-                x: position.X * 32,
-                y: position.Y * 32,
-                scaleX: 1,
-                scaleY: 1,
-                angle: 0,
-                offsetX: .5f,
-                offsetY: .5f
-            );
+            Engine.Draw(texture: tile, x: positionToUpdate.X, y: positionToUpdate.Y);
+
+            collision.Draw();
         }
     }
 }
