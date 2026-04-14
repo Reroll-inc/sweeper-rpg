@@ -19,7 +19,7 @@ namespace EngineGDI.Src
 
         private static readonly CollisionManager collisionManager = CollisionManager.Instance();
         private static readonly Node p1 = new Player(x: 1, y: 1);
-        private static readonly Grid grid = new Grid();
+        private static readonly Node grid = new Grid();
         private static readonly Node[] enemies =
         {
             new Enemy(x: 16, y: 16, 2, 1),
@@ -93,6 +93,7 @@ namespace EngineGDI.Src
             foreach (Node enemy in enemies)
                 enemy.Draw();
 
+            grid.Draw();
             p1.Draw();
 
             collisionManager.Draw();
