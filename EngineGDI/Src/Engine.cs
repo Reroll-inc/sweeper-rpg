@@ -7,7 +7,12 @@ namespace EngineGDI.Src
 {
     public static class Engine
     {
-        private class DrawCommand
+        private abstract class DrawCommand
+        {
+            public abstract void Draw(PaintEventArgs e);
+        }
+
+        private class DrawImageCommand : DrawCommand
         {
             public Image texture;
             public float X,
@@ -17,6 +22,33 @@ namespace EngineGDI.Src
             public float Angle,
                 OffsetX,
                 OffsetY;
+
+            public override void Draw(PaintEventArgs e)
+            {
+                float width = texture.Width * ScaleX;
+                float height = texture.Height * ScaleY;
+
+                // Transformación: traslación al punto, rotación, luego dibujar con offset
+                e.Graphics.TranslateTransform(X, Y);
+                e.Graphics.RotateTransform(Angle);
+                e.Graphics.DrawImage(texture, -OffsetX * width, -OffsetY * height, width, height);
+                e.Graphics.ResetTransform();
+            }
+        }
+
+        private class DrawRectCommand : DrawCommand
+        {
+            public Rectangle rect;
+            public Pen pen;
+            public Brush brush = null;
+
+            public override void Draw(PaintEventArgs e)
+            {
+                if (!(brush is null))
+                    e.Graphics.FillRectangle(brush, rect);
+
+                e.Graphics.DrawRectangle(pen, rect);
+            }
         }
 
         private class CollisionCommand
@@ -99,7 +131,7 @@ namespace EngineGDI.Src
             sounds[path].Play();
         }
 
-        public static void Draw(
+        public static void DrawImage(
             Image texture,
             float x,
             float y,
@@ -111,7 +143,7 @@ namespace EngineGDI.Src
         )
         {
             drawQueue.Add(
-                new DrawCommand
+                new DrawImageCommand
                 {
                     texture = texture,
                     X = x,
@@ -121,6 +153,18 @@ namespace EngineGDI.Src
                     Angle = angle,
                     OffsetX = offsetX,
                     OffsetY = offsetY,
+                }
+            );
+        }
+
+        public static void DrawRect(Rectangle rect, Pen pen, Brush brush = null)
+        {
+            drawQueue.Add(
+                new DrawRectCommand
+                {
+                    rect = rect,
+                    pen = pen,
+                    brush = brush,
                 }
             );
         }
@@ -200,22 +244,7 @@ namespace EngineGDI.Src
                 base.OnPaint(e);
                 e.Graphics.Clear(ClearColor);
                 foreach (var cmd in drawQueue)
-                {
-                    var img = cmd.texture;
-                    float width = img.Width * cmd.ScaleX;
-                    float height = img.Height * cmd.ScaleY;
-                    // Transformación: traslación al punto, rotación, luego dibujar con offset
-                    e.Graphics.TranslateTransform(cmd.X, cmd.Y);
-                    e.Graphics.RotateTransform(cmd.Angle);
-                    e.Graphics.DrawImage(
-                        img,
-                        -cmd.OffsetX * width,
-                        -cmd.OffsetY * height,
-                        width,
-                        height
-                    );
-                    e.Graphics.ResetTransform();
-                }
+                    cmd.Draw(e);
 
                 foreach (var collision in collisionQueue)
                 {

@@ -59,7 +59,7 @@ namespace EngineGDI.Src.SweeperRpg
 
         public override void Draw()
         {
-            Engine.Draw(texture: tile, x: actualPosition.X, y: actualPosition.Y);
+            Engine.DrawImage(texture: tile, x: actualPosition.X, y: actualPosition.Y);
         }
     }
 }

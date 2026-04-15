@@ -12,9 +12,6 @@ namespace EngineGDI.Src.SweeperRpg
      */
     public class Grid : Node
     {
-        public Image undiscoveredCell = Image.FromFile("Assets/Imgs/gridUndiscovered.png");
-        public Image discoveredCell = Image.FromFile("Assets/Imgs/gridDiscovered.png");
-        public Image playerOnCell = Image.FromFile("Assets/Imgs/gridPlayer.png");
         private readonly List<List<CellData>> level;
         private readonly int MAX_ROW = 16;
         private readonly int MAX_COLUMN = 32;
@@ -84,7 +81,14 @@ namespace EngineGDI.Src.SweeperRpg
             // El nivel redibuje las celdas del nivel.
             for (int rowId = 0; rowId < MAX_ROW; rowId++)
             for (int columnId = 0; columnId < MAX_COLUMN; columnId++)
-                Engine.Draw(texture: discoveredCell, x: columnId * 32, y: rowId * 32);
+                Engine.DrawRect(
+                    rect: new Rectangle(
+                        location: new Point(x: columnId * 32, y: rowId * 32),
+                        size: new Size(width: 32, height: 32)
+                    ),
+                    pen: new Pen(color: Color.DarkSlateGray),
+                    brush: new SolidBrush(Color.DarkSlateGray)
+                );
 
             for (int rowId = 0; rowId < level.Count; rowId++)
             {
@@ -107,27 +111,45 @@ namespace EngineGDI.Src.SweeperRpg
                             //mas ppractico
                             break;
                         case CellType.START:
-                            Engine.Draw(
-                                texture: playerOnCell,
-                                x: (columnId * 32) + (fillColumns * 32),
-                                y: (rowId * 32) + (fillRows * 32)
+                            Engine.DrawRect(
+                                rect: new Rectangle(
+                                    location: new Point(
+                                        x: (columnId * 32) + (fillColumns * 32),
+                                        y: (rowId * 32) + (fillRows * 32)
+                                    ),
+                                    size: new Size(width: 32, height: 32)
+                                ),
+                                pen: new Pen(color: Color.Black),
+                                brush: new SolidBrush(Color.DarkViolet)
                             );
                             continue;
                         case CellType.END:
-                            Engine.Draw(
-                                texture: playerOnCell,
-                                x: (columnId * 32) + (fillColumns * 32),
-                                y: (rowId * 32) + (fillRows * 32)
+                            Engine.DrawRect(
+                                rect: new Rectangle(
+                                    location: new Point(
+                                        x: (columnId * 32) + (fillColumns * 32),
+                                        y: (rowId * 32) + (fillRows * 32)
+                                    ),
+                                    size: new Size(width: 32, height: 32)
+                                ),
+                                pen: new Pen(color: Color.Black),
+                                brush: new SolidBrush(Color.DarkGoldenrod)
                             );
                             continue;
                         case CellType.NULL:
                             break;
                     }
 
-                    Engine.Draw(
-                        texture: undiscoveredCell,
-                        x: (columnId * 32) + (fillColumns * 32),
-                        y: (rowId * 32) + (fillRows * 32)
+                    Engine.DrawRect(
+                        rect: new Rectangle(
+                            location: new Point(
+                                x: (columnId * 32) + (fillColumns * 32),
+                                y: (rowId * 32) + (fillRows * 32)
+                            ),
+                            size: new Size(width: 32, height: 32)
+                        ),
+                        pen: new Pen(color: Color.Black),
+                        brush: new SolidBrush(Color.SeaGreen)
                     );
                 }
             }

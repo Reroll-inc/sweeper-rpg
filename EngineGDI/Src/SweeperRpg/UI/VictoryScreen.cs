@@ -25,7 +25,7 @@ namespace EngineGDI.Src.SweeperRpg.UI
         public override void Draw()
         {
             if (isActive)
-                Engine.Draw(texture: backgroundImg, x: 0, y: 0);
+                Engine.DrawImage(texture: backgroundImg, x: 0, y: 0);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace EngineGDI.Src
         public override void Draw()
         {
             if (toggle)
-                Engine.Draw(texture: defeatScreen, x: 0, y: 0);
+                Engine.DrawImage(texture: defeatScreen, x: 0, y: 0);
         }
     }
 }
