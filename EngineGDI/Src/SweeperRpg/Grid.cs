@@ -46,8 +46,8 @@ namespace EngineGDI.Src.SweeperRpg
         public class CellData
         {
             public CellType type = CellType.NULL;
-            public string id = "NULL";
-            public string enemy = "NULL";
+            public string id = null;
+            public EnemyKind? kind = null;
             public int currency = 0;
         }
 

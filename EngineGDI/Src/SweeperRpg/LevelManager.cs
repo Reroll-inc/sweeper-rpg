@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using Newtonsoft.Json;
 using static EngineGDI.Src.SweeperRpg.Grid;
@@ -24,8 +25,15 @@ namespace EngineGDI.Src.SweeperRpg
         private int fillColumns;
         private bool created = false;
         private readonly Player player = new Player(x: 0, y: 0);
+        private static readonly List<Node> enemies = new List<Node>();
+        private readonly Dictionary<EnemyKind, Point> enemiesPoint;
 
-        private LevelManager() { }
+        private LevelManager()
+        {
+            string jsonContent = File.ReadAllText("Assets/32rogues/monsters.json");
+
+            enemiesPoint = JsonConvert.DeserializeObject<Dictionary<EnemyKind, Point>>(jsonContent);
+        }
 
         public static LevelManager Instance
         {
@@ -76,11 +84,19 @@ namespace EngineGDI.Src.SweeperRpg
                             //si la celda alguna moneda, los dibujamos :)
                             break;
                         case CellType.ENEMY:
+                            if (!cell.kind.HasValue)
+                                throw new System.Exception(
+                                    $"Level nº{levelId}, cell [{rowId}, {columnId}] type is ENEMY but kind is not defined."
+                                );
+                            enemiesPoint.TryGetValue(cell.kind.Value, out Point inTile);
 
-                            //si la celda tiene enemigos, dibujamos la casilla de combate
-                            //si distintos assets para distintos enemigos habria que repensarlo
-                            //o clavar alguna logica de que el string enemy sea el nombre del asset
-                            //mas ppractico
+                            enemies.Add(
+                                new Enemy(
+                                    x: columnId + fillColumns,
+                                    y: rowId + fillRows,
+                                    inTile: inTile
+                                )
+                            );
                             break;
                         case CellType.START:
                             player.Reset(x: columnId + fillColumns, y: rowId + fillRows);
@@ -106,6 +122,9 @@ namespace EngineGDI.Src.SweeperRpg
 
         public override void Draw()
         {
+            foreach (Node enemy in enemies)
+                enemy.Draw();
+
             player.Draw();
         }
     }
