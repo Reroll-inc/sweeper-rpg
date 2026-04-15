@@ -12,26 +12,18 @@ namespace EngineGDI.Src
     {
         private readonly List<Collisioner> enemies = new List<Collisioner>();
         private Collisioner player;
-        private static CollisionManager self;
+        private static readonly CollisionManager instance = new CollisionManager();
 
         private CollisionManager() { }
 
         public static CollisionManager Instance
         {
-            get
-            {
-                if (self == null)
-                {
-                    self = new CollisionManager();
-                }
-
-                return self;
-            }
+            get { return instance; }
         }
 
         public static void RegisterPlayer(Point position)
         {
-            self.player = new Collisioner(
+            instance.player = new Collisioner(
                 position: position,
                 size: new Size(width: 32, height: 32),
                 brushColor: Color.DarkBlue
@@ -40,22 +32,22 @@ namespace EngineGDI.Src
 
         public static void RegisterEnemy(Collisioner enemy)
         {
-            self.enemies.Add(enemy);
+            instance.enemies.Add(enemy);
         }
 
         public static void UnRegisterEnemy(Collisioner enemy)
         {
-            if (!self.enemies.Remove(enemy))
+            if (!instance.enemies.Remove(enemy))
                 throw new System.Exception("Enemy already removed?");
         }
 
         public static void UpdatePlayer(Point position)
         {
-            self.player.UpdatePosition(position: position);
+            instance.player.UpdatePosition(position: position);
 
-            foreach (Collisioner enemy in self.enemies)
+            foreach (Collisioner enemy in instance.enemies)
             {
-                if (self.player.CheckCollision(enemy))
+                if (instance.player.CheckCollision(enemy))
                     enemy.OnCollisionIn();
                 else
                     enemy.OnCollisionOut();

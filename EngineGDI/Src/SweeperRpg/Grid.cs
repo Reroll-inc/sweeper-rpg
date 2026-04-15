@@ -25,7 +25,7 @@ namespace EngineGDI.Src.SweeperRpg
         private int fillColumns;
 
         [JsonConverter(typeof(StringEnumConverter))]
-        private enum CellType
+        public enum CellType
         {
             [EnumMember(Value = "N")]
             NULL,
@@ -43,7 +43,7 @@ namespace EngineGDI.Src.SweeperRpg
             END,
         }
 
-        private class CellData
+        public class CellData
         {
             public CellType type = CellType.NULL;
             public string id = "NULL";
@@ -107,11 +107,19 @@ namespace EngineGDI.Src.SweeperRpg
                             //mas ppractico
                             break;
                         case CellType.START:
-                            //dibujar la entrada
-                            break;
+                            Engine.Draw(
+                                texture: playerOnCell,
+                                x: (columnId * 32) + (fillColumns * 32),
+                                y: (rowId * 32) + (fillRows * 32)
+                            );
+                            continue;
                         case CellType.END:
-                            //dibujar salida
-                            break;
+                            Engine.Draw(
+                                texture: playerOnCell,
+                                x: (columnId * 32) + (fillColumns * 32),
+                                y: (rowId * 32) + (fillRows * 32)
+                            );
+                            continue;
                         case CellType.NULL:
                             break;
                     }

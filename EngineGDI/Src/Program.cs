@@ -18,19 +18,8 @@ namespace EngineGDI.Src
         public static int SCREEN_HEIGHT = 720;
 
         private static readonly CollisionManager collisionManager = CollisionManager.Instance;
-        private static readonly Node p1 = new Player(x: 1, y: 1);
+        private static readonly LevelManager levelManager = LevelManager.Instance;
         private static readonly Node grid = new Grid();
-        private static readonly Node[] enemies =
-        {
-            new Enemy(x: 16, y: 16, 2, 1),
-            new Enemy(x: 24, y: 1, 1, 1),
-            new Enemy(x: 3, y: 8, 0, 4),
-            new Enemy(x: 12, y: 12, 4, 3),
-            new Enemy(x: 13, y: 7, 5, 2),
-            new Enemy(x: 1, y: 5, 6, 7),
-            new Enemy(x: 17, y: 2, 7, 4),
-            new Enemy(x: 16, y: 10, 8, 4),
-        };
 
         /// <summary>
         /// Punto de entrada principal para la aplicación.
@@ -44,6 +33,9 @@ namespace EngineGDI.Src
                 height: SCREEN_HEIGHT,
                 fullscreen: false
             );
+
+            levelManager.LoadLevel(1);
+            levelManager.CreateLevel();
 
             while (Engine.IsWindowOpen)
             {
@@ -80,15 +72,12 @@ namespace EngineGDI.Src
 
         static void Input()
         {
-            p1.Input();
+            levelManager.Input();
         }
 
         static void Update()
         {
-            foreach (Node enemy in enemies)
-                enemy.Update(deltaTime: deltaTime);
-
-            p1.Update(deltaTime: deltaTime);
+            levelManager.Update(deltaTime: deltaTime);
 
             collisionManager.Update(deltaTime: deltaTime);
         }
@@ -97,10 +86,7 @@ namespace EngineGDI.Src
         {
             grid.Draw();
 
-            foreach (Node enemy in enemies)
-                enemy.Draw();
-
-            p1.Draw();
+            levelManager.Draw();
 
             collisionManager.Draw();
         }

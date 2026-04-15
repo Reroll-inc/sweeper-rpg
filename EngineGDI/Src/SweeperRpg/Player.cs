@@ -6,7 +6,7 @@ namespace EngineGDI.Src.SweeperRpg
     public class Player : Node
     {
         private Point position;
-        private Point positionToUpdate;
+        private Point positionToUpdate = new Point();
         private readonly Image tile;
 
         public Player(int x, int y)
@@ -15,6 +15,12 @@ namespace EngineGDI.Src.SweeperRpg
             tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
 
             CollisionManager.RegisterPlayer(position: position);
+        }
+
+        public void Reset(int x, int y)
+        {
+            position.X = x;
+            position.Y = y;
         }
 
         public override void Input()
@@ -36,7 +42,8 @@ namespace EngineGDI.Src.SweeperRpg
 
         public override void Update(float deltaTime)
         {
-            positionToUpdate = new Point(position.X * 32, position.Y * 32);
+            positionToUpdate.X = position.X * 32;
+            positionToUpdate.Y = position.Y * 32;
 
             CollisionManager.UpdatePlayer(position: positionToUpdate);
         }
