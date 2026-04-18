@@ -51,6 +51,19 @@ namespace EngineGDI.Src
             }
         }
 
+        private class DrawTextCommand : DrawCommand
+        {
+            public string text;
+            public Font font;
+            public Brush brush;
+            public PointF position;
+
+            public override void Draw(PaintEventArgs e)
+            {
+                e.Graphics.DrawString(text, font, brush, position);
+            }
+        }
+
         private class CollisionCommand
         {
             public Pen pen;
@@ -165,6 +178,19 @@ namespace EngineGDI.Src
                     rect = rect,
                     pen = pen,
                     brush = brush,
+                }
+            );
+        }
+
+        public static void DrawText(string text, Font font, Brush brush, PointF position)
+        {
+            drawQueue.Add(
+                new DrawTextCommand
+                {
+                    text = text,
+                    font = font,
+                    brush = brush,
+                    position = position,
                 }
             );
         }
