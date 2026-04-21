@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using EngineGDI.Src.SweeperRpg;
 
 namespace EngineGDI.Src
 {
@@ -10,7 +11,6 @@ namespace EngineGDI.Src
 
     public class CollisionManager : Node
     {
-        private readonly List<Collisioner> enemies = new List<Collisioner>();
         private Collisioner player;
         private static readonly CollisionManager instance = new CollisionManager();
 
@@ -30,36 +30,48 @@ namespace EngineGDI.Src
             );
         }
 
-        public static void RegisterEnemy(Collisioner enemy)
-        {
-            instance.enemies.Add(enemy);
-        }
+        // public static void RegisterEnemy(Collisioner enemy)
+        // {
+        //     instance.enemies.Add(enemy);
+        // }
 
-        public static void UnRegisterEnemy(Collisioner enemy)
-        {
-            if (!instance.enemies.Remove(enemy))
-                throw new System.Exception("Enemy already removed?");
-        }
+        // public static void UnRegisterEnemy(Collisioner enemy)
+        // {
+        //     if (!instance.enemies.Remove(enemy))
+        //         throw new System.Exception("Enemy already removed?");
+        // }
 
         public static void UpdatePlayer(Point position)
         {
             instance.player.UpdatePosition(position: position);
 
-            foreach (Collisioner enemy in instance.enemies)
+            foreach (Enemy enemy in LevelManager.Instance.ActiveEnemies)
             {
-                if (instance.player.CheckCollision(enemy))
-                    enemy.OnCollisionIn();
+                if (instance.player.CheckCollision(enemy.Collsion))
+                {
+                    //Notify Enemy
+                    LevelManager.Instance.OnCollision(enemy);
+                    enemy.Collsion.OnCollisionIn();
+                    // Notify Player
+
+                    instance.player.OnCollisionIn();
+                    // cambios: En collisioner - en levelmanager - en collisionmanager
+                    // Hacer que collisionManager deje de registrar los collisioners enemigos y le pida la lista de enemigos activos al levelmanager
+                }
                 else
-                    enemy.OnCollisionOut();
+                {
+                    enemy.Collsion.OnCollisionOut();
+                    instance.player.OnCollisionOut();
+                }
             }
         }
 
         public override void Draw()
         {
             player.Draw();
-            foreach (Collisioner enemy in enemies)
+            foreach (Enemy enemy in LevelManager.Instance.ActiveEnemies)
             {
-                enemy.Draw();
+                enemy.Collsion.Draw();
             }
         }
     }

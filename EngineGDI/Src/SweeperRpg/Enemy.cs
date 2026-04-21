@@ -37,6 +37,11 @@ namespace EngineGDI.Src.SweeperRpg
         private Point actualPosition;
         private readonly Image tile;
         private readonly Collisioner collisioner;
+        public Collisioner Collsion
+        {
+            get { return collisioner; }
+        }
+        private int damage = 2;
 
         public Enemy(int x, int y, Point inTile)
         {
@@ -53,13 +58,16 @@ namespace EngineGDI.Src.SweeperRpg
                 size: new Size(width: 32, height: 32),
                 brushColor: Color.BlanchedAlmond
             );
-
-            CollisionManager.RegisterEnemy(enemy: collisioner);
         }
 
         public override void Draw()
         {
             Engine.DrawImage(texture: tile, x: actualPosition.X, y: actualPosition.Y);
+        }
+
+        public int Damage
+        {
+            get { return damage; }
         }
     }
 }

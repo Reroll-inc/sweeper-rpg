@@ -25,8 +25,13 @@ namespace EngineGDI.Src.SweeperRpg
         private int fillColumns;
         private bool created = false;
         private readonly Player player = new Player(x: 0, y: 0);
-        private static readonly List<Node> enemies = new List<Node>();
+        private static readonly List<Enemy> enemies = new List<Enemy>();
+        public List<Enemy> ActiveEnemies
+        {
+            get { return enemies; }
+        }
         private readonly Dictionary<EnemyKind, Point> enemiesPoint;
+        private static readonly CollisionManager collisionManager = CollisionManager.Instance;
 
         private LevelManager()
         {
@@ -127,5 +132,19 @@ namespace EngineGDI.Src.SweeperRpg
 
             player.Draw();
         }
+
+        public void OnCollision(Enemy enemy)
+        {
+            player.TakeDamage(enemy.Damage);
+            if (player.IsDead())
+            {
+                // Avisar al GameManager que perdio.
+            }
+        }
     }
+
+    // LevelManager should function as a sort of middle man that helps the combat loop work.
+    // Player, al colisionar con un enemigo, deberia hacer que el LevelManager consiga el valor de danio del enemigo,
+    // y le notifique a player el valor por el cual su vida debe bajar. Al mismo tiempo, por ahora, el Manager
+    // deberia a la instancia de enemigo que colisiono cambiarle su estado para que muera.
 }

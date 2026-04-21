@@ -8,6 +8,7 @@ namespace EngineGDI.Src.SweeperRpg
         private Point position;
         private Point positionToUpdate = new Point();
         private readonly Image tile;
+        private int health = 10;
 
         public Player(int x, int y)
         {
@@ -52,5 +53,17 @@ namespace EngineGDI.Src.SweeperRpg
         {
             Engine.DrawImage(texture: tile, x: positionToUpdate.X, y: positionToUpdate.Y);
         }
+
+        public void TakeDamage(int damage)
+        {
+            health -= damage;
+        }
+
+        public bool IsDead()
+        {
+            return health < 0;
+        }
     }
 }
+// Combat: PLayer recibe instancia de enemigo
+//
