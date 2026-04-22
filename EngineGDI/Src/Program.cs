@@ -18,7 +18,8 @@ namespace EngineGDI.Src
         public static int SCREEN_HEIGHT = 720;
 
         private static readonly CollisionManager collisionManager = CollisionManager.Instance;
-        private static readonly LevelManager levelManager = LevelManager.Instance;
+
+        private static readonly GameManager gameManager = GameManager.Instance;
         private static readonly Node grid = new Grid();
 
         /// <summary>
@@ -33,9 +34,7 @@ namespace EngineGDI.Src
                 height: SCREEN_HEIGHT,
                 fullscreen: false
             );
-
-            levelManager.LoadLevel(1);
-            levelManager.CreateLevel();
+            gameManager();
 
             while (Engine.IsWindowOpen)
             {
@@ -72,13 +71,11 @@ namespace EngineGDI.Src
 
         static void Input()
         {
-            levelManager.Input();
+            gameManager.Input();
         }
 
         static void Update()
         {
-            levelManager.Update(deltaTime: deltaTime);
-
             collisionManager.Update(deltaTime: deltaTime);
         }
 
@@ -86,7 +83,7 @@ namespace EngineGDI.Src
         {
             grid.Draw();
 
-            levelManager.Draw();
+            gameManager.Draw();
 
             collisionManager.Draw();
         }
