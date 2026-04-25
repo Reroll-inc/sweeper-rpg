@@ -1,13 +1,10 @@
-using EngineGDI.Src.sweeperRpg;
-using EngineGDI.Src.SweeperRpg;
-using EngineGDI.Src.SweeperRpg.UI;
+using System.Windows.Forms;
 
-namespace EngineGDI.Src
+namespace EngineGDI.Src.SweeperRpg
 {
     public class GameManager : Node
     {
-        //refactorizar usando un enum
-        //buscar patron maquina estados
+        // Buscar patron maquina estados
         private enum GameState
         {
             MAIN_MENU,
@@ -21,36 +18,36 @@ namespace EngineGDI.Src
             QUIT, //falta implementar
         }
 
-        private static readonly LevelManager levelManager = LevelManager.Instance;
+        private GameState state = GameState.MAIN_MENU;
 
-        public GameState state = GameState.MAIN_MENU;
+        // private VictoryScreen();
+        // private Defeat();
+        // private MainMenu();
 
-        private VictoryScreen();
-
-        private Defeat();
-
-        private MainMenu();
-
+        private static readonly GameManager instance = new GameManager();
         public static GameManager Instance
         {
             get { return instance; }
         }
+        private static readonly LevelManager levelManager = LevelManager.Instance;
+
+        private GameManager() { }
 
         public override void Input()
         {
             switch (state)
             {
                 case GameState.MAIN_MENU:
-                    MainMenu.Input();
+                    // MainMenu.Input();
                     break;
                 case GameState.PLAYING_LEVEL:
                     levelManager.Input();
                     break;
                 case GameState.VICTORY:
-                    VictoryScreen.Input;
+                    // VictoryScreen.Input;
                     break;
                 case GameState.DEFEAT:
-                    Defeat.Input;
+                    // Defeat.Input;
                     break;
             }
             //reimplementar como llamados de cambio de estado dentro de cada pantalla
@@ -98,34 +95,36 @@ namespace EngineGDI.Src
             switch (state)
             {
                 case GameState.MAIN_MENU:
-                    MainMenu.Draw();
+                    // MainMenu.Draw();
                     break;
                 case GameState.PLAYING_LEVEL:
                     levelManager.Draw();
                     break;
                 case GameState.VICTORY:
-                    VictoryScreen.Draw();
+                    // VictoryScreen.Draw();
                     break;
                 case GameState.DEFEAT:
-                    Defeat.Draw();
+                    // Defeat.Draw();
+                    break;
             }
         }
 
-        public override void Update()
+        public override void Update(float deltaTime)
         {
             switch (state)
             {
                 case GameState.MAIN_MENU:
-                    MainMenu.Update();
+                    // MainMenu.Update(deltaTime: deltaTime);
                     break;
                 case GameState.PLAYING_LEVEL:
                     levelManager.Update(deltaTime: deltaTime);
                     break;
                 case GameState.VICTORY:
-                    VictoryScreen.Update();
+                    // VictoryScreen.Update(deltaTime: deltaTime);
                     break;
                 case GameState.DEFEAT:
-                    Defeat.Update();
+                    // Defeat.Update(deltaTime: deltaTime);
+                    break;
             }
         }
     }

@@ -30,6 +30,7 @@ namespace EngineGDI.Src.SweeperRpg
         {
             get { return enemies; }
         }
+        private static readonly Grid grid = new Grid();
         private readonly Dictionary<EnemyKind, Point> enemiesPoint;
         private static readonly CollisionManager collisionManager = CollisionManager.Instance;
 
@@ -45,6 +46,8 @@ namespace EngineGDI.Src.SweeperRpg
             get { return instance; }
         }
 
+        public IEnumerable<Collisioner> AliveEnemies { get; internal set; }
+
         public void LoadLevel(int level)
         {
             levelId = level;
@@ -58,6 +61,7 @@ namespace EngineGDI.Src.SweeperRpg
             levels.Add(level, currentLevel);
         }
 
+        // TODO: Unload a level if changing level or going back to menu
         public void CreateLevel()
         {
             if (created)
@@ -123,19 +127,27 @@ namespace EngineGDI.Src.SweeperRpg
         public override void Update(float deltaTime)
         {
             player.Update(deltaTime: deltaTime);
+            grid.Update(deltaTime: deltaTime);
+
+            collisionManager.Update(deltaTime: deltaTime);
         }
 
         public override void Draw()
         {
+            grid.Draw();
+
             foreach (Node enemy in enemies)
                 enemy.Draw();
 
             player.Draw();
+
+            collisionManager.Draw();
         }
 
         public void OnCollision(Enemy enemy)
         {
             player.TakeDamage(enemy.Damage);
+
             if (player.IsDead())
             {
                 // Avisar al GameManager que perdio.

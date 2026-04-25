@@ -13,6 +13,8 @@ namespace EngineGDI.Src.SweeperRpg
         public Player(int x, int y)
         {
             position = new Point(x: x, y: y);
+            positionToUpdate.X = position.X * 32;
+            positionToUpdate.Y = position.Y * 32;
             tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
 
             CollisionManager.RegisterPlayer(position: position);
@@ -22,31 +24,50 @@ namespace EngineGDI.Src.SweeperRpg
         {
             position.X = x;
             position.Y = y;
+
+            positionToUpdate.X = position.X * 32;
+            positionToUpdate.Y = position.Y * 32;
         }
 
         public override void Input()
         {
+            bool changed = false;
+
             if (Engine.OnKeyDown(Keys.W))
+            {
                 position.Y--;
+                changed = true;
+            }
             if (Engine.OnKeyDown(Keys.A))
+            {
                 position.X--;
+                changed = true;
+            }
             if (Engine.OnKeyDown(Keys.S))
+            {
                 position.Y++;
+                changed = true;
+            }
             if (Engine.OnKeyDown(Keys.D))
+            {
                 position.X++;
+                changed = true;
+            }
             if (Engine.OnKeyDown(Keys.Space))
             {
                 position.X = 1;
                 position.Y = 1;
+
+                changed = true;
             }
-        }
 
-        public override void Update(float deltaTime)
-        {
-            positionToUpdate.X = position.X * 32;
-            positionToUpdate.Y = position.Y * 32;
+            if (changed)
+            {
+                positionToUpdate.X = position.X * 32;
+                positionToUpdate.Y = position.Y * 32;
 
-            CollisionManager.UpdatePlayer(position: positionToUpdate);
+                CollisionManager.UpdatePlayer(position: positionToUpdate);
+            }
         }
 
         public override void Draw()
@@ -65,5 +86,3 @@ namespace EngineGDI.Src.SweeperRpg
         }
     }
 }
-// Combat: PLayer recibe instancia de enemigo
-//

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Drawing;
 using EngineGDI.Src.SweeperRpg;
 
@@ -30,37 +29,22 @@ namespace EngineGDI.Src
             );
         }
 
-        // public static void RegisterEnemy(Collisioner enemy)
-        // {
-        //     instance.enemies.Add(enemy);
-        // }
-
-        // public static void UnRegisterEnemy(Collisioner enemy)
-        // {
-        //     if (!instance.enemies.Remove(enemy))
-        //         throw new System.Exception("Enemy already removed?");
-        // }
-
         public static void UpdatePlayer(Point position)
         {
             instance.player.UpdatePosition(position: position);
 
             foreach (Enemy enemy in LevelManager.Instance.ActiveEnemies)
             {
-                if (instance.player.CheckCollision(enemy.Collsion))
+                if (instance.player.CheckCollision(enemy.Collisioner))
                 {
-                    //Notify Enemy
-                    LevelManager.Instance.OnCollision(enemy);
-                    enemy.Collsion.OnCollisionIn();
-                    // Notify Player
-
+                    // Notifico al enemigo
+                    enemy.Collisioner.OnCollisionIn();
+                    // Notifico al player
                     instance.player.OnCollisionIn();
-                    // cambios: En collisioner - en levelmanager - en collisionmanager
-                    // Hacer que collisionManager deje de registrar los collisioners enemigos y le pida la lista de enemigos activos al levelmanager
                 }
                 else
                 {
-                    enemy.Collsion.OnCollisionOut();
+                    enemy.Collisioner.OnCollisionOut();
                     instance.player.OnCollisionOut();
                 }
             }
@@ -69,10 +53,9 @@ namespace EngineGDI.Src
         public override void Draw()
         {
             player.Draw();
+
             foreach (Enemy enemy in LevelManager.Instance.ActiveEnemies)
-            {
-                enemy.Collsion.Draw();
-            }
+                enemy.Collisioner.Draw();
         }
     }
 }

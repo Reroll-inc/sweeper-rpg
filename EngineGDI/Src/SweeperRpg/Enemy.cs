@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
@@ -37,11 +36,12 @@ namespace EngineGDI.Src.SweeperRpg
         private Point actualPosition;
         private readonly Image tile;
         private readonly Collisioner collisioner;
-        public Collisioner Collsion
+        private int damage = 2;
+
+        public Collisioner Collisioner
         {
             get { return collisioner; }
         }
-        private int damage = 2;
 
         public Enemy(int x, int y, Point inTile)
         {

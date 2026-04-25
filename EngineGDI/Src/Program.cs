@@ -17,10 +17,7 @@ namespace EngineGDI.Src
         public static int SCREEN_WIDTH = 1024;
         public static int SCREEN_HEIGHT = 720;
 
-        private static readonly CollisionManager collisionManager = CollisionManager.Instance;
-
         private static readonly GameManager gameManager = GameManager.Instance;
-        private static readonly Node grid = new Grid();
 
         /// <summary>
         /// Punto de entrada principal para la aplicación.
@@ -34,7 +31,6 @@ namespace EngineGDI.Src
                 height: SCREEN_HEIGHT,
                 fullscreen: false
             );
-            gameManager();
 
             while (Engine.IsWindowOpen)
             {
@@ -76,16 +72,12 @@ namespace EngineGDI.Src
 
         static void Update()
         {
-            collisionManager.Update(deltaTime: deltaTime);
+            gameManager.Update(deltaTime: deltaTime);
         }
 
         static void Render()
         {
-            grid.Draw();
-
             gameManager.Draw();
-
-            collisionManager.Draw();
         }
     }
 }

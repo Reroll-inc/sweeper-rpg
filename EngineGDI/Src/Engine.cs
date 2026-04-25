@@ -7,7 +7,7 @@ namespace EngineGDI.Src
 {
     public static class Engine
     {
-        private abstract class DrawCommand
+        public abstract class DrawCommand
         {
             public abstract void Draw(PaintEventArgs e);
         }
@@ -142,6 +142,11 @@ namespace EngineGDI.Src
             if (!sounds.ContainsKey(path))
                 sounds[path] = new SoundPlayer(path);
             sounds[path].Play();
+        }
+
+        public static void DrawACommand(DrawCommand command)
+        {
+            drawQueue.Add(command);
         }
 
         public static void DrawImage(
