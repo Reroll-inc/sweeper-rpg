@@ -19,8 +19,8 @@ namespace EngineGDI.Src.SweeperRpg
         private readonly int MAX_ROW = 16;
         private readonly int MAX_COLUMN = 32;
 
-        private int lvlRow;
-        private int lvlColumn;
+        private int lvlRows;
+        private int lvlColumns;
         private int fillRows;
         private int fillColumns;
         private bool created = false;
@@ -68,18 +68,18 @@ namespace EngineGDI.Src.SweeperRpg
                 throw new System.Exception($"Level nº{levelId} already created");
             created = true;
 
-            lvlRow = currentLevel.Count;
-            lvlColumn = currentLevel[0].Count;
+            lvlRows = currentLevel.Count;
+            lvlColumns = currentLevel[0].Count;
 
-            if (lvlRow > 16 || lvlColumn > 32)
+            if (lvlRows > 16 || lvlColumns > 32)
                 throw new System.Exception(
-                    $"Level size is [{lvlRow},{lvlColumn}] which is bigger than [16,32]"
+                    $"Level size is [{lvlRows},{lvlColumns}] which is bigger than [16,32]"
                 );
 
-            fillRows = (MAX_ROW - lvlRow) / 2;
-            fillColumns = (MAX_COLUMN - lvlColumn) / 2;
+            fillRows = (MAX_ROW - lvlRows) / 2;
+            fillColumns = (MAX_COLUMN - lvlColumns) / 2;
 
-            for (int rowId = 0; rowId < lvlRow; rowId++)
+            for (int rowId = 0; rowId < lvlRows; rowId++)
             {
                 List<Cell> row = currentLevel[rowId];
 
@@ -117,6 +117,14 @@ namespace EngineGDI.Src.SweeperRpg
                     }
                 }
             }
+        }
+
+        public bool IsWithinLimits(Point position)
+        {
+            return position.X >= fillColumns
+                && position.X <= (fillColumns + lvlColumns - 1)
+                && position.Y >= fillRows
+                && position.Y <= (fillRows + lvlRows - 1);
         }
 
         public override void Input()

@@ -32,10 +32,12 @@ namespace EngineGDI.Src.SweeperRpg
         public override void Input()
         {
             bool changed = false;
+            Point prevPosition = new Point(x: position.X, y: position.Y);
 
             if (Engine.OnKeyDown(Keys.W))
             {
                 position.Y--;
+
                 changed = true;
             }
             if (Engine.OnKeyDown(Keys.A))
@@ -53,20 +55,18 @@ namespace EngineGDI.Src.SweeperRpg
                 position.X++;
                 changed = true;
             }
-            if (Engine.OnKeyDown(Keys.Space))
-            {
-                position.X = 1;
-                position.Y = 1;
-
-                changed = true;
-            }
 
             if (changed)
             {
-                positionToUpdate.X = position.X * 32;
-                positionToUpdate.Y = position.Y * 32;
+                if (LevelManager.Instance.IsWithinLimits(position: position))
+                {
+                    positionToUpdate.X = position.X * 32;
+                    positionToUpdate.Y = position.Y * 32;
 
-                CollisionManager.UpdatePlayer(position: positionToUpdate);
+                    CollisionManager.UpdatePlayer(position: positionToUpdate);
+                }
+                else
+                    position = prevPosition;
             }
         }
 
