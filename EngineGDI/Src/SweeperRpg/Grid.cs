@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization;
+using EngineGDI.Src.SweeperRpg.Animations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -12,41 +14,14 @@ namespace EngineGDI.Src.SweeperRpg
      */
     public class Grid : Node
     {
-        private readonly List<List<CellData>> level;
+        private readonly List<List<Cell>> level;
         private readonly int MAX_ROW = 16;
         private readonly int MAX_COLUMN = 32;
 
-        private int lvlRow;
-        private int lvlColumn;
-        private int fillRows;
-        private int fillColumns;
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum CellType
-        {
-            [EnumMember(Value = "N")]
-            NULL,
-
-            [EnumMember(Value = "E")]
-            ENEMY,
-
-            [EnumMember(Value = "C")]
-            COIN,
-
-            [EnumMember(Value = "S")]
-            START,
-
-            [EnumMember(Value = "D")]
-            END,
-        }
-
-        public class CellData
-        {
-            public CellType type = CellType.NULL;
-            public string id = null;
-            public EnemyKind? kind = null;
-            public int currency = 0;
-        }
+        private readonly int lvlRow;
+        private readonly int lvlColumn;
+        private readonly int fillRows;
+        private readonly int fillColumns;
 
         public Grid()
         {
@@ -54,104 +29,199 @@ namespace EngineGDI.Src.SweeperRpg
             lvlRow = level.Count;
             lvlColumn = level[0].Count;
 
-            if (lvlRow > 16 || lvlColumn > 32)
+            if (lvlRow > MAX_ROW || lvlColumn > MAX_COLUMN)
                 throw new System.Exception(
                     $"Level size is [{lvlRow},{lvlColumn}] which is bigger than [16,32]"
                 );
 
             fillRows = (MAX_ROW - lvlRow) / 2;
             fillColumns = (MAX_COLUMN - lvlColumn) / 2;
+
+            for (int rowId = 0; rowId < level.Count; rowId++)
+            {
+                List<Cell> row = level[rowId];
+
+                for (int columnId = 0; columnId < row.Count; columnId++)
+                {
+                    Cell cell = row[columnId];
+
+                    cell.SetData(
+                        columnId: columnId,
+                        rowId: rowId,
+                        fillColumns: fillColumns,
+                        fillRows: fillRows
+                    );
+                }
+            }
         }
 
-        private List<List<CellData>> LoadJson()
+        private List<List<Cell>> LoadJson()
         {
             string jsonContent = File.ReadAllText("Assets/Levels/1.json");
 
-            return JsonConvert.DeserializeObject<List<List<CellData>>>(jsonContent);
+            return JsonConvert.DeserializeObject<List<List<Cell>>>(jsonContent);
         }
 
         public override void Update(float deltaTime)
         {
-            //aca metemos el posible chequeo de colicion con el player
+            // aca metemos el posible chequeo de colicion con el player
+            foreach (List<Cell> row in level)
+            foreach (Cell cell in row)
+                cell.Update(deltaTime: deltaTime);
         }
 
         public override void Draw()
         {
-            // FIXME: Optimizar. Se dibuja todo el fondo para que luego
-            // El nivel redibuje las celdas del nivel.
+            // Draw filling cells
             for (int rowId = 0; rowId < MAX_ROW; rowId++)
             for (int columnId = 0; columnId < MAX_COLUMN; columnId++)
                 Engine.DrawRect(
                     rect: new Rectangle(
-                        location: new Point(x: columnId * 32, y: rowId * 32),
-                        size: new Size(width: 32, height: 32)
+                        location: new Point(x: columnId * Cell.SIZE, y: rowId * Cell.SIZE),
+                        size: new Size(width: Cell.SIZE, height: Cell.SIZE)
                     ),
                     pen: new Pen(color: Color.DarkSlateGray),
                     brush: new SolidBrush(Color.DarkSlateGray)
                 );
 
-            for (int rowId = 0; rowId < level.Count; rowId++)
+            // Draw game cells
+            foreach (List<Cell> row in level)
+            foreach (Cell cell in row)
+                cell.Draw();
+        }
+
+        public void DrawAfter()
+        {
+            foreach (List<Cell> row in level)
+            foreach (Cell cell in row)
+                cell.DrawAfter();
+        }
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum CellType
+    {
+        [EnumMember(Value = "N")]
+        NULL,
+
+        [EnumMember(Value = "E")]
+        ENEMY,
+
+        [EnumMember(Value = "C")]
+        COIN,
+
+        [EnumMember(Value = "S")]
+        START,
+
+        [EnumMember(Value = "D")]
+        END,
+    }
+
+    public class Cell
+    {
+        private enum State
+        {
+            INIT = 'I',
+            OPENING = 'O',
+            OPEN = 'N',
+        }
+
+        public CellType type = CellType.NULL;
+        public string id = null;
+        public EnemyKind? kind = null;
+        public int currency = 0;
+        public static readonly int SIZE = 32;
+
+        private Rectangle rect;
+        public Rectangle Rect
+        {
+            get { return rect; }
+        }
+
+        private State state = State.OPENING;
+        private readonly PeelingCellAnimation animation = new PeelingCellAnimation();
+
+        public void SetData(int columnId, int rowId, int fillColumns, int fillRows)
+        {
+            Point point = new Point(
+                x: (columnId * SIZE) + (fillColumns * SIZE),
+                y: (rowId * SIZE) + (fillRows * SIZE)
+            );
+            Size size = new Size(SIZE, SIZE);
+
+            rect = new Rectangle(location: point, size: size);
+
+            animation.SetData(point: point, size: size);
+
+            animation.OnFinish += FinishOpening;
+        }
+
+        public void StartOpening()
+        {
+            state = State.OPENING;
+        }
+
+        public void FinishOpening(object sender, EventArgs e)
+        {
+            state = State.OPEN;
+        }
+
+        public void Update(float deltaTime)
+        {
+            switch (state)
             {
-                List<CellData> row = level[rowId];
+                case State.OPENING:
+                    animation.Update(deltaTime: deltaTime);
+                    break;
+            }
+        }
 
-                for (int columnId = 0; columnId < row.Count; columnId++)
-                {
-                    CellData cell = row[columnId];
+        public void Draw()
+        {
+            switch (type)
+            {
+                case CellType.COIN:
+                    //si la celda alguna moneda, los dibujamos :)
+                    break;
+                case CellType.ENEMY:
 
-                    switch (cell.type)
-                    {
-                        case CellType.COIN:
-                            //si la celda alguna moneda, los dibujamos :)
-                            break;
-                        case CellType.ENEMY:
-
-                            //si la celda tiene enemigos, dibujamos la casilla de combate
-                            //si distintos assets para distintos enemigos habria que repensarlo
-                            //o clavar alguna logica de que el string enemy sea el nombre del asset
-                            //mas ppractico
-                            break;
-                        case CellType.START:
-                            Engine.DrawRect(
-                                rect: new Rectangle(
-                                    location: new Point(
-                                        x: (columnId * 32) + (fillColumns * 32),
-                                        y: (rowId * 32) + (fillRows * 32)
-                                    ),
-                                    size: new Size(width: 32, height: 32)
-                                ),
-                                pen: new Pen(color: Color.Black),
-                                brush: new SolidBrush(Color.DarkViolet)
-                            );
-                            continue;
-                        case CellType.END:
-                            Engine.DrawRect(
-                                rect: new Rectangle(
-                                    location: new Point(
-                                        x: (columnId * 32) + (fillColumns * 32),
-                                        y: (rowId * 32) + (fillRows * 32)
-                                    ),
-                                    size: new Size(width: 32, height: 32)
-                                ),
-                                pen: new Pen(color: Color.Black),
-                                brush: new SolidBrush(Color.DarkGoldenrod)
-                            );
-                            continue;
-                        case CellType.NULL:
-                            break;
-                    }
-
+                    //si la celda tiene enemigos, dibujamos la casilla de combate
+                    //si distintos assets para distintos enemigos habria que repensarlo
+                    //o clavar alguna logica de que el string enemy sea el nombre del asset
+                    //mas ppractico
+                    break;
+                case CellType.START:
                     Engine.DrawRect(
-                        rect: new Rectangle(
-                            location: new Point(
-                                x: (columnId * 32) + (fillColumns * 32),
-                                y: (rowId * 32) + (fillRows * 32)
-                            ),
-                            size: new Size(width: 32, height: 32)
-                        ),
+                        rect: Rect,
                         pen: new Pen(color: Color.Black),
-                        brush: new SolidBrush(Color.SeaGreen)
+                        brush: new SolidBrush(Color.DarkViolet)
                     );
-                }
+                    return;
+                case CellType.END:
+                    Engine.DrawRect(
+                        rect: Rect,
+                        pen: new Pen(color: Color.Black),
+                        brush: new SolidBrush(Color.DarkGoldenrod)
+                    );
+                    return;
+                case CellType.NULL:
+                    break;
+            }
+
+            Engine.DrawRect(
+                rect: Rect,
+                pen: new Pen(color: Color.Black),
+                brush: new SolidBrush(Color.SeaGreen)
+            );
+        }
+
+        public void DrawAfter()
+        {
+            switch (state)
+            {
+                case State.OPENING:
+                    Engine.DrawACommand(animation);
+                    break;
             }
         }
     }

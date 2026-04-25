@@ -12,10 +12,10 @@ namespace EngineGDI.Src.SweeperRpg
         // Quiero crear los enemigos
         // Quiero crear el personaje
         private static readonly LevelManager instance = new LevelManager();
-        private readonly Dictionary<int, List<List<CellData>>> levels =
-            new Dictionary<int, List<List<CellData>>>();
+        private readonly Dictionary<int, List<List<Cell>>> levels =
+            new Dictionary<int, List<List<Cell>>>();
         private int levelId;
-        private List<List<CellData>> currentLevel;
+        private List<List<Cell>> currentLevel;
         private readonly int MAX_ROW = 16;
         private readonly int MAX_COLUMN = 32;
 
@@ -56,7 +56,7 @@ namespace EngineGDI.Src.SweeperRpg
                 return;
 
             string jsonContent = File.ReadAllText($"Assets/Levels/{level}.json");
-            currentLevel = JsonConvert.DeserializeObject<List<List<CellData>>>(jsonContent);
+            currentLevel = JsonConvert.DeserializeObject<List<List<Cell>>>(jsonContent);
 
             levels.Add(level, currentLevel);
         }
@@ -81,11 +81,11 @@ namespace EngineGDI.Src.SweeperRpg
 
             for (int rowId = 0; rowId < lvlRow; rowId++)
             {
-                List<CellData> row = currentLevel[rowId];
+                List<Cell> row = currentLevel[rowId];
 
                 for (int columnId = 0; columnId < row.Count; columnId++)
                 {
-                    CellData cell = row[columnId];
+                    Cell cell = row[columnId];
 
                     switch (cell.type)
                     {
@@ -140,6 +140,8 @@ namespace EngineGDI.Src.SweeperRpg
                 enemy.Draw();
 
             player.Draw();
+
+            grid.DrawAfter();
 
             collisionManager.Draw();
         }
