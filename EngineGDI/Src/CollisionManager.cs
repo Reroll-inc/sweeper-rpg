@@ -41,6 +41,8 @@ namespace EngineGDI.Src
                     enemy.Collisioner.OnCollisionIn();
                     // Notifico al player
                     instance.player.OnCollisionIn();
+                    // Notifico al LevelManager
+                    LevelManager.Instance.OnCollision(enemy);
                 }
                 else
                 {

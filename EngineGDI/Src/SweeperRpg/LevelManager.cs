@@ -119,6 +119,14 @@ namespace EngineGDI.Src.SweeperRpg
             }
         }
 
+        // Attempt at a method that unloads the level. If coded incorrectly then it should be changed.
+        public void ResetLevel()
+        {
+            created = false;
+            currentLevel = null;
+            enemies.Clear();
+        }
+
         public bool IsWithinLimits(Point position)
         {
             return position.X >= fillColumns
@@ -158,10 +166,21 @@ namespace EngineGDI.Src.SweeperRpg
         {
             player.TakeDamage(enemy.Damage);
 
-            if (player.IsDead())
-            {
-                // Avisar al GameManager que perdio.
-            }
+            // if (player.IsDead())
+            // {
+            //     // Avisar al GameManager que perdio.
+            // }
+        }
+
+        public bool IsPlayerDead()
+        {
+            return player.IsDead();
+        }
+
+        public void StartLevel(int level)
+        {
+            LoadLevel(level);
+            CreateLevel();
         }
     }
 

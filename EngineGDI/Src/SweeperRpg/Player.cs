@@ -8,7 +8,8 @@ namespace EngineGDI.Src.SweeperRpg
         private Point position;
         private Point positionToUpdate = new Point();
         private readonly Image tile;
-        private int health = 10;
+        private int maxHealth = 8;
+        private int health;
 
         public Player(int x, int y)
         {
@@ -27,6 +28,8 @@ namespace EngineGDI.Src.SweeperRpg
 
             positionToUpdate.X = position.X * 32;
             positionToUpdate.Y = position.Y * 32;
+
+            health = maxHealth;
         }
 
         public override void Input()
@@ -82,7 +85,7 @@ namespace EngineGDI.Src.SweeperRpg
 
         public bool IsDead()
         {
-            return health < 0;
+            return health <= 0;
         }
     }
 }
