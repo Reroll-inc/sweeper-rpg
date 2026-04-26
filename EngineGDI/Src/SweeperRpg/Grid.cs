@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using EngineGDI.Src.SweeperRpg.Animations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using static EngineGDI.Src.SweeperRpg.Enemy;
 
 namespace EngineGDI.Src.SweeperRpg
 {

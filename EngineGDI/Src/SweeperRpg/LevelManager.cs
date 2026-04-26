@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using Newtonsoft.Json;
-using static EngineGDI.Src.SweeperRpg.Grid;
 
 namespace EngineGDI.Src.SweeperRpg
 {
@@ -28,25 +27,17 @@ namespace EngineGDI.Src.SweeperRpg
         private static readonly List<Enemy> enemies = new List<Enemy>();
         public List<Enemy> ActiveEnemies
         {
-            get { return enemies; }
+            get { return enemies.FindAll(enemy => enemy.IsAlive()); }
         }
         private static readonly Grid grid = new Grid();
-        private readonly Dictionary<EnemyKind, Point> enemiesPoint;
         private static readonly CollisionManager collisionManager = CollisionManager.Instance;
 
-        private LevelManager()
-        {
-            string jsonContent = File.ReadAllText("Assets/32rogues/monsters.json");
-
-            enemiesPoint = JsonConvert.DeserializeObject<Dictionary<EnemyKind, Point>>(jsonContent);
-        }
+        private LevelManager() { }
 
         public static LevelManager Instance
         {
             get { return instance; }
         }
-
-        public IEnumerable<Collisioner> AliveEnemies { get; internal set; }
 
         public void LoadLevel(int level)
         {
@@ -93,17 +84,11 @@ namespace EngineGDI.Src.SweeperRpg
                             //si la celda alguna moneda, los dibujamos :)
                             break;
                         case CellType.ENEMY:
-                            if (!cell.kind.HasValue)
-                                throw new System.Exception(
-                                    $"Level nº{levelId}, cell [{rowId}, {columnId}] type is ENEMY but kind is not defined."
-                                );
-                            enemiesPoint.TryGetValue(cell.kind.Value, out Point inTile);
-
                             enemies.Add(
                                 new Enemy(
                                     x: columnId + fillColumns,
                                     y: rowId + fillRows,
-                                    inTile: inTile
+                                    kind: cell.kind.Value
                                 )
                             );
                             break;
@@ -119,11 +104,12 @@ namespace EngineGDI.Src.SweeperRpg
             }
         }
 
-        // Attempt at a method that unloads the level. If coded incorrectly then it should be changed.
         public void ResetLevel()
         {
+            // TODO: hacer que no recargue el JSON si el nivel actual ya se cargó.
             created = false;
             currentLevel = null;
+            // TODO: no borrar los enemigos, pero sí resetear su estado.
             enemies.Clear();
         }
 
@@ -152,7 +138,7 @@ namespace EngineGDI.Src.SweeperRpg
         {
             grid.Draw();
 
-            foreach (Node enemy in enemies)
+            foreach (Enemy enemy in ActiveEnemies)
                 enemy.Draw();
 
             player.Draw();
@@ -166,10 +152,12 @@ namespace EngineGDI.Src.SweeperRpg
         {
             player.TakeDamage(enemy.Damage);
 
-            // if (player.IsDead())
-            // {
-            //     // Avisar al GameManager que perdio.
-            // }
+            if (player.IsDead())
+            {
+                // Avisar al GameManager que perdio.
+            }
+            else
+                enemy.Defeat();
         }
 
         public bool IsPlayerDead()

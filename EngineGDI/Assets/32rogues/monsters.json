@@ -1,9 +1,9 @@
 {
-  "G_R": "0,2",
-  "G_A": "0,5",
-  "G_M": "0,6",
-  "G_C": "0,7",
-  "G_B1": "0,1",
-  "G_B2": "0,3",
-  "G_B3": "0,4"
+  "G_R": { "point": "0,2", "damage": 3 },
+  "G_A": { "point": "0,5", "damage": 5 },
+  "G_M": { "point": "0,6", "damage": 5 },
+  "G_C": { "point": "0,7", "damage": 5 },
+  "G_B1": { "point": "0,1", "damage": 5 },
+  "G_B2": { "point": "0,3", "damage": 5 },
+  "G_B3": { "point": "0,4", "damage": 5 }
 }
