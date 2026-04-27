@@ -38,7 +38,6 @@ namespace EngineGDI.Src.SweeperRpg
         private int lvlColumns;
         private int fillRows;
         private int fillColumns;
-        private bool created = false;
         private readonly Player player = new Player(x: 0, y: 0);
         public Player Player
         {
@@ -74,13 +73,8 @@ namespace EngineGDI.Src.SweeperRpg
             levels.Add(level, currentLevel);
         }
 
-        // TODO: Unload a level if changing level or going back to menu
-        public void CreateLevel()
+        private void CreateLevel()
         {
-            if (created)
-                throw new System.Exception($"Level nº{levelId} already created");
-            created = true;
-
             lvlRows = currentLevel.grid.Count;
             lvlColumns = currentLevel.grid[0].Count;
 
@@ -158,9 +152,7 @@ namespace EngineGDI.Src.SweeperRpg
         {
             LoadLevel(level);
 
-            levels.TryGetValue(level, out LevelData data);
-
-            grid.SetLevel(data);
+            grid.SetLevel(currentLevel);
 
             CreateLevel();
         }
@@ -170,10 +162,21 @@ namespace EngineGDI.Src.SweeperRpg
             ui = new LevelUI(font: font, player: player);
         }
 
+        public void CheckVictoryCondition()
+        {
+            if (
+                currentLevel
+                    .grid[player.Position.X - fillColumns][player.Position.Y - fillRows]
+                    .type == CellType.END
+            )
+                GameManager.Instance.OnVictory();
+        }
+
         public override void Input()
         {
             player.Input();
             collisionManager.ValidateCollitions();
+            CheckVictoryCondition();
         }
 
         public override void Update(float deltaTime)

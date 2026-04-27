@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using EngineGDI.Src.SweeperRpg.UI;
 
@@ -32,20 +33,36 @@ namespace EngineGDI.Src.SweeperRpg
         private readonly UI.MainMenu mainMenu;
         private readonly LevelManager levelManager = LevelManager.Instance;
         private readonly DefeatScreen defeat;
+        private readonly VictoryScreen victory;
+
+        private int level = 1;
+        private int maxLvls;
 
         private GameManager()
         {
             mainMenu = new UI.MainMenu(font: font);
             defeat = new DefeatScreen(font: font);
+            victory = new VictoryScreen(font: font);
+
+            ReadLevelCount();
 
             levelManager.Init(font: font);
+        }
+
+        private void ReadLevelCount()
+        {
+            DirectoryInfo dir = new DirectoryInfo("Assets/Levels");
+
+            maxLvls = dir.GetFiles().Length;
         }
 
         // Custom methods here
         public void OnPlay()
         {
+            level = 1;
+
             state = GameState.PLAYING_LEVEL;
-            levelManager.StartLevel(1);
+            levelManager.StartLevel(level);
         }
 
         public void OnRetry()
@@ -65,9 +82,23 @@ namespace EngineGDI.Src.SweeperRpg
             defeat.EnableDefeat();
         }
 
-        public void OnWin()
+        public void OnVictory()
         {
             state = GameState.VICTORY;
+        }
+
+        public void NextLevel()
+        {
+            if (maxLvls == level)
+            {
+                state = GameState.MAIN_MENU;
+
+                return;
+            }
+            level++;
+
+            state = GameState.PLAYING_LEVEL;
+            levelManager.StartLevel(level);
         }
 
         public void OnMainMenu()
@@ -87,7 +118,7 @@ namespace EngineGDI.Src.SweeperRpg
                     levelManager.Input();
                     break;
                 case GameState.VICTORY:
-                    // VictoryScreen.Input;
+                    victory.Input();
                     break;
                 case GameState.DEFEAT:
                     defeat.Input();
@@ -100,16 +131,13 @@ namespace EngineGDI.Src.SweeperRpg
             switch (state)
             {
                 case GameState.MAIN_MENU:
-                    // MainMenu.Update(deltaTime: deltaTime);
                     break;
                 case GameState.PLAYING_LEVEL:
                     levelManager.Update(deltaTime: deltaTime);
                     break;
                 case GameState.VICTORY:
-                    // VictoryScreen.Update(deltaTime: deltaTime);
                     break;
                 case GameState.DEFEAT:
-                    // Defeat.Update(deltaTime: deltaTime);
                     break;
                 case GameState.QUIT:
                     // Close the game window.
@@ -129,7 +157,7 @@ namespace EngineGDI.Src.SweeperRpg
                     levelManager.Draw();
                     break;
                 case GameState.VICTORY:
-                    // VictoryScreen.Draw();
+                    victory.Draw();
                     break;
                 case GameState.DEFEAT:
                     defeat.Draw();

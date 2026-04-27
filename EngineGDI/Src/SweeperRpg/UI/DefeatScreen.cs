@@ -7,7 +7,7 @@ namespace EngineGDI.Src.SweeperRpg.UI
     {
         private readonly Image defeatScreen = Image.FromFile("Assets/Imgs/defeat_placeholder.png");
 
-        public enum DefeatResult
+        private enum DefeatResult
         {
             Retry,
             MainMenu,

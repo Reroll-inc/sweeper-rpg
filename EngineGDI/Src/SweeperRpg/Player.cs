@@ -6,6 +6,10 @@ namespace EngineGDI.Src.SweeperRpg
     public class Player : Node
     {
         private Point position;
+        public Point Position
+        {
+            get { return position; }
+        }
         private Point positionToUpdate = new Point();
         private Point start = new Point();
         private readonly Image tile;
