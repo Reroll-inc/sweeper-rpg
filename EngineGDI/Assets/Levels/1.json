@@ -1,5 +1,7 @@
 {
-  "props": {},
+  "props": {
+    "start": "#FF0000"
+  },
   "grid": [
     [
       {

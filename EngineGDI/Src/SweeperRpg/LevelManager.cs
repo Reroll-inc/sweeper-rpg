@@ -6,7 +6,11 @@ using Newtonsoft.Json;
 
 namespace EngineGDI.Src.SweeperRpg
 {
-    public class LevelDataProps { }
+    public class LevelDataProps
+    {
+        [JsonConverter(typeof(ColorHexConverter))]
+        public Color start;
+    }
 
     public class LevelData
     { // atributo props pubnlico que es de tipo LevelDataProps
@@ -149,6 +153,11 @@ namespace EngineGDI.Src.SweeperRpg
         public void StartLevel(int level)
         {
             LoadLevel(level);
+
+            levels.TryGetValue(level, out LevelData data);
+
+            grid.SetLevel(data);
+
             CreateLevel();
         }
 

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Runtime.Serialization;
 using EngineGDI.Src.SweeperRpg.Animations;
 using Newtonsoft.Json;
@@ -15,23 +14,26 @@ namespace EngineGDI.Src.SweeperRpg
      */
     public class Grid : Node
     {
-        private readonly LevelData level;
         private readonly int MAX_ROW = 16;
         private readonly int MAX_COLUMN = 32;
 
-        private readonly int lvlRow;
-        private readonly int lvlColumn;
-        private readonly int fillRows;
-        private readonly int fillColumns;
+        private LevelData level;
+        private int lvlRow;
+        private int lvlColumn;
+        private int fillRows;
+        private int fillColumns;
 
-        public Grid()
+        public Grid() { }
+
+        public void SetLevel(LevelData level)
         {
-            level = LoadJson();
+            this.level = level;
+
             lvlRow = level.grid.Count;
             lvlColumn = level.grid[0].Count;
 
             if (lvlRow > MAX_ROW || lvlColumn > MAX_COLUMN)
-                throw new System.Exception(
+                throw new Exception(
                     $"Level size is [{lvlRow},{lvlColumn}] which is bigger than [16,32]"
                 );
 
@@ -47,6 +49,7 @@ namespace EngineGDI.Src.SweeperRpg
                     Cell cell = row[columnId];
 
                     cell.SetData(
+                        level: level,
                         columnId: columnId,
                         rowId: rowId,
                         fillColumns: fillColumns,
@@ -54,13 +57,6 @@ namespace EngineGDI.Src.SweeperRpg
                     );
                 }
             }
-        }
-
-        private LevelData LoadJson()
-        {
-            string jsonContent = File.ReadAllText("Assets/Levels/1.json");
-
-            return JsonConvert.DeserializeObject<LevelData>(jsonContent);
         }
 
         public void Reset()
@@ -147,10 +143,13 @@ namespace EngineGDI.Src.SweeperRpg
         }
 
         private State state = State.OPENING;
+        private LevelData level;
         private readonly PeelingCellAnimation animation = new PeelingCellAnimation();
 
-        public void SetData(int columnId, int rowId, int fillColumns, int fillRows)
+        public void SetData(LevelData level, int columnId, int rowId, int fillColumns, int fillRows)
         {
+            this.level = level;
+
             Point point = new Point(
                 x: (columnId * SIZE) + (fillColumns * SIZE),
                 y: (rowId * SIZE) + (fillRows * SIZE)
@@ -210,7 +209,7 @@ namespace EngineGDI.Src.SweeperRpg
                     Engine.DrawRect(
                         rect: Rect,
                         pen: new Pen(color: Color.Black),
-                        brush: new SolidBrush(Color.DarkViolet)
+                        brush: new SolidBrush(level.props.start)
                     );
                     return;
                 case CellType.END:
