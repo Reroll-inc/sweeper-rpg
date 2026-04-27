@@ -96,7 +96,7 @@ namespace EngineGDI.Src.SweeperRpg
                             );
                             break;
                         case CellType.START:
-                            player.Reset(x: columnId + fillColumns, y: rowId + fillRows);
+                            player.SetStart(x: columnId + fillColumns, y: rowId + fillRows);
                             continue;
                         case CellType.END:
                             continue;
@@ -109,11 +109,11 @@ namespace EngineGDI.Src.SweeperRpg
 
         public void ResetLevel()
         {
-            // TODO: hacer que no recargue el JSON si el nivel actual ya se cargó.
-            created = false;
-            currentLevel = null;
-            // TODO: no borrar los enemigos, pero sí resetear su estado.
-            enemies.Clear();
+            player.Reset();
+            grid.Reset();
+
+            foreach (Enemy enemy in enemies)
+                enemy.Reset();
         }
 
         public bool IsWithinLimits(Point position)
@@ -129,10 +129,8 @@ namespace EngineGDI.Src.SweeperRpg
             player.TakeDamage(enemy.Damage);
 
             if (player.IsDead())
-            {
                 // Avisar al GameManager que perdio.
                 GameManager.Instance.OnDefeat();
-            }
             else
                 enemy.Defeat();
         }

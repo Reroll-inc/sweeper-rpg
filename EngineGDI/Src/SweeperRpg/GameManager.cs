@@ -44,9 +44,14 @@ namespace EngineGDI.Src.SweeperRpg
         // Custom methods here
         public void OnPlay()
         {
-            levelManager.ResetLevel();
             state = GameState.PLAYING_LEVEL;
             levelManager.StartLevel(1);
+        }
+
+        public void OnRetry()
+        {
+            state = GameState.PLAYING_LEVEL;
+            levelManager.ResetLevel();
         }
 
         public void OnExit()

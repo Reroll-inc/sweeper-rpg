@@ -7,6 +7,7 @@ namespace EngineGDI.Src.SweeperRpg
     {
         private Point position;
         private Point positionToUpdate = new Point();
+        private Point start = new Point();
         private readonly Image tile;
         public Image Tile
         {
@@ -29,15 +30,32 @@ namespace EngineGDI.Src.SweeperRpg
             CollisionManager.RegisterPlayer(position: position);
         }
 
-        public void Reset(int x, int y)
+        public void SetStart(int x, int y)
         {
-            position.X = x;
-            position.Y = y;
+            start.X = x;
+            start.Y = y;
 
+            Reset();
+        }
+
+        public void Reset()
+        {
+            position.X = start.X;
+            position.Y = start.Y;
             positionToUpdate.X = position.X * 32;
             positionToUpdate.Y = position.Y * 32;
 
             health = maxHealth;
+        }
+
+        public void TakeDamage(int damage)
+        {
+            health -= damage;
+        }
+
+        public bool IsDead()
+        {
+            return health < 0;
         }
 
         public override void Input()
@@ -84,16 +102,6 @@ namespace EngineGDI.Src.SweeperRpg
         public override void Draw()
         {
             Engine.DrawImage(texture: tile, x: positionToUpdate.X, y: positionToUpdate.Y);
-        }
-
-        public void TakeDamage(int damage)
-        {
-            health -= damage;
-        }
-
-        public bool IsDead()
-        {
-            return health < 0;
         }
     }
 }

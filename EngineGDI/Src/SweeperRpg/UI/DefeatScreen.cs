@@ -39,7 +39,7 @@ namespace EngineGDI.Src.SweeperRpg.UI
                 switch (result)
                 {
                     case DefeatResult.Retry:
-                        GameManager.Instance.OnPlay();
+                        GameManager.Instance.OnRetry();
                         break;
                     case DefeatResult.MainMenu:
                         GameManager.Instance.OnMainMenu();

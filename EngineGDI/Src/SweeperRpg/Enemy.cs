@@ -99,6 +99,11 @@ namespace EngineGDI.Src.SweeperRpg
             return state == State.ALIVE;
         }
 
+        public void Reset()
+        {
+            state = State.ALIVE;
+        }
+
         public override void Draw()
         {
             Engine.DrawImage(texture: tile, x: actualPosition.X, y: actualPosition.Y);

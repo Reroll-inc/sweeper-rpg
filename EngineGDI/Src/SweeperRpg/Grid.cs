@@ -63,6 +63,13 @@ namespace EngineGDI.Src.SweeperRpg
             return JsonConvert.DeserializeObject<List<List<Cell>>>(jsonContent);
         }
 
+        public void Reset()
+        {
+            foreach (List<Cell> row in level)
+            foreach (Cell cell in row)
+                cell.Reset();
+        }
+
         public override void Update(float deltaTime)
         {
             // aca metemos el posible chequeo de colicion con el player
@@ -165,6 +172,14 @@ namespace EngineGDI.Src.SweeperRpg
         public void FinishOpening(object sender, EventArgs e)
         {
             state = State.OPEN;
+        }
+
+        public void Reset()
+        {
+            // TODO> This should reset to INIT
+            state = State.OPENING;
+
+            animation.Reset();
         }
 
         public void Update(float deltaTime)

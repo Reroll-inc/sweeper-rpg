@@ -21,6 +21,19 @@ namespace EngineGDI.Src.SweeperRpg.Animations
             this.size = size;
         }
 
+        public void Reset()
+        {
+            progress = 0;
+        }
+
+        public void Update(float deltaTime)
+        {
+            progress += 100 * deltaTime / sec;
+
+            if (progress > 100)
+                OnFinish?.Invoke(this, EventArgs.Empty);
+        }
+
         public override void Draw(PaintEventArgs e)
         {
             GraphicsState state = e.Graphics.Save();
@@ -51,14 +64,6 @@ namespace EngineGDI.Src.SweeperRpg.Animations
             );
 
             e.Graphics.Restore(state);
-        }
-
-        public void Update(float deltaTime)
-        {
-            progress += 100 * deltaTime / sec;
-
-            if (progress > 100)
-                OnFinish?.Invoke(this, EventArgs.Empty);
         }
     }
 }
