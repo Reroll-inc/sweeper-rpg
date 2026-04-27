@@ -102,6 +102,8 @@ namespace EngineGDI.Src.SweeperRpg
         public void Reset()
         {
             state = State.ALIVE;
+
+            collisioner.Reset(null);
         }
 
         public override void Draw()

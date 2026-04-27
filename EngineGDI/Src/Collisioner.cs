@@ -5,6 +5,12 @@ namespace EngineGDI.Src
     public class Collisioner : Node
     {
         private Rectangle rect;
+
+        public Rectangle Rect
+        {
+            get { return rect; }
+        }
+
         private readonly Pen pen;
         private readonly Brush brush;
 
@@ -29,9 +35,15 @@ namespace EngineGDI.Src
             rect.Y = position.Y + (rect.Size.Height / 2);
         }
 
-        public Rectangle Rect()
+        public void Reset(Point? position)
         {
-            return rect;
+            if (position.HasValue)
+            {
+                rect.X = position.Value.X + (rect.Size.Width / 2);
+                rect.Y = position.Value.Y + (rect.Size.Height / 2);
+            }
+
+            debugCollisioned = false;
         }
 
         public void OnCollisionIn()

@@ -32,6 +32,10 @@ namespace EngineGDI.Src.SweeperRpg
         private int fillColumns;
         private bool created = false;
         private readonly Player player = new Player(x: 0, y: 0);
+        public Player Player
+        {
+            get { return player; }
+        }
         private static readonly List<Enemy> enemies = new List<Enemy>();
         public List<Enemy> ActiveEnemies
         {
@@ -156,6 +160,7 @@ namespace EngineGDI.Src.SweeperRpg
         public override void Input()
         {
             player.Input();
+            collisionManager.ValidateCollitions();
         }
 
         public override void Update(float deltaTime)

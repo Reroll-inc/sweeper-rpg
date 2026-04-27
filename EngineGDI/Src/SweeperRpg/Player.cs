@@ -20,6 +20,12 @@ namespace EngineGDI.Src.SweeperRpg
             get { return health; }
         }
 
+        private readonly Collisioner collisioner;
+        public Collisioner Collisioner
+        {
+            get { return collisioner; }
+        }
+
         public Player(int x, int y)
         {
             position = new Point(x: x, y: y);
@@ -27,7 +33,11 @@ namespace EngineGDI.Src.SweeperRpg
             positionToUpdate.Y = position.Y * 32;
             tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
 
-            CollisionManager.RegisterPlayer(position: position);
+            collisioner = new Collisioner(
+                position: position,
+                size: new Size(width: 32, height: 32),
+                brushColor: Color.DarkBlue
+            );
         }
 
         public void SetStart(int x, int y)
@@ -46,6 +56,8 @@ namespace EngineGDI.Src.SweeperRpg
             positionToUpdate.Y = position.Y * 32;
 
             health = maxHealth;
+
+            collisioner.Reset(positionToUpdate);
         }
 
         public void TakeDamage(int damage)
@@ -92,7 +104,7 @@ namespace EngineGDI.Src.SweeperRpg
                     positionToUpdate.X = position.X * 32;
                     positionToUpdate.Y = position.Y * 32;
 
-                    CollisionManager.UpdatePlayer(position: positionToUpdate);
+                    collisioner.UpdatePosition(position: positionToUpdate);
                 }
                 else
                     position = prevPosition;

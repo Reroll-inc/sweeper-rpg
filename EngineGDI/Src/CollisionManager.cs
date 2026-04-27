@@ -1,4 +1,3 @@
-using System.Drawing;
 using EngineGDI.Src.SweeperRpg;
 
 namespace EngineGDI.Src
@@ -10,7 +9,6 @@ namespace EngineGDI.Src
 
     public class CollisionManager : Node
     {
-        private Collisioner player;
         private static readonly CollisionManager instance = new CollisionManager();
 
         private CollisionManager() { }
@@ -20,41 +18,32 @@ namespace EngineGDI.Src
             get { return instance; }
         }
 
-        public static void RegisterPlayer(Point position)
+        public void ValidateCollitions()
         {
-            instance.player = new Collisioner(
-                position: position,
-                size: new Size(width: 32, height: 32),
-                brushColor: Color.DarkBlue
-            );
-        }
-
-        public static void UpdatePlayer(Point position)
-        {
-            instance.player.UpdatePosition(position: position);
+            Player player = LevelManager.Instance.Player;
 
             foreach (Enemy enemy in LevelManager.Instance.ActiveEnemies)
             {
-                if (instance.player.CheckCollision(enemy.Collisioner))
+                if (player.Collisioner.CheckCollision(enemy.Collisioner))
                 {
                     // Notifico al enemigo
                     enemy.Collisioner.OnCollisionIn();
                     // Notifico al player
-                    instance.player.OnCollisionIn();
+                    player.Collisioner.OnCollisionIn();
                     // Notifico al LevelManager
                     LevelManager.Instance.OnCollision(enemy);
                 }
                 else
                 {
                     enemy.Collisioner.OnCollisionOut();
-                    instance.player.OnCollisionOut();
+                    player.Collisioner.OnCollisionOut();
                 }
             }
         }
 
         public override void Draw()
         {
-            player.Draw();
+            LevelManager.Instance.Player.Collisioner.Draw();
 
             foreach (Enemy enemy in LevelManager.Instance.ActiveEnemies)
                 enemy.Collisioner.Draw();
