@@ -15,7 +15,7 @@ namespace EngineGDI.Src.SweeperRpg
      */
     public class Grid : Node
     {
-        private readonly List<List<Cell>> level;
+        private readonly LevelData level;
         private readonly int MAX_ROW = 16;
         private readonly int MAX_COLUMN = 32;
 
@@ -27,8 +27,8 @@ namespace EngineGDI.Src.SweeperRpg
         public Grid()
         {
             level = LoadJson();
-            lvlRow = level.Count;
-            lvlColumn = level[0].Count;
+            lvlRow = level.grid.Count;
+            lvlColumn = level.grid[0].Count;
 
             if (lvlRow > MAX_ROW || lvlColumn > MAX_COLUMN)
                 throw new System.Exception(
@@ -38,9 +38,9 @@ namespace EngineGDI.Src.SweeperRpg
             fillRows = (MAX_ROW - lvlRow) / 2;
             fillColumns = (MAX_COLUMN - lvlColumn) / 2;
 
-            for (int rowId = 0; rowId < level.Count; rowId++)
+            for (int rowId = 0; rowId < level.grid.Count; rowId++)
             {
-                List<Cell> row = level[rowId];
+                List<Cell> row = level.grid[rowId];
 
                 for (int columnId = 0; columnId < row.Count; columnId++)
                 {
@@ -56,24 +56,24 @@ namespace EngineGDI.Src.SweeperRpg
             }
         }
 
-        private List<List<Cell>> LoadJson()
+        private LevelData LoadJson()
         {
             string jsonContent = File.ReadAllText("Assets/Levels/1.json");
 
-            return JsonConvert.DeserializeObject<List<List<Cell>>>(jsonContent);
+            return JsonConvert.DeserializeObject<LevelData>(jsonContent);
         }
 
         public void Reset()
         {
-            foreach (List<Cell> row in level)
+            foreach (List<Cell> row in level.grid)
             foreach (Cell cell in row)
                 cell.Reset();
         }
 
         public override void Update(float deltaTime)
         {
-            // aca metemos el posible chequeo de colicion con el player
-            foreach (List<Cell> row in level)
+            //aca metemos el posible chequeo de colicion con el player
+            foreach (List<Cell> row in level.grid)
             foreach (Cell cell in row)
                 cell.Update(deltaTime: deltaTime);
         }
@@ -93,14 +93,14 @@ namespace EngineGDI.Src.SweeperRpg
                 );
 
             // Draw game cells
-            foreach (List<Cell> row in level)
+            foreach (List<Cell> row in level.grid)
             foreach (Cell cell in row)
                 cell.Draw();
         }
 
         public void DrawAfter()
         {
-            foreach (List<Cell> row in level)
+            foreach (List<Cell> row in level.grid)
             foreach (Cell cell in row)
                 cell.DrawAfter();
         }

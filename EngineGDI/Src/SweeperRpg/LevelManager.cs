@@ -6,16 +6,23 @@ using Newtonsoft.Json;
 
 namespace EngineGDI.Src.SweeperRpg
 {
+    public class LevelDataProps { }
+
+    public class LevelData
+    { // atributo props pubnlico que es de tipo LevelDataProps
+        public LevelDataProps props;
+        public List<List<Cell>> grid;
+    }
+
     public class LevelManager : Node
     {
         // Quiero renderizar la grilla
         // Quiero crear los enemigos
         // Quiero crear el personaje
         private static readonly LevelManager instance = new LevelManager();
-        private readonly Dictionary<int, List<List<Cell>>> levels =
-            new Dictionary<int, List<List<Cell>>>();
+        private readonly Dictionary<int, LevelData> levels = new Dictionary<int, LevelData>();
         private int levelId;
-        private List<List<Cell>> currentLevel;
+        private LevelData currentLevel;
         private readonly int MAX_ROW = 16;
         private readonly int MAX_COLUMN = 32;
 
@@ -50,7 +57,7 @@ namespace EngineGDI.Src.SweeperRpg
                 return;
 
             string jsonContent = File.ReadAllText($"Assets/Levels/{level}.json");
-            currentLevel = JsonConvert.DeserializeObject<List<List<Cell>>>(jsonContent);
+            currentLevel = JsonConvert.DeserializeObject<LevelData>(jsonContent);
 
             levels.Add(level, currentLevel);
         }
@@ -62,8 +69,8 @@ namespace EngineGDI.Src.SweeperRpg
                 throw new System.Exception($"Level nº{levelId} already created");
             created = true;
 
-            lvlRows = currentLevel.Count;
-            lvlColumns = currentLevel[0].Count;
+            lvlRows = currentLevel.grid.Count;
+            lvlColumns = currentLevel.grid[0].Count;
 
             if (lvlRows > 16 || lvlColumns > 32)
                 throw new System.Exception(
@@ -75,7 +82,7 @@ namespace EngineGDI.Src.SweeperRpg
 
             for (int rowId = 0; rowId < lvlRows; rowId++)
             {
-                List<Cell> row = currentLevel[rowId];
+                List<Cell> row = currentLevel.grid[rowId];
 
                 for (int columnId = 0; columnId < row.Count; columnId++)
                 {
