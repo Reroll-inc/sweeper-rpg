@@ -151,11 +151,14 @@ namespace EngineGDI.Src.SweeperRpg
 
         public void StartLevel(int level)
         {
+            enemies.Clear();
             LoadLevel(level);
 
             grid.SetLevel(currentLevel);
 
             CreateLevel();
+
+            ui.SetLevel(level);
         }
 
         public void Init(Font font)

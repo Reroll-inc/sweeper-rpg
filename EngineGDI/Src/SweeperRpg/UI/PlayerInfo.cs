@@ -20,7 +20,6 @@ namespace EngineGDI.Src.SweeperRpg.UI
 
             Engine.DrawText("Player", font, Brushes.White, new Point(120, 590));
             Engine.DrawText($"HP: {player.Hp}", font, Brushes.White, new Point(120, 620));
-            Engine.DrawText("Level: 1", font, Brushes.White, new Point(120, 650));
         }
     }
 }
