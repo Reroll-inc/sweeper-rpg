@@ -12,7 +12,7 @@ namespace EngineGDI.Src.SweeperRpg.UI
         }
 
         private readonly Font font;
-        private readonly Image menuImg = Image.FromFile("Assets/Imgs/menu_placeholder.png");
+        private readonly Image menuImg = Image.FromFile("Assets/Imgs/retro_main_menu.png");
 
         private MenuResult result = MenuResult.Play;
 
@@ -44,7 +44,7 @@ namespace EngineGDI.Src.SweeperRpg.UI
 
         public override void Draw()
         {
-            Engine.DrawImage(texture: menuImg, x: 0, y: 0, scaleX: 4.5f, scaleY: 4.5f);
+            Engine.DrawImage(texture: menuImg, x: 0, y: 0);
 
             string playText = (result == MenuResult.Play) ? "> Play" : " Play";
             string exitText = (result == MenuResult.Exit) ? "> Exit" : " Exit";
