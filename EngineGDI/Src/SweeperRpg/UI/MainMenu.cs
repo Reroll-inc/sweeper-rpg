@@ -25,8 +25,6 @@ namespace EngineGDI.Src.SweeperRpg
             this.font = font;
 
             menuImg = Image.FromFile("Assets/Imgs/menu_placeholder.png");
-            //This should load resources only, do not use draw because it should not happen when the object is created.
-            //Draw();
         }
 
         public override void Draw()
@@ -49,19 +47,10 @@ namespace EngineGDI.Src.SweeperRpg
             if (Engine.OnKeyDown(Keys.Enter))
             {
                 if (index == 0)
-                    result = MenuResult.Play;
+                    GameManager.Instance.OnPlay();
                 else if (index == 1)
-                    result = MenuResult.Exit;
-                //position.X = 1;
-                //position.Y = 1;
+                    GameManager.Instance.OnExit();
             }
-        }
-
-        public MenuResult GetResult()
-        {
-            MenuResult temp = result;
-            result = MenuResult.None;
-            return temp;
         }
     }
 }

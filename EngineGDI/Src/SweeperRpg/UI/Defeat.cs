@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
+using EngineGDI.Src.SweeperRpg;
 
 namespace EngineGDI.Src
 {
@@ -26,30 +27,6 @@ namespace EngineGDI.Src
             this.font = font;
         }
 
-        public override void Input()
-        {
-            if (!toggle)
-                return;
-            if (Engine.OnKeyDown(Keys.W))
-                index = System.Math.Max(0, index - 1);
-            if (Engine.OnKeyDown(Keys.S))
-                index = (index + 1) % 2;
-            if (Engine.OnKeyDown(Keys.Enter))
-            {
-                if (index == 0)
-                    result = DefeatResult.Retry;
-                else if (index == 1)
-                    result = DefeatResult.MainMenu;
-            }
-        }
-
-        public DefeatResult GetResult()
-        {
-            DefeatResult temp = result;
-            result = DefeatResult.None;
-            return temp;
-        }
-
         public void EnableDefeat()
         {
             toggle = true;
@@ -61,9 +38,25 @@ namespace EngineGDI.Src
             toggle = false;
         }
 
+        public override void Input()
+        {
+            if (!toggle)
+                return;
+            if (Engine.OnKeyDown(Keys.W))
+                index = System.Math.Max(0, index - 1);
+            if (Engine.OnKeyDown(Keys.S))
+                index = (index + 1) % 2;
+            if (Engine.OnKeyDown(Keys.Enter))
+            {
+                if (index == 0)
+                    GameManager.Instance.OnPlay();
+                else if (index == 1)
+                    GameManager.Instance.OnMainMenu();
+            }
+        }
+
         public override void Draw()
         {
-            //if (toggle)
             if (!toggle)
                 return;
             Engine.DrawImage(texture: defeatScreen, x: 0, y: 0);

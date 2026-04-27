@@ -132,14 +132,10 @@ namespace EngineGDI.Src.SweeperRpg
             if (player.IsDead())
             {
                 // Avisar al GameManager que perdio.
+                GameManager.Instance.OnDefeat();
             }
             else
                 enemy.Defeat();
-        }
-
-        public bool IsPlayerDead()
-        {
-            return player.IsDead();
         }
 
         public void StartLevel(int level)
