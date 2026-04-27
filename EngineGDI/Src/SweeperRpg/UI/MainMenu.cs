@@ -5,52 +5,52 @@ namespace EngineGDI.Src.SweeperRpg.UI
 {
     public class MainMenu : Node
     {
-        public enum MenuResult
+        private enum MenuResult
         {
-            None,
             Play,
             Exit,
         }
 
         private readonly Font font;
-        private Image menuImg;
-        private Point position;
-        private Point positionToUpdate = new Point();
-        private int index = 0;
+        private readonly Image menuImg = Image.FromFile("Assets/Imgs/menu_placeholder.png");
 
-        private MenuResult result = MenuResult.None;
+        private MenuResult result = MenuResult.Play;
 
         public MainMenu(Font font)
         {
             this.font = font;
-
-            menuImg = Image.FromFile("Assets/Imgs/menu_placeholder.png");
-        }
-
-        public override void Draw()
-        {
-            Engine.DrawImage(texture: menuImg, x: 0, y: 0);
-
-            string playText = (index == 0) ? "> Play" : " Play";
-            string exitText = (index == 1) ? "> Exit" : " Exit";
-
-            Engine.DrawText(playText, font, Brushes.White, new Point(200, 400));
-            Engine.DrawText(exitText, font, Brushes.White, new Point(200, 450));
         }
 
         public override void Input()
         {
             if (Engine.OnKeyDown(Keys.W))
-                index = System.Math.Max(0, index - 1);
+                result = result == MenuResult.Play ? MenuResult.Exit : MenuResult.Play;
             if (Engine.OnKeyDown(Keys.S))
-                index = (index + 1) % 2;
+                result = result == MenuResult.Play ? MenuResult.Exit : MenuResult.Play;
+
             if (Engine.OnKeyDown(Keys.Enter))
             {
-                if (index == 0)
-                    GameManager.Instance.OnPlay();
-                else if (index == 1)
-                    GameManager.Instance.OnExit();
+                switch (result)
+                {
+                    case MenuResult.Play:
+                        GameManager.Instance.OnPlay();
+                        break;
+                    case MenuResult.Exit:
+                        GameManager.Instance.OnExit();
+                        break;
+                }
             }
+        }
+
+        public override void Draw()
+        {
+            Engine.DrawImage(texture: menuImg, x: 0, y: 0, scaleX: 4.5f, scaleY: 4.5f);
+
+            string playText = (result == MenuResult.Play) ? "> Play" : " Play";
+            string exitText = (result == MenuResult.Exit) ? "> Exit" : " Exit";
+
+            Engine.DrawText(playText, font, Brushes.White, new Point(200, 400));
+            Engine.DrawText(exitText, font, Brushes.White, new Point(200, 450));
         }
     }
 }

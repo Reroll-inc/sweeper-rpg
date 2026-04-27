@@ -109,6 +109,10 @@ namespace EngineGDI.Src.SweeperRpg
                     positionToUpdate.Y = position.Y * 32;
 
                     collisioner.UpdatePosition(position: positionToUpdate);
+
+                    CollisionManager.Instance.ValidateCollitions();
+
+                    LevelManager.Instance.CheckVictoryCondition();
                 }
                 else
                     position = prevPosition;

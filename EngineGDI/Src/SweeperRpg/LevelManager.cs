@@ -175,8 +175,6 @@ namespace EngineGDI.Src.SweeperRpg
         public override void Input()
         {
             player.Input();
-            collisionManager.ValidateCollitions();
-            CheckVictoryCondition();
         }
 
         public override void Update(float deltaTime)
