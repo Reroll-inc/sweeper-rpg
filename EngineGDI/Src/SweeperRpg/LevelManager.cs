@@ -10,6 +10,10 @@ namespace EngineGDI.Src.SweeperRpg
     {
         [JsonConverter(typeof(ColorHexConverter))]
         public Color start;
+        public Color end;
+        public Color basic;
+        public Color lineMesh;
+        public Color treasure;
     }
 
     public class LevelData

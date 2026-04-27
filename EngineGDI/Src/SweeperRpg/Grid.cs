@@ -196,27 +196,24 @@ namespace EngineGDI.Src.SweeperRpg
             switch (type)
             {
                 case CellType.COIN:
-                    //si la celda alguna moneda, los dibujamos :)
-                    break;
-                case CellType.ENEMY:
-
-                    //si la celda tiene enemigos, dibujamos la casilla de combate
-                    //si distintos assets para distintos enemigos habria que repensarlo
-                    //o clavar alguna logica de que el string enemy sea el nombre del asset
-                    //mas ppractico
-                    break;
+                    Engine.DrawRect(
+                        rect: Rect,
+                        pen: new Pen(level.props.lineMesh),
+                        brush: new SolidBrush(level.props.treasure)
+                    );
+                    return;
                 case CellType.START:
                     Engine.DrawRect(
                         rect: Rect,
-                        pen: new Pen(color: Color.Black),
+                        pen: new Pen(level.props.lineMesh),
                         brush: new SolidBrush(level.props.start)
                     );
                     return;
                 case CellType.END:
                     Engine.DrawRect(
                         rect: Rect,
-                        pen: new Pen(color: Color.Black),
-                        brush: new SolidBrush(Color.DarkGoldenrod)
+                        pen: new Pen(level.props.lineMesh),
+                        brush: new SolidBrush(level.props.treasure)
                     );
                     return;
                 case CellType.NULL:
@@ -225,8 +222,8 @@ namespace EngineGDI.Src.SweeperRpg
 
             Engine.DrawRect(
                 rect: Rect,
-                pen: new Pen(color: Color.Black),
-                brush: new SolidBrush(Color.SeaGreen)
+                pen: new Pen(level.props.lineMesh),
+                brush: new SolidBrush(level.props.basic)
             );
         }
 
