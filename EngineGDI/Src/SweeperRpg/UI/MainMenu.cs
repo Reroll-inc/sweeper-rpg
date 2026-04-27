@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace EngineGDI.Src.SweeperRpg
+namespace EngineGDI.Src.SweeperRpg.UI
 {
     public class MainMenu : Node
     {

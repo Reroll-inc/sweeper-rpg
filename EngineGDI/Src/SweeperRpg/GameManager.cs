@@ -1,6 +1,6 @@
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using EngineGDI.Src.SweeperRpg.UI;
 
 namespace EngineGDI.Src.SweeperRpg
 {
@@ -29,14 +29,14 @@ namespace EngineGDI.Src.SweeperRpg
             get { return instance; }
         }
         private readonly Font font = new Font("Assets/Fonts/pixel.ttf", 16);
-        private readonly MainMenu mainMenu;
+        private readonly UI.MainMenu mainMenu;
         private readonly LevelManager levelManager = LevelManager.Instance;
-        private readonly Defeat defeat;
+        private readonly DefeatScreen defeat;
 
         private GameManager()
         {
-            mainMenu = new MainMenu(font: font);
-            defeat = new Defeat(font: font);
+            mainMenu = new UI.MainMenu(font: font);
+            defeat = new DefeatScreen(font: font);
 
             levelManager.Init(font: font);
         }
@@ -46,7 +46,6 @@ namespace EngineGDI.Src.SweeperRpg
         {
             levelManager.ResetLevel();
             state = GameState.PLAYING_LEVEL;
-            defeat.DisableDefeat();
             levelManager.StartLevel(1);
         }
 

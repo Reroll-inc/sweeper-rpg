@@ -61,7 +61,7 @@ namespace EngineGDI.Src
             public string text;
             public Font font;
             public Brush brush;
-            public PointF position;
+            public Point position;
 
             public override void Draw(PaintEventArgs e)
             {
@@ -192,7 +192,7 @@ namespace EngineGDI.Src
             );
         }
 
-        public static void DrawText(string text, Font font, Brush brush, PointF position)
+        public static void DrawText(string text, Font font, Brush brush, Point position)
         {
             drawQueue.Add(
                 new DrawTextCommand

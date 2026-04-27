@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -178,9 +177,4 @@ namespace EngineGDI.Src.SweeperRpg
             ui.Draw();
         }
     }
-
-    // LevelManager should function as a sort of middle man that helps the combat loop work.
-    // Player, al colisionar con un enemigo, deberia hacer que el LevelManager consiga el valor de danio del enemigo,
-    // y le notifique a player el valor por el cual su vida debe bajar. Al mismo tiempo, por ahora, el Manager
-    // deberia a la instancia de enemigo que colisiono cambiarle su estado para que muera.
 }
