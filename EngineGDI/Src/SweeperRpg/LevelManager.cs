@@ -14,6 +14,7 @@ namespace EngineGDI.Src.SweeperRpg
         public Color basic;
         public Color lineMesh;
         public Color treasure;
+        public Color background;
     }
 
     public class LevelData

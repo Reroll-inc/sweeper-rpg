@@ -84,8 +84,8 @@ namespace EngineGDI.Src.SweeperRpg
                         location: new Point(x: columnId * Cell.SIZE, y: rowId * Cell.SIZE),
                         size: new Size(width: Cell.SIZE, height: Cell.SIZE)
                     ),
-                    pen: new Pen(color: Color.DarkSlateGray),
-                    brush: new SolidBrush(Color.DarkSlateGray)
+                    pen: new Pen(level.props.background),
+                    brush: new SolidBrush(level.props.background)
                 );
 
             // Draw game cells
@@ -213,7 +213,7 @@ namespace EngineGDI.Src.SweeperRpg
                     Engine.DrawRect(
                         rect: Rect,
                         pen: new Pen(level.props.lineMesh),
-                        brush: new SolidBrush(level.props.treasure)
+                        brush: new SolidBrush(level.props.end)
                     );
                     return;
                 case CellType.NULL:

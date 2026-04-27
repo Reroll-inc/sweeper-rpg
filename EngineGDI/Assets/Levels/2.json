@@ -1,6 +1,11 @@
 {
   "props": {
-    "start": "#00FF00"
+    "start": "#A72BFF",
+    "end": "#7600D1",
+    "treasure": "#CBA406",
+    "basic": "#70ef0e",
+    "lineMesh": "#5C7854",
+    "background": "#65CFC7"
   },
   "grid": [
     [
