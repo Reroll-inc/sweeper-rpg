@@ -35,7 +35,7 @@ namespace EngineGDI.Src.SweeperRpg
         private readonly DefeatScreen defeat;
         private readonly VictoryScreen victory;
 
-        private int level = 1;
+        private int level;
         private int maxLvls;
 
         private GameManager()
