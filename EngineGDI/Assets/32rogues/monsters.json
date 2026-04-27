@@ -5,5 +5,5 @@
   "G_C": { "point": "0,7", "damage": 5 },
   "G_B1": { "point": "0,1", "damage": 5 },
   "G_B2": { "point": "0,3", "damage": 5 },
-  "G_B3": { "point": "0,4", "damage": 5 }
+  "G_B3": { "point": "0,4", "damage": 15 }
 }

@@ -8,8 +8,16 @@ namespace EngineGDI.Src.SweeperRpg
         private Point position;
         private Point positionToUpdate = new Point();
         private readonly Image tile;
-        private int maxHealth = 8;
+        public Image Tile
+        {
+            get { return tile; }
+        }
+        private readonly int maxHealth = 8;
         private int health;
+        public int Hp
+        {
+            get { return health; }
+        }
 
         public Player(int x, int y)
         {

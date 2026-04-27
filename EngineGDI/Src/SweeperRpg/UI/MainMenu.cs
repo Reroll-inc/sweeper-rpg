@@ -5,12 +5,6 @@ namespace EngineGDI.Src.SweeperRpg
 {
     public class MainMenu : Node
     {
-        private Font font;
-        private Image menuImg;
-        private Point position;
-        private Point positionToUpdate = new Point();
-        private int index = 0;
-
         public enum MenuResult
         {
             None,
@@ -18,11 +12,18 @@ namespace EngineGDI.Src.SweeperRpg
             Exit,
         }
 
+        private readonly Font font;
+        private Image menuImg;
+        private Point position;
+        private Point positionToUpdate = new Point();
+        private int index = 0;
+
         private MenuResult result = MenuResult.None;
 
-        public MainMenu()
+        public MainMenu(Font font)
         {
-            font = new Font("Assets/Fonts/pixel.ttf", 16);
+            this.font = font;
+
             menuImg = Image.FromFile("Assets/Imgs/menu_placeholder.png");
             //This should load resources only, do not use draw because it should not happen when the object is created.
             //Draw();
@@ -35,8 +36,8 @@ namespace EngineGDI.Src.SweeperRpg
             string playText = (index == 0) ? "> Play" : " Play";
             string exitText = (index == 1) ? "> Exit" : " Exit";
 
-            Engine.DrawText(playText, font, Brushes.White, new PointF(200, 400));
-            Engine.DrawText(exitText, font, Brushes.White, new PointF(200, 450));
+            Engine.DrawText(playText, font, Brushes.White, new Point(200, 400));
+            Engine.DrawText(exitText, font, Brushes.White, new Point(200, 450));
         }
 
         public override void Input()

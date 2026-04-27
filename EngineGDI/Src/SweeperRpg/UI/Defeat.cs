@@ -18,7 +18,13 @@ namespace EngineGDI.Src
 
         private int index = 0;
         private DefeatResult result = DefeatResult.None;
-        private Font font = new Font("Assets/Fonts/pixel.ttf", 16);
+
+        private readonly Font font;
+
+        public Defeat(Font font)
+        {
+            this.font = font;
+        }
 
         public override void Input()
         {

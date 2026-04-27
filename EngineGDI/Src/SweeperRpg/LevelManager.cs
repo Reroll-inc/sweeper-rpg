@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using EngineGDI.Src.SweeperRpg.UI;
 using Newtonsoft.Json;
 
 namespace EngineGDI.Src.SweeperRpg
@@ -31,6 +33,8 @@ namespace EngineGDI.Src.SweeperRpg
         }
         private static readonly Grid grid = new Grid();
         private static readonly CollisionManager collisionManager = CollisionManager.Instance;
+
+        private LevelUI ui;
 
         private LevelManager() { }
 
@@ -121,6 +125,34 @@ namespace EngineGDI.Src.SweeperRpg
                 && position.Y <= (fillRows + lvlRows - 1);
         }
 
+        public void OnCollision(Enemy enemy)
+        {
+            player.TakeDamage(enemy.Damage);
+
+            if (player.IsDead())
+            {
+                // Avisar al GameManager que perdio.
+            }
+            else
+                enemy.Defeat();
+        }
+
+        public bool IsPlayerDead()
+        {
+            return player.IsDead();
+        }
+
+        public void StartLevel(int level)
+        {
+            LoadLevel(level);
+            CreateLevel();
+        }
+
+        public void Init(Font font)
+        {
+            ui = new LevelUI(font: font, player: player);
+        }
+
         public override void Input()
         {
             player.Input();
@@ -146,29 +178,8 @@ namespace EngineGDI.Src.SweeperRpg
             grid.DrawAfter();
 
             collisionManager.Draw();
-        }
 
-        public void OnCollision(Enemy enemy)
-        {
-            player.TakeDamage(enemy.Damage);
-
-            if (player.IsDead())
-            {
-                // Avisar al GameManager que perdio.
-            }
-            else
-                enemy.Defeat();
-        }
-
-        public bool IsPlayerDead()
-        {
-            return player.IsDead();
-        }
-
-        public void StartLevel(int level)
-        {
-            LoadLevel(level);
-            CreateLevel();
+            ui.Draw();
         }
     }
 

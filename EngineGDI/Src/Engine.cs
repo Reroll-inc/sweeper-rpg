@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Media;
 using System.Windows.Forms;
 
@@ -28,10 +29,14 @@ namespace EngineGDI.Src
                 float width = texture.Width * ScaleX;
                 float height = texture.Height * ScaleY;
 
-                // Transformación: traslación al punto, rotación, luego dibujar con offset
+                InterpolationMode prevInterpolation = e.Graphics.InterpolationMode;
                 e.Graphics.TranslateTransform(X, Y);
                 e.Graphics.RotateTransform(Angle);
+
+                e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
                 e.Graphics.DrawImage(texture, -OffsetX * width, -OffsetY * height, width, height);
+                e.Graphics.InterpolationMode = prevInterpolation;
+
                 e.Graphics.ResetTransform();
             }
         }

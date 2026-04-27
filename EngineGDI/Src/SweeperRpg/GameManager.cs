@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -21,21 +22,24 @@ namespace EngineGDI.Src.SweeperRpg
 
         private GameState state = GameState.MAIN_MENU;
 
-        // private VictoryScreen();
-        // private Defeat();
-        // private MainMenu();
-
         private static readonly GameManager instance = new GameManager();
 
-        private MainMenu mainMenu = new MainMenu();
         public static GameManager Instance
         {
             get { return instance; }
         }
-        private static readonly LevelManager levelManager = LevelManager.Instance;
-        private static readonly Defeat defeat = new Defeat();
+        private readonly Font font = new Font("Assets/Fonts/pixel.ttf", 16);
+        private readonly MainMenu mainMenu;
+        private readonly LevelManager levelManager = LevelManager.Instance;
+        private readonly Defeat defeat;
 
-        private GameManager() { }
+        private GameManager()
+        {
+            mainMenu = new MainMenu(font: font);
+            defeat = new Defeat(font: font);
+
+            levelManager.Init(font: font);
+        }
 
         public override void Input()
         {
