@@ -27,7 +27,7 @@ namespace EngineGDI.Src.SweeperRpg
         END,
     }
 
-    public class Cell
+    public class Cell : Node
     {
         private enum State
         {
@@ -87,7 +87,7 @@ namespace EngineGDI.Src.SweeperRpg
             animation.Reset();
         }
 
-        public void Update(float deltaTime)
+        public override void Update(float deltaTime)
         {
             switch (state)
             {
@@ -97,7 +97,7 @@ namespace EngineGDI.Src.SweeperRpg
             }
         }
 
-        public void Draw()
+        public override void Draw()
         {
             switch (type)
             {
