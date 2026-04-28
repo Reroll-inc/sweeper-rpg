@@ -10,7 +10,7 @@ namespace EngineGDI.Src.SweeperRpg.Animations
     {
         public event EventHandler OnFinish;
         private float progress = 0;
-        private readonly float sec = (float)1.5;
+        private readonly float sec = 1.5f;
 
         private Point point;
         private Size size;
