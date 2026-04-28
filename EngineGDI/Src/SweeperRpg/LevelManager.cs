@@ -30,7 +30,6 @@ namespace EngineGDI.Src.SweeperRpg
         // Quiero crear el personaje
         private static readonly LevelManager instance = new LevelManager();
         private readonly Dictionary<int, LevelData> levels = new Dictionary<int, LevelData>();
-        private int levelId;
         private LevelData currentLevel;
         private readonly int MAX_ROW = 16;
         private readonly int MAX_COLUMN = 32;
@@ -63,8 +62,6 @@ namespace EngineGDI.Src.SweeperRpg
 
         public void LoadLevel(int level)
         {
-            levelId = level;
-
             if (levels.TryGetValue(key: level, out currentLevel))
                 return;
 

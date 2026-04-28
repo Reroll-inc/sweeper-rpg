@@ -40,7 +40,7 @@ namespace EngineGDI.Src.SweeperRpg
             DEAD,
         }
 
-        private class EnemyDTO
+        private class EnemyData
         {
             public Point point;
             public int damage;
@@ -50,8 +50,8 @@ namespace EngineGDI.Src.SweeperRpg
         private Point actualPosition;
         private readonly Image tile;
         private readonly Collisioner collisioner;
-        private static readonly Dictionary<EnemyKind, EnemyDTO> enemyData =
-            JsonConvert.DeserializeObject<Dictionary<EnemyKind, EnemyDTO>>(
+        private static readonly Dictionary<EnemyKind, EnemyData> enemyData =
+            JsonConvert.DeserializeObject<Dictionary<EnemyKind, EnemyData>>(
                 File.ReadAllText("Assets/32rogues/monsters.json")
             );
 
@@ -70,7 +70,7 @@ namespace EngineGDI.Src.SweeperRpg
 
         public Enemy(int x, int y, EnemyKind kind)
         {
-            enemyData.TryGetValue(kind, out EnemyDTO data);
+            enemyData.TryGetValue(kind, out EnemyData data);
 
             damage = data.damage;
 
