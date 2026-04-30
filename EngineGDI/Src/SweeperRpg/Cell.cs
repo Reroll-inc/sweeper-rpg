@@ -1,29 +1,26 @@
 using System;
 using System.Drawing;
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using EngineGDI.Src.SweeperRpg.Animations;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using static EngineGDI.Src.SweeperRpg.Enemy;
 
 namespace EngineGDI.Src.SweeperRpg
 {
-    [JsonConverter(typeof(StringEnumConverter))]
     public enum CellType
     {
-        [EnumMember(Value = "N")]
+        [JsonStringEnumMemberName("N")]
         NULL,
 
-        [EnumMember(Value = "E")]
+        [JsonStringEnumMemberName("E")]
         ENEMY,
 
-        [EnumMember(Value = "C")]
+        [JsonStringEnumMemberName("C")]
         COIN,
 
-        [EnumMember(Value = "S")]
+        [JsonStringEnumMemberName("S")]
         START,
 
-        [EnumMember(Value = "D")]
+        [JsonStringEnumMemberName("D")]
         END,
     }
 
@@ -36,10 +33,13 @@ namespace EngineGDI.Src.SweeperRpg
             OPEN = 'N',
         }
 
-        public CellType type = CellType.NULL;
-        public string id = null;
-        public EnemyKind? kind = null;
-        public int currency = 0;
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public CellType type { get; set; } = CellType.NULL;
+        public string id { get; set; } = null;
+
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public EnemyKind? kind { get; set; } = null;
+        public int currency { get; set; } = 0;
         public static readonly int SIZE = 32;
 
         private Rectangle rect;
@@ -50,17 +50,17 @@ namespace EngineGDI.Src.SweeperRpg
 
         private State state = State.OPENING;
         private LevelData level;
-        private readonly PeelingCellAnimation animation = new PeelingCellAnimation();
+        private readonly PeelingCellAnimation animation = new();
 
         public void SetData(LevelData level, int columnId, int rowId, int fillColumns, int fillRows)
         {
             this.level = level;
 
-            Point point = new Point(
+            Point point = new(
                 x: (columnId * SIZE) + (fillColumns * SIZE),
                 y: (rowId * SIZE) + (fillRows * SIZE)
             );
-            Size size = new Size(SIZE, SIZE);
+            Size size = new(SIZE, SIZE);
 
             rect = new Rectangle(location: point, size: size);
 

@@ -2,15 +2,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": ".NET Framework Debug",
-      "type": "clr",
+      "type": "DotNetWatch",
       "request": "launch",
-      "program": "${workspaceFolder}/EngineGDI/bin/Debug/net48/EngineGDI.exe",
-      "args": [],
-      "cwd": "${workspaceFolder}/EngineGDI",
-      "console": "internalConsole",
-      "stopAtEntry": false,
-      "internalConsoleOptions": "openOnSessionStart"
+      "name": ".NET Core Watch",
+      "project": "EngineGDI.csproj"
     }
   ]
 }

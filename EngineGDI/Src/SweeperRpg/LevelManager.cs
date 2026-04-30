@@ -1,26 +1,38 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using EngineGDI.Src.SweeperRpg.UI;
-using Newtonsoft.Json;
 
 namespace EngineGDI.Src.SweeperRpg
 {
     public class LevelDataProps
     {
-        [JsonConverter(typeof(ColorHexConverter))]
-        public Color start;
-        public Color end;
-        public Color basic;
-        public Color lineMesh;
-        public Color treasure;
-        public Color background;
+        [JsonConverter(typeof(ColorJsonConverter))]
+        public Color start { get; set; }
+
+        [JsonConverter(typeof(ColorJsonConverter))]
+        public Color end { get; set; }
+
+        [JsonConverter(typeof(ColorJsonConverter))]
+        public Color basic { get; set; }
+
+        [JsonConverter(typeof(ColorJsonConverter))]
+        public Color lineMesh { get; set; }
+
+        [JsonConverter(typeof(ColorJsonConverter))]
+        public Color treasure { get; set; }
+
+        [JsonConverter(typeof(ColorJsonConverter))]
+        public Color background { get; set; }
     }
 
     public class LevelData
-    { // atributo props pubnlico que es de tipo LevelDataProps
-        public LevelDataProps props;
-        public List<List<Cell>> grid;
+    {
+        public LevelDataProps props { get; set; }
+        public List<List<Cell>> grid { get; set; }
     }
 
     public class LevelManager : Node
@@ -66,9 +78,17 @@ namespace EngineGDI.Src.SweeperRpg
                 return;
 
             string jsonContent = File.ReadAllText($"Assets/Levels/{level}.json");
-            currentLevel = JsonConvert.DeserializeObject<LevelData>(jsonContent);
+            try
+            {
+                currentLevel = JsonSerializer.Deserialize<LevelData>(jsonContent);
 
-            levels.Add(level, currentLevel);
+                levels.Add(level, currentLevel);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"JSON error: {ex.Message}");
+                Console.WriteLine($"Path: {ex.Path}");
+            }
         }
 
         private void CreateLevel()

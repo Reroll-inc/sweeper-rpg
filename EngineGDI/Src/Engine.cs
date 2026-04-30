@@ -76,22 +76,20 @@ namespace EngineGDI.Src
             public Rectangle rect;
         }
 
-        private static readonly Dictionary<string, SoundPlayer> sounds =
-            new Dictionary<string, SoundPlayer>();
-        private static readonly List<DrawCommand> drawQueue = new List<DrawCommand>();
-        private static readonly List<CollisionCommand> collisionQueue =
-            new List<CollisionCommand>();
+        private static readonly Dictionary<string, SoundPlayer> sounds = [];
+        private static readonly List<DrawCommand> drawQueue = [];
+        private static readonly List<CollisionCommand> collisionQueue = [];
         private static GameForm window;
         public static bool IsWindowOpen { get; private set; } = false;
         public static Form Window => window;
 
-        private static readonly HashSet<Keys> pressedKeys = new HashSet<Keys>();
-        private static readonly HashSet<Keys> handledKeys = new HashSet<Keys>();
-        private static readonly HashSet<Keys> releasedKeys = new HashSet<Keys>();
-        private static readonly HashSet<Keys> handledReleasedKeys = new HashSet<Keys>();
+        private static readonly HashSet<Keys> pressedKeys = [];
+        private static readonly HashSet<Keys> handledKeys = [];
+        private static readonly HashSet<Keys> releasedKeys = [];
+        private static readonly HashSet<Keys> handledReleasedKeys = [];
 
-        private static readonly List<string> debugMessages = new List<string>();
-        private static readonly Font debugFont = new Font("Consolas", 10);
+        private static readonly List<string> debugMessages = [];
+        private static readonly Font debugFont = new("Consolas", 10);
         private static readonly Brush debugBrush = Brushes.White;
 
         public static void Initialize(

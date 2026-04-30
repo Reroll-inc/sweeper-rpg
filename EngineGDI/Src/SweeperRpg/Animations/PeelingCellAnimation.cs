@@ -41,17 +41,17 @@ namespace EngineGDI.Src.SweeperRpg.Animations
             int withHeight = size.Width;
             int cutSize = (int)(withHeight * progress) / 50;
 
-            GraphicsPath path = new GraphicsPath();
+            GraphicsPath path = new();
 
             path.AddPolygon(
-                points: new Point[]
-                {
+                points:
+                [
                     new Point(x: point.X + cutSize, y: point.Y),
                     new Point(x: point.X + withHeight, y: point.Y),
                     new Point(x: point.X + withHeight, y: point.Y + withHeight),
                     new Point(x: point.X, y: point.Y + withHeight),
                     new Point(x: point.X, y: point.Y + cutSize),
-                }
+                ]
             );
 
             path.CloseFigure();

@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.IO;
 using EngineGDI.Src.SweeperRpg;
 
 namespace EngineGDI.Src
@@ -25,6 +26,8 @@ namespace EngineGDI.Src
         [STAThread]
         static void Main()
         {
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+
             Engine.Initialize(
                 title: "Sweeper RPG",
                 width: SCREEN_WIDTH,

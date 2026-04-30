@@ -1,31 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net48</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Deterministic>true</Deterministic>
-
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
+    <Company>Reroll Inc.</Company>
+    <Product>EngineGDI</Product>
+    <AssemblyTitle>Sweeper RPG</AssemblyTitle>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0</FileVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Reference Include="System.Deployment" />
-  </ItemGroup>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
 
-  <!-- This handles all your images and wav files automatically -->
+  <PropertyGroup>
+    <Deterministic>true</Deterministic>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Include="**\*.png;**\*.wav;**\*.json" Exclude="bin\**;obj\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-  </ItemGroup>
+
+  <ItemGroup></ItemGroup>
 </Project>

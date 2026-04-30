@@ -1,36 +1,34 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EngineGDI.Src.SweeperRpg
 {
     public class Enemy : Node
     {
-        [JsonConverter(typeof(StringEnumConverter))]
         public enum EnemyKind
         {
-            [EnumMember(Value = "G_R")]
+            [JsonStringEnumMemberName("G_R")]
             GOBLIN_ROGUE,
 
-            [EnumMember(Value = "G_A")]
+            [JsonStringEnumMemberName("G_A")]
             GOBLIN_ARCHER,
 
-            [EnumMember(Value = "G_M")]
+            [JsonStringEnumMemberName("G_M")]
             GOBLIN_MAGE,
 
-            [EnumMember(Value = "G_C")]
+            [JsonStringEnumMemberName("G_C")]
             GOBLIN_BARBARIC,
 
-            [EnumMember(Value = "G_B1")]
+            [JsonStringEnumMemberName("G_B1")]
             GOBLIN_BOSS_1,
 
-            [EnumMember(Value = "G_B2")]
+            [JsonStringEnumMemberName("G_B2")]
             GOBLIN_BOSS_2,
 
-            [EnumMember(Value = "G_B3")]
+            [JsonStringEnumMemberName("G_B3")]
             GOBLIN_BOSS_3,
         }
 
@@ -42,8 +40,9 @@ namespace EngineGDI.Src.SweeperRpg
 
         private class EnemyData
         {
-            public Point point;
-            public int damage;
+            [JsonConverter(typeof(PointJsonConverter))]
+            public Point point { get; set; }
+            public int damage { get; set; }
         }
 
         private Point position;
@@ -51,7 +50,7 @@ namespace EngineGDI.Src.SweeperRpg
         private readonly Image tile;
         private readonly Collisioner collisioner;
         private static readonly Dictionary<EnemyKind, EnemyData> enemyData =
-            JsonConvert.DeserializeObject<Dictionary<EnemyKind, EnemyData>>(
+            JsonSerializer.Deserialize<Dictionary<EnemyKind, EnemyData>>(
                 File.ReadAllText("Assets/32rogues/monsters.json")
             );
 
