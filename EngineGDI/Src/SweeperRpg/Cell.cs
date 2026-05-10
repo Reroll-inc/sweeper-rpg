@@ -35,18 +35,15 @@ namespace EngineGDI.Src.SweeperRpg
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public CellType type { get; set; } = CellType.NULL;
-        public string id { get; set; } = null;
+        public string id { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public EnemyKind? kind { get; set; } = null;
-        public int currency { get; set; } = 0;
+        public int currency { get; set; }
         public static readonly int SIZE = 32;
 
         private Rectangle rect;
-        public Rectangle Rect
-        {
-            get { return rect; }
-        }
+        public Rectangle Rect => rect;
 
         private State state = State.OPENING;
         private LevelData level;
@@ -94,6 +91,12 @@ namespace EngineGDI.Src.SweeperRpg
                 case State.OPENING:
                     animation.Update(deltaTime: deltaTime);
                     break;
+                case State.INIT:
+                    break;
+                case State.OPEN:
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -124,6 +127,10 @@ namespace EngineGDI.Src.SweeperRpg
                     return;
                 case CellType.NULL:
                     break;
+                case CellType.ENEMY:
+                    break;
+                default:
+                    break;
             }
 
             Engine.DrawRect(
@@ -139,6 +146,12 @@ namespace EngineGDI.Src.SweeperRpg
             {
                 case State.OPENING:
                     Engine.DrawACommand(animation);
+                    break;
+                case State.INIT:
+                    break;
+                case State.OPEN:
+                    break;
+                default:
                     break;
             }
         }

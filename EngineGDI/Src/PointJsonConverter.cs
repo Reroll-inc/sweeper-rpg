@@ -12,8 +12,8 @@ namespace EngineGDI.Src
             JsonSerializerOptions options
         )
         {
-            var value = reader.GetString();
-            var parts = value!.Split(',');
+            string value = reader.GetString();
+            string[] parts = value.Split(',');
             return new Point(int.Parse(parts[0]), int.Parse(parts[1]));
         }
 

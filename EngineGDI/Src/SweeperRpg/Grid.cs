@@ -18,8 +18,6 @@ namespace EngineGDI.Src.SweeperRpg
         private int fillRows;
         private int fillColumns;
 
-        public Grid() { }
-
         public void SetLevel(LevelData level)
         {
             this.level = level;
@@ -28,9 +26,11 @@ namespace EngineGDI.Src.SweeperRpg
             lvlColumn = level.grid[0].Count;
 
             if (lvlRow > MAX_ROW || lvlColumn > MAX_COLUMN)
+            {
                 throw new Exception(
                     $"Level size is [{lvlRow},{lvlColumn}] which is bigger than [16,32]"
                 );
+            }
 
             fillRows = (MAX_ROW - lvlRow) / 2;
             fillColumns = (MAX_COLUMN - lvlColumn) / 2;
@@ -57,43 +57,63 @@ namespace EngineGDI.Src.SweeperRpg
         public void Reset()
         {
             foreach (List<Cell> row in level.grid)
-            foreach (Cell cell in row)
-                cell.Reset();
+            {
+                foreach (Cell cell in row)
+                {
+                    cell.Reset();
+                }
+            }
         }
 
         public override void Update(float deltaTime)
         {
             //aca metemos el posible chequeo de colicion con el player
             foreach (List<Cell> row in level.grid)
-            foreach (Cell cell in row)
-                cell.Update(deltaTime: deltaTime);
+            {
+                foreach (Cell cell in row)
+                {
+                    cell.Update(deltaTime: deltaTime);
+                }
+            }
         }
 
         public override void Draw()
         {
             // Draw filling cells
             for (int rowId = 0; rowId < MAX_ROW; rowId++)
-            for (int columnId = 0; columnId < MAX_COLUMN; columnId++)
-                Engine.DrawRect(
-                    rect: new Rectangle(
-                        location: new Point(x: columnId * Cell.SIZE, y: rowId * Cell.SIZE),
-                        size: new Size(width: Cell.SIZE, height: Cell.SIZE)
-                    ),
-                    pen: new Pen(level.props.background),
-                    brush: new SolidBrush(level.props.background)
-                );
+            {
+                for (int columnId = 0; columnId < MAX_COLUMN; columnId++)
+                {
+                    Engine.DrawRect(
+                        rect: new Rectangle(
+                            location: new Point(x: columnId * Cell.SIZE, y: rowId * Cell.SIZE),
+                            size: new Size(width: Cell.SIZE, height: Cell.SIZE)
+                        ),
+                        pen: new Pen(level.props.background),
+                        brush: new SolidBrush(level.props.background)
+                    );
+                }
+            }
 
             // Draw game cells
             foreach (List<Cell> row in level.grid)
-            foreach (Cell cell in row)
-                cell.Draw();
+            {
+                foreach (Cell cell in row)
+                {
+                    cell.Draw();
+                }
+            }
         }
 
         public void DrawAfter()
         {
             foreach (List<Cell> row in level.grid)
-            foreach (Cell cell in row)
-                cell.DrawAfter();
+            {
+                foreach (Cell cell in row)
+                {
+                    cell.DrawAfter();
+                }
+            }
         }
     }
 }

@@ -2,7 +2,6 @@
   "recommendations": [
     "ms-dotnettools.csharp",
     "ms-dotnettools.csdevkit",
-    "csharpier.csharpier-vscode",
-    "murugaratham.vscode-dotnet-watch"
+    "csharpier.csharpier-vscode"
   ]
 }

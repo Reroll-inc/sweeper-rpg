@@ -20,7 +20,7 @@ namespace EngineGDI.Src.SweeperRpg
             GOBLIN_MAGE,
 
             [JsonStringEnumMemberName("G_C")]
-            GOBLIN_BARBARIC,
+            GOBLINBARBARIC,
 
             [JsonStringEnumMemberName("G_B1")]
             GOBLIN_BOSS_1,
@@ -48,30 +48,21 @@ namespace EngineGDI.Src.SweeperRpg
         private Point position;
         private Point actualPosition;
         private readonly Image tile;
-        private readonly Collisioner collisioner;
         private static readonly Dictionary<EnemyKind, EnemyData> enemyData =
             JsonSerializer.Deserialize<Dictionary<EnemyKind, EnemyData>>(
                 File.ReadAllText("Assets/32rogues/monsters.json")
             );
 
-        private readonly int damage;
-
-        public int Damage
-        {
-            get { return damage; }
-        }
+        public int Damage { get; }
         private State state = State.ALIVE;
 
-        public Collisioner Collisioner
-        {
-            get { return collisioner; }
-        }
+        public Collisioner Collisioner { get; }
 
         public Enemy(int x, int y, EnemyKind kind)
         {
-            enemyData.TryGetValue(kind, out EnemyData data);
+            _ = enemyData.TryGetValue(kind, out EnemyData data);
 
-            damage = data.damage;
+            Damage = data.damage;
 
             tile = TileMap.LoadSprite(
                 path: "Assets/32rogues/monsters.png",
@@ -81,7 +72,7 @@ namespace EngineGDI.Src.SweeperRpg
             position = new Point(x: x, y: y);
             actualPosition = new Point(x: position.X * 32, y: position.Y * 32);
 
-            collisioner = new Collisioner(
+            Collisioner = new Collisioner(
                 position: actualPosition,
                 size: new Size(width: 32, height: 32),
                 brushColor: Color.BlanchedAlmond
@@ -102,7 +93,7 @@ namespace EngineGDI.Src.SweeperRpg
         {
             state = State.ALIVE;
 
-            collisioner.Reset(null);
+            Collisioner.Reset(null);
         }
 
         public override void Draw()

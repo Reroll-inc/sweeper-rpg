@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace EngineGDI.Src.SweeperRpg.UI
 {
-    public class VictoryScreen : Node
+    public class VictoryScreen(Font font) : Node
     {
         private enum Option
         {
@@ -14,14 +14,9 @@ namespace EngineGDI.Src.SweeperRpg.UI
         private readonly Image backgroundImg = Image.FromFile(
             "Assets/Imgs/victory_Placeholder.png"
         );
-        private readonly Font font;
+        private readonly Font font = font;
 
         private Option option = Option.Next;
-
-        public VictoryScreen(Font font)
-        {
-            this.font = font;
-        }
 
         public void EnableVictory()
         {
@@ -31,9 +26,14 @@ namespace EngineGDI.Src.SweeperRpg.UI
         public override void Input()
         {
             if (Engine.OnKeyDown(Keys.W))
+            {
                 option = option == Option.Next ? Option.MainMenu : Option.Next;
+            }
+
             if (Engine.OnKeyDown(Keys.S))
+            {
                 option = option == Option.Next ? Option.MainMenu : Option.Next;
+            }
 
             if (Engine.OnKeyDown(Keys.Enter))
             {
@@ -44,6 +44,8 @@ namespace EngineGDI.Src.SweeperRpg.UI
                         break;
                     case Option.MainMenu:
                         GameManager.Instance.OnMainMenu();
+                        break;
+                    default:
                         break;
                 }
             }

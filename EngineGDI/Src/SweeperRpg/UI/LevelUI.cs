@@ -2,17 +2,11 @@ using System.Drawing;
 
 namespace EngineGDI.Src.SweeperRpg.UI
 {
-    public class LevelUI : Node
+    public class LevelUI(Font font, Player player) : Node
     {
-        private readonly PlayerInfo playerInfo;
-        private readonly Font font;
+        private readonly PlayerInfo playerInfo = new(font: font, player: player);
+        private readonly Font font = font;
         private int level;
-
-        public LevelUI(Font font, Player player)
-        {
-            this.font = font;
-            playerInfo = new PlayerInfo(font: font, player: player);
-        }
 
         public void SetLevel(int level)
         {

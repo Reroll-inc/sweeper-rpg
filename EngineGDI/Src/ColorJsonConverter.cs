@@ -12,8 +12,8 @@ namespace EngineGDI.Src
             JsonSerializerOptions options
         )
         {
-            var hex = reader.GetString();
-            return ColorTranslator.FromHtml(hex!);
+            string hex = reader.GetString();
+            return ColorTranslator.FromHtml(hex);
         }
 
         public override void Write(

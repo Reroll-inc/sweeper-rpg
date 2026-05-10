@@ -2,32 +2,22 @@ using System.Drawing;
 
 namespace EngineGDI.Src
 {
-    public class Collisioner : Node
+    public class Collisioner(Point position, Size size, Color brushColor) : Node
     {
-        private Rectangle rect;
+        private Rectangle rect = new(
+            location: new Point(
+                x: position.X + (size.Width / 4),
+                y: position.Y + (size.Height / 4)
+            ),
+            size: new Size(width: size.Width / 2, height: size.Height / 2)
+        );
 
-        public Rectangle Rect
-        {
-            get { return rect; }
-        }
+        public Rectangle Rect => rect;
 
-        private readonly Pen pen;
-        private readonly Brush brush;
+        private readonly Pen pen = new(color: Color.Red);
+        private readonly Brush brush = new SolidBrush(color: brushColor);
 
-        private bool debugCollisioned = false;
-
-        public Collisioner(Point position, Size size, Color brushColor)
-        {
-            rect = new Rectangle(
-                location: new Point(
-                    x: position.X + (size.Width / 4),
-                    y: position.Y + (size.Height / 4)
-                ),
-                size: new Size(width: size.Width / 2, height: size.Height / 2)
-            );
-            pen = new Pen(color: Color.Red);
-            brush = new SolidBrush(color: brushColor);
-        }
+        private bool debugCollisioned;
 
         public void UpdatePosition(Point position)
         {

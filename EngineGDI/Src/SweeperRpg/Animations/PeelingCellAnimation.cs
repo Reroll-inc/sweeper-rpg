@@ -9,7 +9,7 @@ namespace EngineGDI.Src.SweeperRpg.Animations
     public class PeelingCellAnimation : DrawCommand
     {
         public event EventHandler OnFinish;
-        private float progress = 0;
+        private float progress;
         private readonly float sec = 1.5f;
 
         private Point point;
@@ -31,7 +31,9 @@ namespace EngineGDI.Src.SweeperRpg.Animations
             progress += 100 * deltaTime / sec;
 
             if (progress > 100)
+            {
                 OnFinish?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public override void Draw(PaintEventArgs e)

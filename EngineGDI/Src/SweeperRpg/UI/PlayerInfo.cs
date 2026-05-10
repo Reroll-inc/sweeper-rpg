@@ -2,17 +2,11 @@ using System.Drawing;
 
 namespace EngineGDI.Src.SweeperRpg.UI
 {
-    public class PlayerInfo : Node
+    public class PlayerInfo(Font font, Player player) : Node
     {
-        private readonly Player player;
+        private readonly Player player = player;
 
-        private readonly Font font;
-
-        public PlayerInfo(Font font, Player player)
-        {
-            this.player = player;
-            this.font = font;
-        }
+        private readonly Font font = font;
 
         public override void Draw()
         {

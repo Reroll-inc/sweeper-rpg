@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -40,8 +39,7 @@ namespace EngineGDI.Src.SweeperRpg
         // Quiero renderizar la grilla
         // Quiero crear los enemigos
         // Quiero crear el personaje
-        private static readonly LevelManager instance = new LevelManager();
-        private readonly Dictionary<int, LevelData> levels = new Dictionary<int, LevelData>();
+        private readonly Dictionary<int, LevelData> levels = [];
         private LevelData currentLevel;
         private readonly int MAX_ROW = 16;
         private readonly int MAX_COLUMN = 32;
@@ -50,45 +48,30 @@ namespace EngineGDI.Src.SweeperRpg
         private int lvlColumns;
         private int fillRows;
         private int fillColumns;
-        private readonly Player player = new Player(x: 0, y: 0);
-        public Player Player
-        {
-            get { return player; }
-        }
-        private static readonly List<Enemy> enemies = new List<Enemy>();
-        public List<Enemy> ActiveEnemies
-        {
-            get { return enemies.FindAll(enemy => enemy.IsAlive()); }
-        }
-        private static readonly Grid grid = new Grid();
+
+        public Player Player { get; } = new(x: 0, y: 0);
+        private static readonly List<Enemy> enemies = [];
+        public static List<Enemy> ActiveEnemies => enemies.FindAll(static enemy => enemy.IsAlive());
+        private static readonly Grid grid = new();
         private static readonly CollisionManager collisionManager = CollisionManager.Instance;
 
         private LevelUI ui;
 
-        private LevelManager() { }
+        public static LevelManager Instance { get; } = new LevelManager();
 
-        public static LevelManager Instance
-        {
-            get { return instance; }
-        }
+        private LevelManager() { }
 
         public void LoadLevel(int level)
         {
             if (levels.TryGetValue(key: level, out currentLevel))
+            {
                 return;
+            }
 
             string jsonContent = File.ReadAllText($"Assets/Levels/{level}.json");
-            try
-            {
-                currentLevel = JsonSerializer.Deserialize<LevelData>(jsonContent);
+            currentLevel = JsonSerializer.Deserialize<LevelData>(jsonContent);
 
-                levels.Add(level, currentLevel);
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"JSON error: {ex.Message}");
-                Console.WriteLine($"Path: {ex.Path}");
-            }
+            levels.Add(level, currentLevel);
         }
 
         private void CreateLevel()
@@ -97,9 +80,11 @@ namespace EngineGDI.Src.SweeperRpg
             lvlColumns = currentLevel.grid[0].Count;
 
             if (lvlRows > 16 || lvlColumns > 32)
+            {
                 throw new System.Exception(
                     $"Level size is [{lvlRows},{lvlColumns}] which is bigger than [16,32]"
                 );
+            }
 
             fillRows = (MAX_ROW - lvlRows) / 2;
             fillColumns = (MAX_COLUMN - lvlColumns) / 2;
@@ -127,11 +112,13 @@ namespace EngineGDI.Src.SweeperRpg
                             );
                             break;
                         case CellType.START:
-                            player.SetStart(x: columnId + fillColumns, y: rowId + fillRows);
+                            Player.SetStart(x: columnId + fillColumns, y: rowId + fillRows);
                             continue;
                         case CellType.END:
                             continue;
                         case CellType.NULL:
+                            break;
+                        default:
                             break;
                     }
                 }
@@ -140,11 +127,13 @@ namespace EngineGDI.Src.SweeperRpg
 
         public void ResetLevel()
         {
-            player.Reset();
+            Player.Reset();
             grid.Reset();
 
             foreach (Enemy enemy in enemies)
+            {
                 enemy.Reset();
+            }
         }
 
         public bool IsWithinLimits(Point position)
@@ -157,13 +146,17 @@ namespace EngineGDI.Src.SweeperRpg
 
         public void OnCollision(Enemy enemy)
         {
-            player.TakeDamage(enemy.Damage);
+            Player.TakeDamage(enemy.Damage);
 
-            if (player.IsDead())
+            if (Player.IsDead())
+            {
                 // Avisar al GameManager que perdio.
                 GameManager.Instance.OnDefeat();
+            }
             else
+            {
                 enemy.Defeat();
+            }
         }
 
         public void StartLevel(int level)
@@ -180,27 +173,29 @@ namespace EngineGDI.Src.SweeperRpg
 
         public void Init(Font font)
         {
-            ui = new LevelUI(font: font, player: player);
+            ui = new LevelUI(font: font, player: Player);
         }
 
         public void CheckVictoryCondition()
         {
             if (
                 currentLevel
-                    .grid[player.Position.X - fillColumns][player.Position.Y - fillRows]
+                    .grid[Player.Position.X - fillColumns][Player.Position.Y - fillRows]
                     .type == CellType.END
             )
+            {
                 GameManager.Instance.OnVictory();
+            }
         }
 
         public override void Input()
         {
-            player.Input();
+            Player.Input();
         }
 
         public override void Update(float deltaTime)
         {
-            player.Update(deltaTime: deltaTime);
+            Player.Update(deltaTime: deltaTime);
             grid.Update(deltaTime: deltaTime);
 
             collisionManager.Update(deltaTime: deltaTime);
@@ -211,9 +206,11 @@ namespace EngineGDI.Src.SweeperRpg
             grid.Draw();
 
             foreach (Enemy enemy in ActiveEnemies)
+            {
                 enemy.Draw();
+            }
 
-            player.Draw();
+            Player.Draw();
 
             grid.DrawAfter();
 

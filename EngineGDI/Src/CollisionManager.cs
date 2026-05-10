@@ -9,20 +9,15 @@ namespace EngineGDI.Src
 
     public class CollisionManager : Node
     {
-        private static readonly CollisionManager instance = new CollisionManager();
-
         private CollisionManager() { }
 
-        public static CollisionManager Instance
-        {
-            get { return instance; }
-        }
+        public static CollisionManager Instance { get; } = new();
 
-        public void ValidateCollitions()
+        public static void ValidateCollitions()
         {
             Player player = LevelManager.Instance.Player;
 
-            foreach (Enemy enemy in LevelManager.Instance.ActiveEnemies)
+            foreach (Enemy enemy in LevelManager.ActiveEnemies)
             {
                 if (player.Collisioner.CheckCollision(enemy.Collisioner))
                 {
@@ -45,8 +40,10 @@ namespace EngineGDI.Src
         {
             LevelManager.Instance.Player.Collisioner.Draw();
 
-            foreach (Enemy enemy in LevelManager.Instance.ActiveEnemies)
+            foreach (Enemy enemy in LevelManager.ActiveEnemies)
+            {
                 enemy.Collisioner.Draw();
+            }
         }
     }
 }

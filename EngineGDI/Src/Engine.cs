@@ -45,12 +45,14 @@ namespace EngineGDI.Src
         {
             public Rectangle rect;
             public Pen pen;
-            public Brush brush = null;
+            public Brush brush;
 
             public override void Draw(PaintEventArgs e)
             {
-                if (!(brush is null))
+                if (brush is not null)
+                {
                     e.Graphics.FillRectangle(brush, rect);
+                }
 
                 e.Graphics.DrawRectangle(pen, rect);
             }
@@ -80,7 +82,7 @@ namespace EngineGDI.Src
         private static readonly List<DrawCommand> drawQueue = [];
         private static readonly List<CollisionCommand> collisionQueue = [];
         private static GameForm window;
-        public static bool IsWindowOpen { get; private set; } = false;
+        public static bool IsWindowOpen { get; private set; }
         public static Form Window => window;
 
         private static readonly HashSet<Keys> pressedKeys = [];
@@ -108,28 +110,31 @@ namespace EngineGDI.Src
                 StartPosition = FormStartPosition.CenterScreen,
             };
             if (fullscreen)
+            {
                 window.WindowState = FormWindowState.Maximized;
-            window.FormClosed += (s, e) => IsWindowOpen = false;
-            window.KeyDown += (s, e) =>
+            }
+
+            window.FormClosed += static (s, e) => IsWindowOpen = false;
+            window.KeyDown += static (s, e) =>
             {
                 if (!pressedKeys.Contains(e.KeyCode))
                 {
-                    pressedKeys.Add(e.KeyCode);
-                    handledKeys.Remove(e.KeyCode);
+                    _ = pressedKeys.Add(e.KeyCode);
+                    _ = handledKeys.Remove(e.KeyCode);
                 }
 
-                releasedKeys.Remove(e.KeyCode);
-                handledReleasedKeys.Remove(e.KeyCode);
+                _ = releasedKeys.Remove(e.KeyCode);
+                _ = handledReleasedKeys.Remove(e.KeyCode);
             };
-            window.KeyUp += (s, e) =>
+            window.KeyUp += static (s, e) =>
             {
-                pressedKeys.Remove(e.KeyCode);
-                handledKeys.Remove(e.KeyCode);
-                releasedKeys.Add(e.KeyCode);
-                handledReleasedKeys.Remove(e.KeyCode);
+                _ = pressedKeys.Remove(e.KeyCode);
+                _ = handledKeys.Remove(e.KeyCode);
+                _ = releasedKeys.Add(e.KeyCode);
+                _ = handledReleasedKeys.Remove(e.KeyCode);
             };
             window.Show();
-            window.Focus();
+            _ = window.Focus();
             window.KeyPreview = true;
             IsWindowOpen = true;
         }
@@ -137,14 +142,20 @@ namespace EngineGDI.Src
         public static void UpdateWindow()
         {
             if (window != null && window.Created)
+            {
                 Application.DoEvents();
+            }
         }
 
         public static void PlaySound(string path)
         {
-            if (!sounds.ContainsKey(path))
-                sounds[path] = new SoundPlayer(path);
-            sounds[path].Play();
+            if (!sounds.TryGetValue(path, out SoundPlayer value))
+            {
+                value = new SoundPlayer(path);
+                sounds[path] = value;
+            }
+
+            value.Play();
         }
 
         public static void DrawACommand(DrawCommand command)
@@ -225,7 +236,7 @@ namespace EngineGDI.Src
         {
             if (pressedKeys.Contains(key) && !handledKeys.Contains(key))
             {
-                handledKeys.Add(key);
+                _ = handledKeys.Add(key);
                 return true;
             }
             return false;
@@ -235,7 +246,7 @@ namespace EngineGDI.Src
         {
             if (releasedKeys.Contains(key) && !handledReleasedKeys.Contains(key))
             {
-                handledReleasedKeys.Add(key);
+                _ = handledReleasedKeys.Add(key);
                 return true;
             }
             return false;
@@ -277,19 +288,24 @@ namespace EngineGDI.Src
             {
                 base.OnPaint(e);
                 e.Graphics.Clear(ClearColor);
-                foreach (var cmd in drawQueue)
-                    cmd.Draw(e);
-
-                foreach (var collision in collisionQueue)
+                foreach (DrawCommand cmd in drawQueue)
                 {
-                    if (!(collision.brush is null))
+                    cmd.Draw(e);
+                }
+
+                foreach (CollisionCommand collision in collisionQueue)
+                {
+                    if (collision.brush is not null)
+                    {
                         e.Graphics.FillRectangle(collision.brush, collision.rect);
+                    }
+
                     e.Graphics.DrawRectangle(collision.pen, collision.rect);
                 }
                 collisionQueue.Clear();
 
                 float debugY = 10;
-                foreach (var msg in debugMessages)
+                foreach (string msg in debugMessages)
                 {
                     e.Graphics.DrawString(msg, debugFont, debugBrush, 10, debugY);
                     debugY += debugFont.Height + 2;

@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace EngineGDI.Src.SweeperRpg.UI
 {
-    public class MainMenu : Node
+    public class MainMenu(Font font) : Node
     {
         private enum MenuResult
         {
@@ -11,22 +11,22 @@ namespace EngineGDI.Src.SweeperRpg.UI
             Exit,
         }
 
-        private readonly Font font;
+        private readonly Font font = font;
         private readonly Image menuImg = Image.FromFile("Assets/Imgs/retro_main_menu.png");
 
         private MenuResult result = MenuResult.Play;
 
-        public MainMenu(Font font)
-        {
-            this.font = font;
-        }
-
         public override void Input()
         {
             if (Engine.OnKeyDown(Keys.W))
+            {
                 result = result == MenuResult.Play ? MenuResult.Exit : MenuResult.Play;
+            }
+
             if (Engine.OnKeyDown(Keys.S))
+            {
                 result = result == MenuResult.Play ? MenuResult.Exit : MenuResult.Play;
+            }
 
             if (Engine.OnKeyDown(Keys.Enter))
             {
@@ -37,6 +37,8 @@ namespace EngineGDI.Src.SweeperRpg.UI
                         break;
                     case MenuResult.Exit:
                         GameManager.Instance.OnExit();
+                        break;
+                    default:
                         break;
                 }
             }

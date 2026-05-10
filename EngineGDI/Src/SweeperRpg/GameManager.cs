@@ -23,13 +23,8 @@ namespace EngineGDI.Src.SweeperRpg
 
         private GameState state = GameState.MAIN_MENU;
 
-        private static readonly GameManager instance = new GameManager();
-
-        public static GameManager Instance
-        {
-            get { return instance; }
-        }
-        private readonly Font font = new Font("Assets/Fonts/pixel.ttf", 16);
+        public static GameManager Instance { get; } = new();
+        private readonly Font font = new("Assets/Fonts/pixel.ttf", 16);
         private readonly UI.MainMenu mainMenu;
         private readonly LevelManager levelManager = LevelManager.Instance;
         private readonly DefeatScreen defeat;
@@ -51,7 +46,7 @@ namespace EngineGDI.Src.SweeperRpg
 
         private void ReadLevelCount()
         {
-            DirectoryInfo dir = new DirectoryInfo("Assets/Levels");
+            DirectoryInfo dir = new("Assets/Levels");
 
             maxLvls = dir.GetFiles().Length;
         }
@@ -123,6 +118,10 @@ namespace EngineGDI.Src.SweeperRpg
                 case GameState.DEFEAT:
                     defeat.Input();
                     break;
+                case GameState.QUIT:
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -143,6 +142,8 @@ namespace EngineGDI.Src.SweeperRpg
                     // Close the game window.
                     Application.Exit();
                     break;
+                default:
+                    break;
             }
         }
 
@@ -161,6 +162,10 @@ namespace EngineGDI.Src.SweeperRpg
                     break;
                 case GameState.DEFEAT:
                     defeat.Draw();
+                    break;
+                case GameState.QUIT:
+                    break;
+                default:
                     break;
             }
         }

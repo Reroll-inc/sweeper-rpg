@@ -5,11 +5,11 @@ using EngineGDI.Src.SweeperRpg;
 
 namespace EngineGDI.Src
 {
-    static class Program
+    internal static class Program
     {
         // Delta time
         public static float deltaTime;
-        static DateTime lastFrameTime = DateTime.Now;
+        private static DateTime lastFrameTime = DateTime.Now;
 
         // mostrar debug
         public static bool showDebug = true;
@@ -24,7 +24,7 @@ namespace EngineGDI.Src
         /// Punto de entrada principal para la aplicación.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
@@ -61,24 +61,24 @@ namespace EngineGDI.Src
             }
         }
 
-        static void CalcDeltatime()
+        private static void CalcDeltatime()
         {
             TimeSpan deltaSpan = DateTime.Now - lastFrameTime;
             deltaTime = (float)deltaSpan.TotalSeconds;
             lastFrameTime = DateTime.Now;
         }
 
-        static void Input()
+        private static void Input()
         {
             gameManager.Input();
         }
 
-        static void Update()
+        private static void Update()
         {
             gameManager.Update(deltaTime: deltaTime);
         }
 
-        static void Render()
+        private static void Render()
         {
             gameManager.Draw();
         }

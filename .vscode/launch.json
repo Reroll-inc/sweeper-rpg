@@ -2,10 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "DotNetWatch",
-      "request": "launch",
-      "name": ".NET Core Watch",
-      "project": "EngineGDI.csproj"
+      "name": "Attach to dotnet watch",
+      "type": "coreclr",
+      "request": "attach",
+      "processName": "EngineGDI",
+      "justMyCode": true
     }
   ]
 }
