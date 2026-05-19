@@ -1,0 +1,35 @@
+@startuml
+enum CellType {
+    NULL,
+    ENEMY,
+    COIN,
+    START,
+    END,
+}
+class Cell {
+    + id : string <<get>> <<set>>
+    + currency : int <<get>> <<set>>
+    + {static} <<readonly>> SIZE : int = 32
+    + SetData(level:LevelData, columnId:int, rowId:int, fillColumns:int, fillRows:int) : void
+    + StartOpening() : void
+    + FinishOpening(sender:object, e:EventArgs) : void
+    + Reset() : void
+    + <<override>> Update(deltaTime:float) : void
+    + <<override>> Draw() : void
+    + DrawAfter() : void
+}
+enum State {
+    INIT= 'I',
+    OPENING= 'O',
+    OPEN= 'N',
+}
+Node <|-- Cell
+Cell o-> "type" CellType
+Cell o-> "kind" EnemyKind
+Cell --> "rect" Rectangle
+Cell --> "Rect" Rectangle
+Cell o-> "state" State
+Cell --> "level" LevelData
+Cell o-> "animation" PeelingCellAnimation
+Cell +-- State
+@enduml

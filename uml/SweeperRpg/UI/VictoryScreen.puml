@@ -1,0 +1,16 @@
+@startuml
+class VictoryScreen {
+    + EnableVictory() : void
+    + <<override>> Input() : void
+    + <<override>> Draw() : void
+}
+enum Option {
+    Next,
+    MainMenu,
+}
+Node <|-- VictoryScreen
+VictoryScreen o-> "backgroundImg" Image
+VictoryScreen o-> "font" Font
+VictoryScreen o-> "option" Option
+VictoryScreen +-- Option
+@enduml

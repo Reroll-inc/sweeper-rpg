@@ -1,0 +1,9 @@
+@startuml
+class ColorJsonConverter {
+    + <<override>> Read(reader:Utf8JsonReader, typeToConvert:System.Type, options:JsonSerializerOptions) : Color
+    + <<override>> Write(writer:Utf8JsonWriter, value:Color, options:JsonSerializerOptions) : void
+}
+class "JsonConverter`1"<T> {
+}
+"JsonConverter`1" "<Color>" <|-- ColorJsonConverter
+@enduml

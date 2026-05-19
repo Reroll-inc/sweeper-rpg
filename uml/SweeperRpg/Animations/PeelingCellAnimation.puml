@@ -1,0 +1,14 @@
+@startuml
+class PeelingCellAnimation {
+    +  <<event>> OnFinish : EventHandler 
+    - progress : float
+    - <<readonly>> sec : float = 1.5f
+    + SetData(point:Point, size:Size) : void
+    + Reset() : void
+    + Update(deltaTime:float) : void
+    + <<override>> Draw(e:PaintEventArgs) : void
+}
+DrawCommand <|-- PeelingCellAnimation
+PeelingCellAnimation --> "point" Point
+PeelingCellAnimation --> "size" Size
+@enduml

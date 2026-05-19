@@ -1,0 +1,17 @@
+@startuml
+class Grid {
+    - <<readonly>> MAX_ROW : int = 16
+    - <<readonly>> MAX_COLUMN : int = 32
+    - lvlRow : int
+    - lvlColumn : int
+    - fillRows : int
+    - fillColumns : int
+    + SetLevel(level:LevelData) : void
+    + Reset() : void
+    + <<override>> Update(deltaTime:float) : void
+    + <<override>> Draw() : void
+    + DrawAfter() : void
+}
+Node <|-- Grid
+Grid --> "level" LevelData
+@enduml

@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Ggenerate UML",
+      "command": "dotnet puml-gen .\\EngineGDI\\Src .\\uml -dir -allInOne -createAssociation",
+      "type": "shell",
+      "args": [],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      },
+      "group": "build"
+    }
+  ]
+}

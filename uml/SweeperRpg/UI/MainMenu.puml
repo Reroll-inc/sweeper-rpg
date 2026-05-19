@@ -1,0 +1,15 @@
+@startuml
+class MainMenu {
+    + <<override>> Input() : void
+    + <<override>> Draw() : void
+}
+enum MenuResult {
+    Play,
+    Exit,
+}
+Node <|-- MainMenu
+MainMenu o-> "font" Font
+MainMenu o-> "menuImg" Image
+MainMenu o-> "result" MenuResult
+MainMenu +-- MenuResult
+@enduml

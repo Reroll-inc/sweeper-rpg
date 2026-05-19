@@ -1,0 +1,16 @@
+@startuml
+class Collisioner {
+    - debugCollisioned : bool
+    + UpdatePosition(position:Point) : void
+    + Reset(position:Point?) : void
+    + OnCollisionIn() : void
+    + OnCollisionOut() : void
+    + CheckCollision(element:Collisioner) : bool
+    + <<override>> Draw() : void
+}
+Node <|-- Collisioner
+Collisioner o-> "rect" Rectangle
+Collisioner --> "Rect" Rectangle
+Collisioner o-> "pen" Pen
+Collisioner o-> "brush" Brush
+@enduml

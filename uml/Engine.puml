@@ -1,0 +1,85 @@
+@startuml
+class Engine <<static>> {
+    + {static} IsWindowOpen : bool <<get>>
+    + {static} Initialize(title:string, width:int, height:int, fullscreen:bool) : void
+    + {static} UpdateWindow() : void
+    + {static} PlaySound(path:string) : void
+    + {static} DrawACommand(command:DrawCommand) : void
+    + {static} DrawImage(texture:Image, x:float, y:float, scaleX:float, scaleY:float, angle:float, offsetX:float, offsetY:float) : void
+    + {static} DrawRect(rect:Rectangle, pen:Pen, brush:Brush) : void
+    + {static} DrawText(text:string, font:Font, brush:Brush, position:Point) : void
+    + {static} DrawCollision(pen:Pen, rect:Rectangle, brush:Brush) : void
+    + {static} Clear(color:Color) : void
+    + {static} OnKeyDown(key:Keys) : bool
+    + {static} OnKeyUp(key:Keys) : bool
+    + {static} IsKeyDown(key:Keys) : bool
+    + {static} IsKeyPressed(key:Keys) : bool
+    + {static} DebugLog(message:string) : void
+    + {static} ClearDebug() : void
+}
+abstract class DrawCommand {
+    + {abstract} Draw(e:PaintEventArgs) : void
+}
+class DrawImageCommand {
+    + X : float
+    + Y : float
+    + ScaleX : float
+    + ScaleY : float
+    + Angle : float
+    + OffsetX : float
+    + OffsetY : float
+    + <<override>> Draw(e:PaintEventArgs) : void
+}
+class DrawRectCommand {
+    + <<override>> Draw(e:PaintEventArgs) : void
+}
+class DrawTextCommand {
+    + text : string
+    + <<override>> Draw(e:PaintEventArgs) : void
+}
+class CollisionCommand {
+}
+class "Dictionary`2"<T1,T2> {
+}
+class "List`1"<T> {
+}
+class "HashSet`1"<T> {
+}
+class GameForm {
+    + GameForm()
+    # <<override>> OnPaint(e:PaintEventArgs) : void
+}
+Engine o-> "sounds<string,SoundPlayer>" "Dictionary`2"
+Engine o-> "drawQueue<DrawCommand>" "List`1"
+Engine o-> "collisionQueue<CollisionCommand>" "List`1"
+Engine --> "window" GameForm
+Engine --> "Window" Form
+Engine o-> "pressedKeys<Keys>" "HashSet`1"
+Engine o-> "handledKeys<Keys>" "HashSet`1"
+Engine o-> "releasedKeys<Keys>" "HashSet`1"
+Engine o-> "handledReleasedKeys<Keys>" "HashSet`1"
+Engine o-> "debugMessages<string>" "List`1"
+Engine o-> "debugFont" Font
+Engine o-> "debugBrush" Brush
+Engine +-- DrawCommand
+Engine +-- DrawImageCommand
+DrawCommand <|-- DrawImageCommand
+DrawImageCommand --> "texture" Image
+Engine +-- DrawRectCommand
+DrawCommand <|-- DrawRectCommand
+DrawRectCommand --> "rect" Rectangle
+DrawRectCommand --> "pen" Pen
+DrawRectCommand --> "brush" Brush
+Engine +-- DrawTextCommand
+DrawCommand <|-- DrawTextCommand
+DrawTextCommand --> "font" Font
+DrawTextCommand --> "brush" Brush
+DrawTextCommand --> "position" Point
+Engine +-- CollisionCommand
+CollisionCommand --> "pen" Pen
+CollisionCommand --> "brush" Brush
+CollisionCommand --> "rect" Rectangle
+Engine +-- GameForm
+Form <|-- GameForm
+GameForm o-> "ClearColor" Color
+@enduml

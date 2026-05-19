@@ -1,0 +1,6 @@
+@startuml
+class TileMap {
+    + {static} Size : int <<get>> = 32
+    + {static} LoadSprite(path:string, row:int, column:int) : Bitmap
+}
+@enduml

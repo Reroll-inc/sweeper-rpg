@@ -1,0 +1,16 @@
+@startuml
+class Program <<static>> {
+    + {static} deltaTime : float
+    + {static} showDebug : bool = true
+    + {static} currentMsg : string = ""
+    + {static} SCREEN_WIDTH : int = 1024
+    + {static} SCREEN_HEIGHT : int = 720
+    - {static} Main() : void
+    - {static} CalcDeltatime() : void
+    - {static} Input() : void
+    - {static} Update() : void
+    - {static} Render() : void
+}
+Program o-> "lastFrameTime" DateTime
+Program o-> "gameManager" GameManager
+@enduml

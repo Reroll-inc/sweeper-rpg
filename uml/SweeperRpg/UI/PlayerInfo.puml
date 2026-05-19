@@ -1,0 +1,8 @@
+@startuml
+class PlayerInfo {
+    + <<override>> Draw() : void
+}
+Node <|-- PlayerInfo
+PlayerInfo o-> "player" Player
+PlayerInfo o-> "font" Font
+@enduml

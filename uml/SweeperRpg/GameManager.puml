@@ -1,0 +1,33 @@
+@startuml
+class GameManager {
+    - level : int
+    - maxLvls : int
+    - GameManager()
+    - ReadLevelCount() : void
+    + OnPlay() : void
+    + OnRetry() : void
+    + OnExit() : void
+    + OnDefeat() : void
+    + OnVictory() : void
+    + NextLevel() : void
+    + OnMainMenu() : void
+    + <<override>> Input() : void
+    + <<override>> Update(deltaTime:float) : void
+    + <<override>> Draw() : void
+}
+enum GameState {
+    MAIN_MENU,
+    PLAYING_LEVEL,
+    VICTORY,
+    DEFEAT,
+    QUIT,
+}
+Node <|-- GameManager
+GameManager o-> "state" GameState
+GameManager o-> "Instance" GameManager
+GameManager o-> "font" Font
+GameManager o-> "levelManager" LevelManager
+GameManager --> "defeat" DefeatScreen
+GameManager --> "victory" VictoryScreen
+GameManager +-- GameState
+@enduml

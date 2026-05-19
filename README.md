@@ -26,6 +26,14 @@ msbuild -t:restore
 
 ## First build with MSBuild
 
-```bash
+```sh
 msbuild /p:Configuration=Debug /p:Platform="Any CPU"
+```
+
+## Generate UML
+
+- VSCode: execute related task.
+
+```sh
+dotnet puml-gen .\\EngineGDI\\Src .\\uml -dir -allInOne -createAssociation
 ```

@@ -1,0 +1,20 @@
+@startuml
+class Player {
+    - <<readonly>> maxHealth : int = 8
+    + Hp : int <<get>>
+    + Player(x:int, y:int)
+    + SetStart(x:int, y:int) : void
+    + Reset() : void
+    + TakeDamage(damage:int) : void
+    + IsDead() : bool
+    + <<override>> Input() : void
+    + <<override>> Draw() : void
+}
+Node <|-- Player
+Player --> "position" Point
+Player --> "Position" Point
+Player --> "positionToUpdate" Point
+Player --> "start" Point
+Player --> "Tile" Image
+Player --> "Collisioner" Collisioner
+@enduml

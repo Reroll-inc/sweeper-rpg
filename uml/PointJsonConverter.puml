@@ -1,0 +1,9 @@
+@startuml
+class PointJsonConverter {
+    + <<override>> Read(reader:Utf8JsonReader, typeToConvert:System.Type, options:JsonSerializerOptions) : Point
+    + <<override>> Write(writer:Utf8JsonWriter, value:Point, options:JsonSerializerOptions) : void
+}
+class "JsonConverter`1"<T> {
+}
+"JsonConverter`1" "<Point>" <|-- PointJsonConverter
+@enduml

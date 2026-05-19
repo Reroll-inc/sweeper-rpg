@@ -1,0 +1,48 @@
+@startuml
+class LevelDataProps {
+}
+class LevelData {
+}
+class LevelManager {
+    - <<readonly>> MAX_ROW : int = 16
+    - <<readonly>> MAX_COLUMN : int = 32
+    - lvlRows : int
+    - lvlColumns : int
+    - fillRows : int
+    - fillColumns : int
+    - LevelManager()
+    + LoadLevel(level:int) : void
+    - CreateLevel() : void
+    + ResetLevel() : void
+    + IsWithinLimits(position:Point) : bool
+    + OnCollision(enemy:Enemy) : void
+    + StartLevel(level:int) : void
+    + Init(font:Font) : void
+    + CheckVictoryCondition() : void
+    + <<override>> Input() : void
+    + <<override>> Update(deltaTime:float) : void
+    + <<override>> Draw() : void
+}
+class "List`1"<T> {
+}
+class "Dictionary`2"<T1,T2> {
+}
+LevelDataProps --> "start" Color
+LevelDataProps --> "end" Color
+LevelDataProps --> "basic" Color
+LevelDataProps --> "lineMesh" Color
+LevelDataProps --> "treasure" Color
+LevelDataProps --> "background" Color
+LevelData --> "props" LevelDataProps
+LevelData --> "grid<List<Cell>>" "List`1"
+Node <|-- LevelManager
+LevelManager o-> "levels<int,LevelData>" "Dictionary`2"
+LevelManager --> "currentLevel" LevelData
+LevelManager o-> "Player" Player
+LevelManager o-> "enemies<Enemy>" "List`1"
+LevelManager --> "ActiveEnemies<Enemy>" "List`1"
+LevelManager o-> "grid" Grid
+LevelManager o-> "collisionManager" CollisionManager
+LevelManager --> "ui" LevelUI
+LevelManager o-> "Instance" LevelManager
+@enduml
