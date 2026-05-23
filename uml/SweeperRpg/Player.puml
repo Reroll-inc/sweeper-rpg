@@ -1,12 +1,16 @@
 @startuml
 class Player {
+    +  <<event>> OnWillMove : PlayerEventWillMove 
+    +  <<event>> OnPlayerDeath : PlayerEventIsDead 
     - <<readonly>> maxHealth : int = 8
     + Hp : int <<get>>
     + Player(x:int, y:int)
     + SetStart(x:int, y:int) : void
     + Reset() : void
     + TakeDamage(damage:int) : void
-    + IsDead() : bool
+    - IsDead() : bool
+    + Move(newPosition:Point) : void
+    + Collide(enemy:Enemy) : bool
     + <<override>> Input() : void
     + <<override>> Draw() : void
 }

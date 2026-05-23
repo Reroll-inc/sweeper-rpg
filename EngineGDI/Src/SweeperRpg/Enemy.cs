@@ -74,8 +74,7 @@ namespace EngineGDI.Src.SweeperRpg
 
             Collisioner = new Collisioner(
                 position: actualPosition,
-                size: new Size(width: 32, height: 32),
-                brushColor: Color.BlanchedAlmond
+                size: new Size(width: 32, height: 32)
             );
         }
 

@@ -1,10 +1,17 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace EngineGDI.Src.SweeperRpg
 {
+    public delegate void PlayerEventWillMove(Point newPosition);
+    public delegate void PlayerEventIsDead();
+
     public class Player : Node
     {
+        public event PlayerEventWillMove OnWillMove;
+        public event PlayerEventIsDead OnPlayerDeath;
+
         private Point position;
         public Point Position => position;
         private Point positionToUpdate;
@@ -25,8 +32,7 @@ namespace EngineGDI.Src.SweeperRpg
 
             Collisioner = new Collisioner(
                 position: position,
-                size: new Size(width: 32, height: 32),
-                brushColor: Color.DarkBlue
+                size: new Size(width: 32, height: 32)
             );
         }
 
@@ -53,57 +59,73 @@ namespace EngineGDI.Src.SweeperRpg
         public void TakeDamage(int damage)
         {
             Hp -= damage;
+
+            if (IsDead())
+            {
+                OnPlayerDeath();
+            }
         }
 
-        public bool IsDead()
+        private bool IsDead()
         {
             return Hp < 0;
+        }
+
+        public void Move(Point newPosition)
+        {
+            position = newPosition;
+            positionToUpdate.X = position.X * 32;
+            positionToUpdate.Y = position.Y * 32;
+
+            Collisioner.UpdatePosition(position: positionToUpdate);
+        }
+
+        public bool Collide(Enemy enemy)
+        {
+            bool DidCollision = Collisioner.CheckCollision(enemy.Collisioner);
+
+            if (DidCollision)
+            {
+                TakeDamage(enemy.Damage);
+
+                if (!IsDead())
+                {
+                    enemy.Defeat();
+                }
+            }
+
+            return DidCollision;
         }
 
         public override void Input()
         {
             bool changed = false;
-            Point prevPosition = new(x: position.X, y: position.Y);
+            Point newPosition = new(x: position.X, y: position.Y);
 
             if (Engine.OnKeyDown(Keys.W))
             {
-                position.Y--;
-
+                newPosition.Y--;
                 changed = true;
             }
             if (Engine.OnKeyDown(Keys.A))
             {
-                position.X--;
+                newPosition.X--;
                 changed = true;
             }
             if (Engine.OnKeyDown(Keys.S))
             {
-                position.Y++;
+                newPosition.Y++;
                 changed = true;
             }
             if (Engine.OnKeyDown(Keys.D))
             {
-                position.X++;
+                newPosition.X++;
                 changed = true;
             }
 
             if (changed)
             {
-                if (LevelManager.Instance.IsWithinLimits(position: position))
-                {
-                    positionToUpdate.X = position.X * 32;
-                    positionToUpdate.Y = position.Y * 32;
-
-                    Collisioner.UpdatePosition(position: positionToUpdate);
-
-                    CollisionManager.ValidateCollitions();
-
-                    LevelManager.Instance.CheckVictoryCondition();
-                }
-                else
-                {
-                    position = prevPosition;
-                }
+                OnWillMove(newPosition: newPosition);
             }
         }
 

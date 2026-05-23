@@ -7,7 +7,6 @@ namespace EngineGDI.Src.SweeperRpg
 {
     public class GameManager : Node
     {
-        // Buscar patron maquina estados
         private enum GameState
         {
             MAIN_MENU,
@@ -42,6 +41,8 @@ namespace EngineGDI.Src.SweeperRpg
             ReadLevelCount();
 
             levelManager.Init(font: font);
+
+            levelManager.OnLose += HandleLose;
         }
 
         private void ReadLevelCount()
@@ -51,7 +52,6 @@ namespace EngineGDI.Src.SweeperRpg
             maxLvls = dir.GetFiles().Length;
         }
 
-        // Custom methods here
         public void OnPlay()
         {
             level = 1;
@@ -71,7 +71,7 @@ namespace EngineGDI.Src.SweeperRpg
             state = GameState.QUIT;
         }
 
-        public void OnDefeat()
+        private void HandleLose()
         {
             state = GameState.DEFEAT;
             defeat.EnableDefeat();

@@ -4,6 +4,8 @@ namespace EngineGDI.Src.SweeperRpg.UI
 {
     public class LevelUI(Font font, Player player) : Node
     {
+        // private static readonly List<DrawCommand> drawQueue = [];
+
         private readonly PlayerInfo playerInfo = new(font: font, player: player);
         private readonly Font font = font;
         private int level;

@@ -7,6 +7,8 @@ using EngineGDI.Src.SweeperRpg.UI;
 
 namespace EngineGDI.Src.SweeperRpg
 {
+    public delegate void LevelEventLose();
+
     public class LevelDataProps
     {
         [JsonConverter(typeof(ColorJsonConverter))]
@@ -36,9 +38,7 @@ namespace EngineGDI.Src.SweeperRpg
 
     public class LevelManager : Node
     {
-        // Quiero renderizar la grilla
-        // Quiero crear los enemigos
-        // Quiero crear el personaje
+        public event LevelEventLose OnLose;
         private readonly Dictionary<int, LevelData> levels = [];
         private LevelData currentLevel;
         private readonly int MAX_ROW = 16;
@@ -49,17 +49,20 @@ namespace EngineGDI.Src.SweeperRpg
         private int fillRows;
         private int fillColumns;
 
-        public Player Player { get; } = new(x: 0, y: 0);
+        private Player Player { get; } = new(x: 0, y: 0);
         private static readonly List<Enemy> enemies = [];
         public static List<Enemy> ActiveEnemies => enemies.FindAll(static enemy => enemy.IsAlive());
         private static readonly Grid grid = new();
-        private static readonly CollisionManager collisionManager = CollisionManager.Instance;
 
         private LevelUI ui;
 
         public static LevelManager Instance { get; } = new LevelManager();
 
-        private LevelManager() { }
+        private LevelManager()
+        {
+            Player.OnWillMove += PlayerWillMoveHandler;
+            Player.OnPlayerDeath += PlayerDeathHandler;
+        }
 
         public void LoadLevel(int level)
         {
@@ -136,26 +139,47 @@ namespace EngineGDI.Src.SweeperRpg
             }
         }
 
-        public bool IsWithinLimits(Point position)
+        private void PlayerDeathHandler()
         {
-            return position.X >= fillColumns
-                && position.X <= (fillColumns + lvlColumns - 1)
-                && position.Y >= fillRows
-                && position.Y <= (fillRows + lvlRows - 1);
+            OnLose();
         }
 
-        public void OnCollision(Enemy enemy)
+        private void PlayerWillMoveHandler(Point position)
         {
-            Player.TakeDamage(enemy.Damage);
+            if (
+                position.X >= fillColumns
+                && position.X <= (fillColumns + lvlColumns - 1)
+                && position.Y >= fillRows
+                && position.Y <= (fillRows + lvlRows - 1)
+            )
+            {
+                Player.Move(position);
 
-            if (Player.IsDead())
-            {
-                // Avisar al GameManager que perdio.
-                GameManager.Instance.OnDefeat();
+                RunCollisions();
+                CheckVictoryCondition();
             }
-            else
+        }
+
+        private void RunCollisions()
+        {
+            foreach (Enemy enemy in ActiveEnemies)
             {
-                enemy.Defeat();
+                if (Player.Collide(enemy))
+                {
+                    return;
+                }
+            }
+        }
+
+        private void CheckVictoryCondition()
+        {
+            CellType playerInCellType = currentLevel
+                .grid[Player.Position.X - fillColumns][Player.Position.Y - fillRows]
+                .type;
+
+            if (playerInCellType == CellType.END)
+            {
+                GameManager.Instance.OnVictory();
             }
         }
 
@@ -176,18 +200,6 @@ namespace EngineGDI.Src.SweeperRpg
             ui = new LevelUI(font: font, player: Player);
         }
 
-        public void CheckVictoryCondition()
-        {
-            if (
-                currentLevel
-                    .grid[Player.Position.X - fillColumns][Player.Position.Y - fillRows]
-                    .type == CellType.END
-            )
-            {
-                GameManager.Instance.OnVictory();
-            }
-        }
-
         public override void Input()
         {
             Player.Input();
@@ -197,8 +209,6 @@ namespace EngineGDI.Src.SweeperRpg
         {
             Player.Update(deltaTime: deltaTime);
             grid.Update(deltaTime: deltaTime);
-
-            collisionManager.Update(deltaTime: deltaTime);
         }
 
         public override void Draw()
@@ -213,8 +223,6 @@ namespace EngineGDI.Src.SweeperRpg
             Player.Draw();
 
             grid.DrawAfter();
-
-            collisionManager.Draw();
 
             ui.Draw();
         }

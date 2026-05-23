@@ -1,28 +1,11 @@
 @startuml
 class Collisioner {
-    - debugCollisioned : bool
     + UpdatePosition(position:Point) : void
     + Reset(position:Point?) : void
-    + OnCollisionIn() : void
-    + OnCollisionOut() : void
     + CheckCollision(element:Collisioner) : bool
-    + <<override>> Draw() : void
 }
-Node <|-- Collisioner
 Collisioner o-> "rect" Rectangle
 Collisioner --> "Rect" Rectangle
-Collisioner o-> "pen" Pen
-Collisioner o-> "brush" Brush
-class CollisionEvent {
-    + <<readonly>> id : string
-}
-class CollisionManager {
-    - CollisionManager()
-    + {static} ValidateCollitions() : void
-    + <<override>> Draw() : void
-}
-Node <|-- CollisionManager
-CollisionManager o-> "Instance" CollisionManager
 class ColorJsonConverter {
     + <<override>> Read(reader:Utf8JsonReader, typeToConvert:System.Type, options:JsonSerializerOptions) : Color
     + <<override>> Write(writer:Utf8JsonWriter, value:Color, options:JsonSerializerOptions) : void
@@ -221,7 +204,7 @@ class GameManager {
     + OnPlay() : void
     + OnRetry() : void
     + OnExit() : void
-    + OnDefeat() : void
+    - HandleLose() : void
     + OnVictory() : void
     + NextLevel() : void
     + OnMainMenu() : void
@@ -264,6 +247,7 @@ class LevelDataProps {
 class LevelData {
 }
 class LevelManager {
+    +  <<event>> OnLose : LevelEventLose 
     - <<readonly>> MAX_ROW : int = 16
     - <<readonly>> MAX_COLUMN : int = 32
     - lvlRows : int
@@ -274,11 +258,12 @@ class LevelManager {
     + LoadLevel(level:int) : void
     - CreateLevel() : void
     + ResetLevel() : void
-    + IsWithinLimits(position:Point) : bool
-    + OnCollision(enemy:Enemy) : void
+    - PlayerDeathHandler() : void
+    - PlayerWillMoveHandler(position:Point) : void
+    - RunCollisions() : void
+    - CheckVictoryCondition() : void
     + StartLevel(level:int) : void
     + Init(font:Font) : void
-    + CheckVictoryCondition() : void
     + <<override>> Input() : void
     + <<override>> Update(deltaTime:float) : void
     + <<override>> Draw() : void
@@ -302,17 +287,20 @@ LevelManager o-> "Player" Player
 LevelManager o-> "enemies<Enemy>" "List`1"
 LevelManager --> "ActiveEnemies<Enemy>" "List`1"
 LevelManager o-> "grid" Grid
-LevelManager o-> "collisionManager" CollisionManager
 LevelManager --> "ui" LevelUI
 LevelManager o-> "Instance" LevelManager
 class Player {
+    +  <<event>> OnWillMove : PlayerEventWillMove 
+    +  <<event>> OnPlayerDeath : PlayerEventIsDead 
     - <<readonly>> maxHealth : int = 8
     + Hp : int <<get>>
     + Player(x:int, y:int)
     + SetStart(x:int, y:int) : void
     + Reset() : void
     + TakeDamage(damage:int) : void
-    + IsDead() : bool
+    - IsDead() : bool
+    + Move(newPosition:Point) : void
+    + Collide(enemy:Enemy) : bool
     + <<override>> Input() : void
     + <<override>> Draw() : void
 }

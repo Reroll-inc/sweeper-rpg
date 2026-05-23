@@ -5,7 +5,6 @@ namespace EngineGDI.Src.SweeperRpg.UI
     public class PlayerInfo(Font font, Player player) : Node
     {
         private readonly Player player = player;
-
         private readonly Font font = font;
 
         public override void Draw()

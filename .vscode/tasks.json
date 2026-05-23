@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Ggenerate UML",
+      "label": "Generate UML",
       "command": "dotnet puml-gen .\\EngineGDI\\Src .\\uml -dir -allInOne -createAssociation",
       "type": "shell",
       "args": [],
