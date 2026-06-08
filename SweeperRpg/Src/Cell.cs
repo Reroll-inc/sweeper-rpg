@@ -1,10 +1,11 @@
 using System;
 using System.Drawing;
 using System.Text.Json.Serialization;
-using EngineGDI.Src.SweeperRpg.Animations;
-using static EngineGDI.Src.SweeperRpg.Enemy;
+using EngineGDI.Src;
+using SweeperRpg.Src.Animations;
+using static SweeperRpg.Src.Enemy;
 
-namespace EngineGDI.Src.SweeperRpg
+namespace SweeperRpg.Src
 {
     public enum CellType
     {

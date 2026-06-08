@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using static EngineGDI.Src.Engine;
 
-namespace EngineGDI.Src.SweeperRpg.Animations
+namespace SweeperRpg.Src.Animations
 {
     public class PeelingCellAnimation : DrawCommand
     {

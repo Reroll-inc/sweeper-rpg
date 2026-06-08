@@ -1,7 +1,8 @@
 using System.Drawing;
 using System.Windows.Forms;
+using EngineGDI.Src;
 
-namespace EngineGDI.Src.SweeperRpg.UI
+namespace SweeperRpg.Src.UI
 {
     public class MainMenu(Font font) : Node
     {

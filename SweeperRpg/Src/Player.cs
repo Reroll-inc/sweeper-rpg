@@ -1,8 +1,8 @@
-using System;
 using System.Drawing;
 using System.Windows.Forms;
+using EngineGDI.Src;
 
-namespace EngineGDI.Src.SweeperRpg
+namespace SweeperRpg.Src
 {
     public delegate void PlayerEventWillMove(Point newPosition);
     public delegate void PlayerEventIsDead();

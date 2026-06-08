@@ -1,9 +1,9 @@
 using System;
 using System.Drawing;
 using System.IO;
-using EngineGDI.Src.SweeperRpg;
+using EngineGDI.Src;
 
-namespace EngineGDI.Src
+namespace SweeperRpg.Src
 {
     internal static class Program
     {

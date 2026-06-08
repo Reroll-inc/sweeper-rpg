@@ -3,8 +3,9 @@ using System.Drawing;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using EngineGDI.Src;
 
-namespace EngineGDI.Src.SweeperRpg
+namespace SweeperRpg.Src
 {
     public class Enemy : Node
     {

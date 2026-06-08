@@ -1,6 +1,5 @@
 @startuml
 class VictoryScreen {
-    + EnableVictory() : void
     + <<override>> Input() : void
     + <<override>> Draw() : void
 }

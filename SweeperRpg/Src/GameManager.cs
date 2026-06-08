@@ -1,9 +1,10 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using EngineGDI.Src.SweeperRpg.UI;
+using EngineGDI.Src;
+using SweeperRpg.Src.UI;
 
-namespace EngineGDI.Src.SweeperRpg
+namespace SweeperRpg.Src
 {
     public class GameManager : Node
     {

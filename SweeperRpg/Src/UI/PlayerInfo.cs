@@ -1,6 +1,7 @@
 using System.Drawing;
+using EngineGDI.Src;
 
-namespace EngineGDI.Src.SweeperRpg.UI
+namespace SweeperRpg.Src.UI
 {
     public class PlayerInfo(Font font, Player player) : Node
     {

@@ -108,20 +108,6 @@ class PointJsonConverter {
 class "JsonConverter`1"<T> {
 }
 "JsonConverter`1" "<Point>" <|-- PointJsonConverter
-class Program <<static>> {
-    + {static} deltaTime : float
-    + {static} showDebug : bool = true
-    + {static} currentMsg : string = ""
-    + {static} SCREEN_WIDTH : int = 1024
-    + {static} SCREEN_HEIGHT : int = 720
-    - {static} Main() : void
-    - {static} CalcDeltatime() : void
-    - {static} Input() : void
-    - {static} Update() : void
-    - {static} Render() : void
-}
-Program o-> "lastFrameTime" DateTime
-Program o-> "gameManager" GameManager
 class TileMap {
     + {static} Size : int <<get>> = 32
     + {static} LoadSprite(path:string, row:int, column:int) : Bitmap
@@ -311,6 +297,20 @@ Player --> "positionToUpdate" Point
 Player --> "start" Point
 Player --> "Tile" Image
 Player --> "Collisioner" Collisioner
+class Program <<static>> {
+    + {static} deltaTime : float
+    + {static} showDebug : bool = true
+    + {static} currentMsg : string = ""
+    + {static} SCREEN_WIDTH : int = 1024
+    + {static} SCREEN_HEIGHT : int = 720
+    - {static} Main() : void
+    - {static} CalcDeltatime() : void
+    - {static} Input() : void
+    - {static} Update() : void
+    - {static} Render() : void
+}
+Program o-> "lastFrameTime" DateTime
+Program o-> "gameManager" GameManager
 class PeelingCellAnimation {
     +  <<event>> OnFinish : EventHandler 
     - progress : float
@@ -365,7 +365,6 @@ Node <|-- PlayerInfo
 PlayerInfo o-> "player" Player
 PlayerInfo o-> "font" Font
 class VictoryScreen {
-    + EnableVictory() : void
     + <<override>> Input() : void
     + <<override>> Draw() : void
 }

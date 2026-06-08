@@ -1,7 +1,8 @@
 using System.Drawing;
 using System.Windows.Forms;
+using EngineGDI.Src;
 
-namespace EngineGDI.Src.SweeperRpg.UI
+namespace SweeperRpg.Src.UI
 {
     public class VictoryScreen(Font font) : Node
     {
@@ -17,11 +18,6 @@ namespace EngineGDI.Src.SweeperRpg.UI
         private readonly Font font = font;
 
         private Option option = Option.Next;
-
-        public void EnableVictory()
-        {
-            option = Option.Next;
-        }
 
         public override void Input()
         {

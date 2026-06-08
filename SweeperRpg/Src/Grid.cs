@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using EngineGDI.Src;
 
-namespace EngineGDI.Src.SweeperRpg
+namespace SweeperRpg.Src
 {
     /**
      * El tamaño de la grilla máxima tiene 16x32 cuadrantes de 32px.
