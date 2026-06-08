@@ -78,7 +78,7 @@ namespace EngineGDI.Src.SweeperRpg
 
         public void Reset()
         {
-            // TODO> This should reset to INIT
+            // TODO: This should reset to INIT
             state = State.OPENING;
 
             animation.Reset();
