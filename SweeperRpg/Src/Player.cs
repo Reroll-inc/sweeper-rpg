@@ -22,10 +22,11 @@ namespace SweeperRpg.Src
 
         public int Hp { get; private set; }
         public Collisioner Collisioner { get; }
+        private Transform transform;
 
         public Player(int x, int y)
         {
-            position = new Point(x: x, y: y);
+            transform.Position = new Vector2(x, y);
             positionToUpdate.X = position.X * 32;
             positionToUpdate.Y = position.Y * 32;
             Tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
