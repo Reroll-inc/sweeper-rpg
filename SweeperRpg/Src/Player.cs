@@ -2,13 +2,14 @@ using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
 using EngineGDI.Src;
+using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src
 {
     public delegate void PlayerEventWillMove(Point newPosition);
     public delegate void PlayerEventIsDead();
 
-    public class Player : Node
+    public class Player : IInteractiveNode
     {
         public event PlayerEventWillMove OnWillMove;
         public event PlayerEventIsDead OnPlayerDeath;
@@ -83,24 +84,20 @@ namespace SweeperRpg.Src
             Collisioner.UpdatePosition(position: positionToUpdate);
         }
 
-        public bool Collide(Enemy enemy)
+        public bool TryCollide(Enemy enemy)
         {
             bool DidCollision = Collisioner.CheckCollision(enemy.Collisioner);
 
             if (DidCollision)
             {
                 TakeDamage(enemy.Damage);
-
-                if (!IsDead())
-                {
-                    enemy.Defeat();
-                }
+                enemy.Defeat();
             }
 
             return DidCollision;
         }
 
-        public override void Input()
+        public void Input()
         {
             bool changed = false;
             Point newPosition = new(x: position.X, y: position.Y);
@@ -132,7 +129,9 @@ namespace SweeperRpg.Src
             }
         }
 
-        public override void Draw()
+        public void Update(float deltaTime) { }
+
+        public void Draw()
         {
             Engine.DrawImage(texture: Tile, x: positionToUpdate.X, y: positionToUpdate.Y);
         }

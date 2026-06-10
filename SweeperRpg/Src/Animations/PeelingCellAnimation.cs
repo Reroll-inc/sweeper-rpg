@@ -2,11 +2,11 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using static EngineGDI.Src.Engine;
+using EngineGDI.Src.Drawing;
 
 namespace SweeperRpg.Src.Animations
 {
-    public class PeelingCellAnimation : DrawCommand
+    public class PeelingCellAnimation : IDrawCommand
     {
         public event EventHandler OnFinish;
         private float progress;
@@ -36,7 +36,7 @@ namespace SweeperRpg.Src.Animations
             }
         }
 
-        public override void Draw(PaintEventArgs e)
+        public void Draw(PaintEventArgs e)
         {
             GraphicsState state = e.Graphics.Save();
 

@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using EngineGDI.Src;
+using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src
 {
     /**
      * El tamaño de la grilla máxima tiene 16x32 cuadrantes de 32px.
      */
-    public class Grid : Node
+    public class Grid : IDynamicNode
     {
         private readonly int MAX_ROW = 16;
         private readonly int MAX_COLUMN = 32;
@@ -66,9 +67,8 @@ namespace SweeperRpg.Src
             }
         }
 
-        public override void Update(float deltaTime)
+        public void Update(float deltaTime)
         {
-            //aca metemos el posible chequeo de colicion con el player
             foreach (List<Cell> row in level.grid)
             {
                 foreach (Cell cell in row)
@@ -78,7 +78,7 @@ namespace SweeperRpg.Src
             }
         }
 
-        public override void Draw()
+        public void Draw()
         {
             // Draw filling cells
             for (int rowId = 0; rowId < MAX_ROW; rowId++)

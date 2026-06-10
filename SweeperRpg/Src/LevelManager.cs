@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using EngineGDI.Src;
+using EngineGDI.Src.Nodes;
 using SweeperRpg.Src.UI;
 
 namespace SweeperRpg.Src
@@ -37,7 +38,7 @@ namespace SweeperRpg.Src
         public List<List<Cell>> grid { get; set; }
     }
 
-    public class LevelManager : Node
+    public class LevelManager : IInteractiveNode
     {
         public event LevelEventLose OnLose;
         private readonly Dictionary<int, LevelData> levels = [];
@@ -165,7 +166,7 @@ namespace SweeperRpg.Src
         {
             foreach (Enemy enemy in ActiveEnemies)
             {
-                if (Player.Collide(enemy))
+                if (Player.TryCollide(enemy))
                 {
                     return;
                 }
@@ -201,18 +202,18 @@ namespace SweeperRpg.Src
             ui = new LevelUI(font: font, player: Player);
         }
 
-        public override void Input()
+        public void Input()
         {
             Player.Input();
         }
 
-        public override void Update(float deltaTime)
+        public void Update(float deltaTime)
         {
             Player.Update(deltaTime: deltaTime);
             grid.Update(deltaTime: deltaTime);
         }
 
-        public override void Draw()
+        public void Draw()
         {
             grid.Draw();
 

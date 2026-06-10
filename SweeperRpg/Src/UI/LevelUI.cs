@@ -1,9 +1,10 @@
 using System.Drawing;
 using EngineGDI.Src;
+using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src.UI
 {
-    public class LevelUI(Font font, Player player) : Node
+    public class LevelUI(Font font, Player player) : ICanvaElement
     {
         private readonly PlayerInfo playerInfo = new(font: font, player: player);
         private readonly Font font = font;
@@ -14,11 +15,13 @@ namespace SweeperRpg.Src.UI
             this.level = level;
         }
 
-        public override void Draw()
+        public void Input() { }
+
+        public void Draw()
         {
             playerInfo.Draw();
 
-            Engine.DrawText($"Level: {level}", font, Brushes.White, new Point(120, 650));
+            Engine.DrawText($"Game level: {level}", font, Brushes.White, new Point(120, 650));
         }
     }
 }

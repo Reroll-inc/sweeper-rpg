@@ -1,10 +1,11 @@
 using System.Drawing;
 using System.Windows.Forms;
 using EngineGDI.Src;
+using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src.UI
 {
-    public class VictoryScreen(Font font) : Node
+    public class VictoryScreen(Font font) : ICanvaElement
     {
         private enum Option
         {
@@ -19,7 +20,7 @@ namespace SweeperRpg.Src.UI
 
         private Option option = Option.Next;
 
-        public override void Input()
+        public void Input()
         {
             if (Engine.OnKeyDown(Keys.W))
             {
@@ -47,7 +48,7 @@ namespace SweeperRpg.Src.UI
             }
         }
 
-        public override void Draw()
+        public void Draw()
         {
             Engine.DrawImage(texture: backgroundImg, x: 0, y: 0);
 

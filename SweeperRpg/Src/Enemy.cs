@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using EngineGDI.Src;
+using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src
 {
@@ -31,7 +32,7 @@ namespace SweeperRpg.Src
         GOBLIN_BOSS_3,
     }
 
-    public class Enemy : Node
+    public class Enemy : IStaticNode
     {
         private enum State
         {
@@ -76,7 +77,6 @@ namespace SweeperRpg.Src
             );
             position = new Point(x: x, y: y);
             actualPosition = new Point(x: position.X * 32, y: position.Y * 32);
-
             Collisioner = new Collisioner(
                 position: actualPosition,
                 size: new Size(width: 32, height: 32)
@@ -111,7 +111,7 @@ namespace SweeperRpg.Src
             return clone;
         }
 
-        public override void Draw()
+        public void Draw()
         {
             Engine.DrawImage(texture: tile, x: actualPosition.X, y: actualPosition.Y);
         }

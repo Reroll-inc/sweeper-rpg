@@ -1,14 +1,17 @@
 using System.Drawing;
 using EngineGDI.Src;
+using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src.UI
 {
-    public class PlayerInfo(Font font, Player player) : Node
+    public class PlayerInfo(Font font, Player player) : ICanvaElement
     {
         private readonly Player player = player;
         private readonly Font font = font;
 
-        public override void Draw()
+        public void Input() { }
+
+        public void Draw()
         {
             Engine.DrawImage(texture: player.Tile, x: 30, y: 600, scaleX: 2, scaleY: 2);
 

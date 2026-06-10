@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Text.Json.Serialization;
 using EngineGDI.Src;
+using EngineGDI.Src.Nodes;
 using SweeperRpg.Src.Animations;
 
 namespace SweeperRpg.Src
@@ -24,7 +25,7 @@ namespace SweeperRpg.Src
         END,
     }
 
-    public class Cell : Node
+    public class Cell : IDynamicNode
     {
         private enum State
         {
@@ -84,7 +85,7 @@ namespace SweeperRpg.Src
             animation.Reset();
         }
 
-        public override void Update(float deltaTime)
+        public void Update(float deltaTime)
         {
             switch (state)
             {
@@ -100,7 +101,7 @@ namespace SweeperRpg.Src
             }
         }
 
-        public override void Draw()
+        public void Draw()
         {
             switch (type)
             {

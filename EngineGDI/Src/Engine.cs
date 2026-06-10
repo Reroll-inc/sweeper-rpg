@@ -1,86 +1,15 @@
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Media;
 using System.Windows.Forms;
+using EngineGDI.Src.Drawing;
 
 namespace EngineGDI.Src
 {
     public static class Engine
     {
-        public abstract class DrawCommand
-        {
-            public abstract void Draw(PaintEventArgs e);
-        }
-
-        private class DrawImageCommand : DrawCommand
-        {
-            public Image texture;
-            public float X,
-                Y,
-                ScaleX,
-                ScaleY;
-            public float Angle,
-                OffsetX,
-                OffsetY;
-
-            public override void Draw(PaintEventArgs e)
-            {
-                float width = texture.Width * ScaleX;
-                float height = texture.Height * ScaleY;
-
-                InterpolationMode prevInterpolation = e.Graphics.InterpolationMode;
-                e.Graphics.TranslateTransform(X, Y);
-                e.Graphics.RotateTransform(Angle);
-
-                e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-                e.Graphics.DrawImage(texture, -OffsetX * width, -OffsetY * height, width, height);
-                e.Graphics.InterpolationMode = prevInterpolation;
-
-                e.Graphics.ResetTransform();
-            }
-        }
-
-        private class DrawRectCommand : DrawCommand
-        {
-            public Rectangle rect;
-            public Pen pen;
-            public Brush brush;
-
-            public override void Draw(PaintEventArgs e)
-            {
-                if (brush is not null)
-                {
-                    e.Graphics.FillRectangle(brush, rect);
-                }
-
-                e.Graphics.DrawRectangle(pen, rect);
-            }
-        }
-
-        private class DrawTextCommand : DrawCommand
-        {
-            public string text;
-            public Font font;
-            public Brush brush;
-            public Point position;
-
-            public override void Draw(PaintEventArgs e)
-            {
-                e.Graphics.DrawString(text, font, brush, position);
-            }
-        }
-
-        private class CollisionCommand
-        {
-            public Pen pen;
-            public Brush brush;
-            public Rectangle rect;
-        }
-
         private static readonly Dictionary<string, SoundPlayer> sounds = [];
-        private static readonly List<DrawCommand> drawQueue = [];
-        private static readonly List<CollisionCommand> collisionQueue = [];
+        private static readonly List<IDrawCommand> drawQueue = [];
         private static GameForm window;
         public static bool IsWindowOpen { get; private set; }
         public static Form Window => window;
@@ -158,7 +87,7 @@ namespace EngineGDI.Src
             value.Play();
         }
 
-        public static void DrawACommand(DrawCommand command)
+        public static void DrawACommand(IDrawCommand command)
         {
             drawQueue.Add(command);
         }
@@ -210,19 +139,6 @@ namespace EngineGDI.Src
                     font = font,
                     brush = brush,
                     position = position,
-                }
-            );
-        }
-
-        public static void DrawCollision(Pen pen, Rectangle rect, Brush brush = null)
-        {
-            // if (debugMessages.i)
-            collisionQueue.Add(
-                new CollisionCommand
-                {
-                    pen = pen,
-                    brush = brush,
-                    rect = rect,
                 }
             );
         }
@@ -288,21 +204,10 @@ namespace EngineGDI.Src
             {
                 base.OnPaint(e);
                 e.Graphics.Clear(ClearColor);
-                foreach (DrawCommand cmd in drawQueue)
+                foreach (IDrawCommand cmd in drawQueue)
                 {
                     cmd.Draw(e);
                 }
-
-                foreach (CollisionCommand collision in collisionQueue)
-                {
-                    if (collision.brush is not null)
-                    {
-                        e.Graphics.FillRectangle(collision.brush, collision.rect);
-                    }
-
-                    e.Graphics.DrawRectangle(collision.pen, collision.rect);
-                }
-                collisionQueue.Clear();
 
                 float debugY = 10;
                 foreach (string msg in debugMessages)

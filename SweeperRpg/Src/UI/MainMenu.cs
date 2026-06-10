@@ -1,10 +1,11 @@
 using System.Drawing;
 using System.Windows.Forms;
 using EngineGDI.Src;
+using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src.UI
 {
-    public class MainMenu(Font font) : Node
+    public class MainMenu(Font font) : ICanvaElement
     {
         private enum MenuResult
         {
@@ -17,7 +18,7 @@ namespace SweeperRpg.Src.UI
 
         private MenuResult result = MenuResult.Play;
 
-        public override void Input()
+        public void Input()
         {
             if (Engine.OnKeyDown(Keys.W))
             {
@@ -45,7 +46,7 @@ namespace SweeperRpg.Src.UI
             }
         }
 
-        public override void Draw()
+        public void Draw()
         {
             Engine.DrawImage(texture: menuImg, x: 0, y: 0);
 

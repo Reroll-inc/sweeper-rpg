@@ -2,11 +2,12 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using EngineGDI.Src;
+using EngineGDI.Src.Nodes;
 using SweeperRpg.Src.UI;
 
 namespace SweeperRpg.Src
 {
-    public class GameManager : Node
+    public class GameManager : IDynamicNode
     {
         private enum GameState
         {
@@ -25,8 +26,8 @@ namespace SweeperRpg.Src
 
         public static GameManager Instance { get; } = new();
         private readonly Font font = new("Assets/Fonts/pixel.ttf", 16);
-        private readonly UI.MainMenu mainMenu;
         private readonly LevelManager levelManager = LevelManager.Instance;
+        private readonly UI.MainMenu mainMenu;
         private readonly DefeatScreen defeat;
         private readonly VictoryScreen victory;
 
@@ -103,7 +104,7 @@ namespace SweeperRpg.Src
             state = GameState.MAIN_MENU;
         }
 
-        public override void Input()
+        public void Input()
         {
             switch (state)
             {
@@ -126,7 +127,7 @@ namespace SweeperRpg.Src
             }
         }
 
-        public override void Update(float deltaTime)
+        public void Update(float deltaTime)
         {
             switch (state)
             {
@@ -148,7 +149,7 @@ namespace SweeperRpg.Src
             }
         }
 
-        public override void Draw()
+        public void Draw()
         {
             switch (state)
             {
