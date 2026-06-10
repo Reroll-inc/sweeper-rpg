@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Numerics;
 using System.Windows.Forms;
 using EngineGDI.Src;
 
@@ -22,11 +23,12 @@ namespace SweeperRpg.Src
 
         public int Hp { get; private set; }
         public Collisioner Collisioner { get; }
-        private Transform transform;
+
+        private readonly Transform transform;
 
         public Player(int x, int y)
         {
-            transform.Position = new Vector2(x, y);
+            transform = new(new Vector2(x, y), 0, new Vector2(1, 1));
             positionToUpdate.X = position.X * 32;
             positionToUpdate.Y = position.Y * 32;
             Tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);

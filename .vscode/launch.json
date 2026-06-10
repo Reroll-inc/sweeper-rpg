@@ -5,7 +5,7 @@
       "name": "Attach to dotnet watch",
       "type": "coreclr",
       "request": "attach",
-      "processName": "EngineGDI",
+      "processName": "SweeperRpg",
       "justMyCode": true
     }
   ]

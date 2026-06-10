@@ -108,7 +108,7 @@ namespace SweeperRpg.Src
                             break;
                         case CellType.ENEMY:
                             enemies.Add(
-                                new Enemy(
+                                EnemyFactory.Create(
                                     x: columnId + fillColumns,
                                     y: rowId + fillRows,
                                     kind: cell.kind.Value

@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Text.Json.Serialization;
 using EngineGDI.Src;
 using SweeperRpg.Src.Animations;
-using static SweeperRpg.Src.Enemy;
 
 namespace SweeperRpg.Src
 {

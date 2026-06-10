@@ -7,36 +7,44 @@ using EngineGDI.Src;
 
 namespace SweeperRpg.Src
 {
+    public enum EnemyKind
+    {
+        [JsonStringEnumMemberName("G_R")]
+        GOBLIN_ROGUE,
+
+        [JsonStringEnumMemberName("G_A")]
+        GOBLIN_ARCHER,
+
+        [JsonStringEnumMemberName("G_M")]
+        GOBLIN_MAGE,
+
+        [JsonStringEnumMemberName("G_C")]
+        GOBLINBARBARIC,
+
+        [JsonStringEnumMemberName("G_B1")]
+        GOBLIN_BOSS_1,
+
+        [JsonStringEnumMemberName("G_B2")]
+        GOBLIN_BOSS_2,
+
+        [JsonStringEnumMemberName("G_B3")]
+        GOBLIN_BOSS_3,
+    }
+
     public class Enemy : Node
     {
-        public enum EnemyKind
-        {
-            [JsonStringEnumMemberName("G_R")]
-            GOBLIN_ROGUE,
-
-            [JsonStringEnumMemberName("G_A")]
-            GOBLIN_ARCHER,
-
-            [JsonStringEnumMemberName("G_M")]
-            GOBLIN_MAGE,
-
-            [JsonStringEnumMemberName("G_C")]
-            GOBLINBARBARIC,
-
-            [JsonStringEnumMemberName("G_B1")]
-            GOBLIN_BOSS_1,
-
-            [JsonStringEnumMemberName("G_B2")]
-            GOBLIN_BOSS_2,
-
-            [JsonStringEnumMemberName("G_B3")]
-            GOBLIN_BOSS_3,
-        }
-
         private enum State
         {
             ALIVE,
             DEAD,
+        }
+
+        private static class DataManager
+        {
+            public static readonly Dictionary<EnemyKind, EnemyData> enemyData =
+                JsonSerializer.Deserialize<Dictionary<EnemyKind, EnemyData>>(
+                    File.ReadAllText("Assets/32rogues/monsters.json")
+                );
         }
 
         private class EnemyData
@@ -49,10 +57,6 @@ namespace SweeperRpg.Src
         private Point position;
         private Point actualPosition;
         private readonly Image tile;
-        private static readonly Dictionary<EnemyKind, EnemyData> enemyData =
-            JsonSerializer.Deserialize<Dictionary<EnemyKind, EnemyData>>(
-                File.ReadAllText("Assets/32rogues/monsters.json")
-            );
 
         public int Damage { get; }
         private State state = State.ALIVE;
@@ -61,7 +65,7 @@ namespace SweeperRpg.Src
 
         public Enemy(int x, int y, EnemyKind kind)
         {
-            _ = enemyData.TryGetValue(kind, out EnemyData data);
+            _ = DataManager.enemyData.TryGetValue(kind, out EnemyData data);
 
             Damage = data.damage;
 
@@ -94,6 +98,17 @@ namespace SweeperRpg.Src
             state = State.ALIVE;
 
             Collisioner.Reset(null);
+        }
+
+        public Enemy Clone(int x, int y)
+        {
+            Enemy clone = (Enemy)MemberwiseClone();
+
+            clone.position = new Point(x: x, y: y);
+            clone.actualPosition = new Point(x: clone.position.X * 32, y: clone.position.Y * 32);
+            clone.Collisioner.UpdatePosition(clone.actualPosition);
+
+            return clone;
         }
 
         public override void Draw()
