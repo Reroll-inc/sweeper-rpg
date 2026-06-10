@@ -14,8 +14,8 @@ class Cell {
     + StartOpening() : void
     + FinishOpening(sender:object, e:EventArgs) : void
     + Reset() : void
-    + <<override>> Update(deltaTime:float) : void
-    + <<override>> Draw() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
     + DrawAfter() : void
 }
 enum State {
@@ -23,7 +23,7 @@ enum State {
     OPENING= 'O',
     OPEN= 'N',
 }
-Node <|-- Cell
+IDynamicNode <|-- Cell
 Cell o-> "type" CellType
 Cell o-> "kind" EnemyKind
 Cell --> "rect" Rectangle

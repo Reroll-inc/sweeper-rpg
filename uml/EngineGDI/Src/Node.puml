@@ -1,7 +1,0 @@
-@startuml
-abstract class Node {
-    + <<virtual>> Input() : void
-    + <<virtual>> Update(deltaTime:float) : void
-    + {abstract} Draw() : void
-}
-@enduml

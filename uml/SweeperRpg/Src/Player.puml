@@ -10,15 +10,17 @@ class Player {
     + TakeDamage(damage:int) : void
     - IsDead() : bool
     + Move(newPosition:Point) : void
-    + Collide(enemy:Enemy) : bool
-    + <<override>> Input() : void
-    + <<override>> Draw() : void
+    + TryCollide(enemy:Enemy) : bool
+    + Input() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
 }
-Node <|-- Player
+IInteractiveNode <|-- Player
 Player --> "position" Point
 Player --> "Position" Point
 Player --> "positionToUpdate" Point
 Player --> "start" Point
 Player --> "Tile" Image
 Player --> "Collisioner" Collisioner
+Player --> "transform" Transform
 @enduml

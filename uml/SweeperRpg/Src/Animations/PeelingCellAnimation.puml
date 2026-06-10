@@ -6,9 +6,9 @@ class PeelingCellAnimation {
     + SetData(point:Point, size:Size) : void
     + Reset() : void
     + Update(deltaTime:float) : void
-    + <<override>> Draw(e:PaintEventArgs) : void
+    + Draw(e:PaintEventArgs) : void
 }
-DrawCommand <|-- PeelingCellAnimation
+IDrawCommand <|-- PeelingCellAnimation
 PeelingCellAnimation --> "point" Point
 PeelingCellAnimation --> "size" Size
 @enduml

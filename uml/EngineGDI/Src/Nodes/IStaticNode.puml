@@ -1,0 +1,5 @@
+@startuml
+interface IStaticNode {
+    + Draw() : void
+}
+@enduml

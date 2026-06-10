@@ -1,0 +1,7 @@
+@startuml
+interface IInteractiveNode {
+    + Input() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
+}
+@enduml

@@ -1,12 +1,4 @@
 @startuml
-class Enemy {
-    + Damage : int <<get>>
-    + Enemy(x:int, y:int, kind:EnemyKind)
-    + Defeat() : void
-    + IsAlive() : bool
-    + Reset() : void
-    + <<override>> Draw() : void
-}
 enum EnemyKind {
     GOBLIN_ROGUE,
     GOBLIN_ARCHER,
@@ -16,24 +8,35 @@ enum EnemyKind {
     GOBLIN_BOSS_2,
     GOBLIN_BOSS_3,
 }
+class Enemy {
+    + Damage : int <<get>>
+    + Enemy(x:int, y:int, kind:EnemyKind)
+    + Defeat() : void
+    + IsAlive() : bool
+    + Reset() : void
+    + Clone(x:int, y:int) : Enemy
+    + Draw() : void
+}
 enum State {
     ALIVE,
     DEAD,
+}
+class DataManager <<static>> {
 }
 class EnemyData {
     + damage : int <<get>> <<set>>
 }
 class "Dictionary`2"<T1,T2> {
 }
-Node <|-- Enemy
+IStaticNode <|-- Enemy
 Enemy --> "position" Point
 Enemy --> "actualPosition" Point
 Enemy --> "tile" Image
-Enemy o-> "enemyData<EnemyKind,EnemyData>" "Dictionary`2"
 Enemy o-> "state" State
 Enemy --> "Collisioner" Collisioner
-Enemy +-- EnemyKind
 Enemy +-- State
+Enemy +-- DataManager
+DataManager o-> "enemyData<EnemyKind,EnemyData>" "Dictionary`2"
 Enemy +-- EnemyData
 EnemyData --> "point" Point
 @enduml

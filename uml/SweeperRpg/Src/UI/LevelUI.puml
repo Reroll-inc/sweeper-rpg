@@ -2,9 +2,10 @@
 class LevelUI {
     - level : int
     + SetLevel(level:int) : void
-    + <<override>> Draw() : void
+    + Input() : void
+    + Draw() : void
 }
-Node <|-- LevelUI
+ICanvaElement <|-- LevelUI
 LevelUI o-> "playerInfo" PlayerInfo
 LevelUI o-> "font" Font
 @enduml

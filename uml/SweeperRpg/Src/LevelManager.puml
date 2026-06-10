@@ -21,9 +21,9 @@ class LevelManager {
     - CheckVictoryCondition() : void
     + StartLevel(level:int) : void
     + Init(font:Font) : void
-    + <<override>> Input() : void
-    + <<override>> Update(deltaTime:float) : void
-    + <<override>> Draw() : void
+    + Input() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
 }
 class "List`1"<T> {
 }
@@ -37,7 +37,7 @@ LevelDataProps --> "treasure" Color
 LevelDataProps --> "background" Color
 LevelData --> "props" LevelDataProps
 LevelData --> "grid<List<Cell>>" "List`1"
-Node <|-- LevelManager
+IInteractiveNode <|-- LevelManager
 LevelManager o-> "levels<int,LevelData>" "Dictionary`2"
 LevelManager --> "currentLevel" LevelData
 LevelManager o-> "Player" Player

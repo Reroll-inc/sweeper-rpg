@@ -1,13 +1,13 @@
 @startuml
 class VictoryScreen {
-    + <<override>> Input() : void
-    + <<override>> Draw() : void
+    + Input() : void
+    + Draw() : void
 }
 enum Option {
     Next,
     MainMenu,
 }
-Node <|-- VictoryScreen
+ICanvaElement <|-- VictoryScreen
 VictoryScreen o-> "backgroundImg" Image
 VictoryScreen o-> "font" Font
 VictoryScreen o-> "option" Option

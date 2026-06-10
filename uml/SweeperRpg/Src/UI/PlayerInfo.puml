@@ -1,8 +1,9 @@
 @startuml
 class PlayerInfo {
-    + <<override>> Draw() : void
+    + Input() : void
+    + Draw() : void
 }
-Node <|-- PlayerInfo
+ICanvaElement <|-- PlayerInfo
 PlayerInfo o-> "player" Player
 PlayerInfo o-> "font" Font
 @enduml

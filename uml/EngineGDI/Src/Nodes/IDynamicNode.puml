@@ -1,0 +1,6 @@
+@startuml
+interface IDynamicNode {
+    + Update(deltaTime:float) : void
+    + Draw() : void
+}
+@enduml

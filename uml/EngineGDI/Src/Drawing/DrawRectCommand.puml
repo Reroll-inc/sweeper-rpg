@@ -1,0 +1,9 @@
+@startuml
+class DrawRectCommand {
+    + Draw(e:PaintEventArgs) : void
+}
+IDrawCommand <|-- DrawRectCommand
+DrawRectCommand --> "rect" Rectangle
+DrawRectCommand --> "pen" Pen
+DrawRectCommand --> "brush" Brush
+@enduml

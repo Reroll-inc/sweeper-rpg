@@ -11,9 +11,9 @@ class GameManager {
     + OnVictory() : void
     + NextLevel() : void
     + OnMainMenu() : void
-    + <<override>> Input() : void
-    + <<override>> Update(deltaTime:float) : void
-    + <<override>> Draw() : void
+    + Input() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
 }
 enum GameState {
     MAIN_MENU,
@@ -22,7 +22,7 @@ enum GameState {
     DEFEAT,
     QUIT,
 }
-Node <|-- GameManager
+IDynamicNode <|-- GameManager
 GameManager o-> "state" GameState
 GameManager o-> "Instance" GameManager
 GameManager o-> "font" Font

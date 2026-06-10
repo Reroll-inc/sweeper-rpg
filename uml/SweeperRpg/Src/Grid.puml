@@ -8,10 +8,10 @@ class Grid {
     - fillColumns : int
     + SetLevel(level:LevelData) : void
     + Reset() : void
-    + <<override>> Update(deltaTime:float) : void
-    + <<override>> Draw() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
     + DrawAfter() : void
 }
-Node <|-- Grid
+IDynamicNode <|-- Grid
 Grid --> "level" LevelData
 @enduml

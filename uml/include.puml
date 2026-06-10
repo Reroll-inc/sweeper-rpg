@@ -18,11 +18,10 @@ class Engine <<static>> {
     + {static} Initialize(title:string, width:int, height:int, fullscreen:bool) : void
     + {static} UpdateWindow() : void
     + {static} PlaySound(path:string) : void
-    + {static} DrawACommand(command:DrawCommand) : void
+    + {static} DrawACommand(command:IDrawCommand) : void
     + {static} DrawImage(texture:Image, x:float, y:float, scaleX:float, scaleY:float, angle:float, offsetX:float, offsetY:float) : void
     + {static} DrawRect(rect:Rectangle, pen:Pen, brush:Brush) : void
     + {static} DrawText(text:string, font:Font, brush:Brush, position:Point) : void
-    + {static} DrawCollision(pen:Pen, rect:Rectangle, brush:Brush) : void
     + {static} Clear(color:Color) : void
     + {static} OnKeyDown(key:Keys) : bool
     + {static} OnKeyUp(key:Keys) : bool
@@ -30,28 +29,6 @@ class Engine <<static>> {
     + {static} IsKeyPressed(key:Keys) : bool
     + {static} DebugLog(message:string) : void
     + {static} ClearDebug() : void
-}
-abstract class DrawCommand {
-    + {abstract} Draw(e:PaintEventArgs) : void
-}
-class DrawImageCommand {
-    + X : float
-    + Y : float
-    + ScaleX : float
-    + ScaleY : float
-    + Angle : float
-    + OffsetX : float
-    + OffsetY : float
-    + <<override>> Draw(e:PaintEventArgs) : void
-}
-class DrawRectCommand {
-    + <<override>> Draw(e:PaintEventArgs) : void
-}
-class DrawTextCommand {
-    + text : string
-    + <<override>> Draw(e:PaintEventArgs) : void
-}
-class CollisionCommand {
 }
 class "Dictionary`2"<T1,T2> {
 }
@@ -64,8 +41,7 @@ class GameForm {
     # <<override>> OnPaint(e:PaintEventArgs) : void
 }
 Engine o-> "sounds<string,SoundPlayer>" "Dictionary`2"
-Engine o-> "drawQueue<DrawCommand>" "List`1"
-Engine o-> "collisionQueue<CollisionCommand>" "List`1"
+Engine o-> "drawQueue<IDrawCommand>" "List`1"
 Engine --> "window" GameForm
 Engine --> "Window" Form
 Engine o-> "pressedKeys<Keys>" "HashSet`1"
@@ -75,32 +51,9 @@ Engine o-> "handledReleasedKeys<Keys>" "HashSet`1"
 Engine o-> "debugMessages<string>" "List`1"
 Engine o-> "debugFont" Font
 Engine o-> "debugBrush" Brush
-Engine +-- DrawCommand
-Engine +-- DrawImageCommand
-DrawCommand <|-- DrawImageCommand
-DrawImageCommand --> "texture" Image
-Engine +-- DrawRectCommand
-DrawCommand <|-- DrawRectCommand
-DrawRectCommand --> "rect" Rectangle
-DrawRectCommand --> "pen" Pen
-DrawRectCommand --> "brush" Brush
-Engine +-- DrawTextCommand
-DrawCommand <|-- DrawTextCommand
-DrawTextCommand --> "font" Font
-DrawTextCommand --> "brush" Brush
-DrawTextCommand --> "position" Point
-Engine +-- CollisionCommand
-CollisionCommand --> "pen" Pen
-CollisionCommand --> "brush" Brush
-CollisionCommand --> "rect" Rectangle
 Engine +-- GameForm
 Form <|-- GameForm
 GameForm o-> "ClearColor" Color
-abstract class Node {
-    + <<virtual>> Input() : void
-    + <<virtual>> Update(deltaTime:float) : void
-    + {abstract} Draw() : void
-}
 class PointJsonConverter {
     + <<override>> Read(reader:Utf8JsonReader, typeToConvert:System.Type, options:JsonSerializerOptions) : Point
     + <<override>> Write(writer:Utf8JsonWriter, value:Point, options:JsonSerializerOptions) : void
@@ -112,6 +65,11 @@ class TileMap {
     + {static} Size : int <<get>> = 32
     + {static} LoadSprite(path:string, row:int, column:int) : Bitmap
 }
+class Transform {
+    + Rotation : float
+}
+Transform o-> "Position" Vector2
+Transform o-> "Scale" Vector2
 enum CellType {
     NULL,
     ENEMY,
@@ -127,8 +85,8 @@ class Cell {
     + StartOpening() : void
     + FinishOpening(sender:object, e:EventArgs) : void
     + Reset() : void
-    + <<override>> Update(deltaTime:float) : void
-    + <<override>> Draw() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
     + DrawAfter() : void
 }
 enum State {
@@ -136,7 +94,7 @@ enum State {
     OPENING= 'O',
     OPEN= 'N',
 }
-Node <|-- Cell
+IDynamicNode <|-- Cell
 Cell o-> "type" CellType
 Cell o-> "kind" EnemyKind
 Cell --> "rect" Rectangle
@@ -145,14 +103,6 @@ Cell o-> "state" State
 Cell --> "level" LevelData
 Cell o-> "animation" PeelingCellAnimation
 Cell +-- State
-class Enemy {
-    + Damage : int <<get>>
-    + Enemy(x:int, y:int, kind:EnemyKind)
-    + Defeat() : void
-    + IsAlive() : bool
-    + Reset() : void
-    + <<override>> Draw() : void
-}
 enum EnemyKind {
     GOBLIN_ROGUE,
     GOBLIN_ARCHER,
@@ -162,26 +112,46 @@ enum EnemyKind {
     GOBLIN_BOSS_2,
     GOBLIN_BOSS_3,
 }
+class Enemy {
+    + Damage : int <<get>>
+    + Enemy(x:int, y:int, kind:EnemyKind)
+    + Defeat() : void
+    + IsAlive() : bool
+    + Reset() : void
+    + Clone(x:int, y:int) : Enemy
+    + Draw() : void
+}
 enum State {
     ALIVE,
     DEAD,
+}
+class DataManager <<static>> {
 }
 class EnemyData {
     + damage : int <<get>> <<set>>
 }
 class "Dictionary`2"<T1,T2> {
 }
-Node <|-- Enemy
+IStaticNode <|-- Enemy
 Enemy --> "position" Point
 Enemy --> "actualPosition" Point
 Enemy --> "tile" Image
-Enemy o-> "enemyData<EnemyKind,EnemyData>" "Dictionary`2"
 Enemy o-> "state" State
 Enemy --> "Collisioner" Collisioner
-Enemy +-- EnemyKind
 Enemy +-- State
+Enemy +-- DataManager
+DataManager o-> "enemyData<EnemyKind,EnemyData>" "Dictionary`2"
 Enemy +-- EnemyData
 EnemyData --> "point" Point
+class EnemyFactory {
+    - EnemyFactory()
+    + {static} Create(x:int, y:int, kind:EnemyKind) : Enemy
+    - RecreatePrototypes() : void
+}
+class "Dictionary`2"<T1,T2> {
+}
+EnemyFactory o-> "EnemyPrototypes<EnemyKind,Enemy>" "Dictionary`2"
+EnemyFactory o-> "Instance" EnemyFactory
 class GameManager {
     - level : int
     - maxLvls : int
@@ -194,9 +164,9 @@ class GameManager {
     + OnVictory() : void
     + NextLevel() : void
     + OnMainMenu() : void
-    + <<override>> Input() : void
-    + <<override>> Update(deltaTime:float) : void
-    + <<override>> Draw() : void
+    + Input() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
 }
 enum GameState {
     MAIN_MENU,
@@ -205,7 +175,7 @@ enum GameState {
     DEFEAT,
     QUIT,
 }
-Node <|-- GameManager
+IDynamicNode <|-- GameManager
 GameManager o-> "state" GameState
 GameManager o-> "Instance" GameManager
 GameManager o-> "font" Font
@@ -222,11 +192,11 @@ class Grid {
     - fillColumns : int
     + SetLevel(level:LevelData) : void
     + Reset() : void
-    + <<override>> Update(deltaTime:float) : void
-    + <<override>> Draw() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
     + DrawAfter() : void
 }
-Node <|-- Grid
+IDynamicNode <|-- Grid
 Grid --> "level" LevelData
 class LevelDataProps {
 }
@@ -250,9 +220,9 @@ class LevelManager {
     - CheckVictoryCondition() : void
     + StartLevel(level:int) : void
     + Init(font:Font) : void
-    + <<override>> Input() : void
-    + <<override>> Update(deltaTime:float) : void
-    + <<override>> Draw() : void
+    + Input() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
 }
 class "List`1"<T> {
 }
@@ -266,7 +236,7 @@ LevelDataProps --> "treasure" Color
 LevelDataProps --> "background" Color
 LevelData --> "props" LevelDataProps
 LevelData --> "grid<List<Cell>>" "List`1"
-Node <|-- LevelManager
+IInteractiveNode <|-- LevelManager
 LevelManager o-> "levels<int,LevelData>" "Dictionary`2"
 LevelManager --> "currentLevel" LevelData
 LevelManager o-> "Player" Player
@@ -286,17 +256,19 @@ class Player {
     + TakeDamage(damage:int) : void
     - IsDead() : bool
     + Move(newPosition:Point) : void
-    + Collide(enemy:Enemy) : bool
-    + <<override>> Input() : void
-    + <<override>> Draw() : void
+    + TryCollide(enemy:Enemy) : bool
+    + Input() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
 }
-Node <|-- Player
+IInteractiveNode <|-- Player
 Player --> "position" Point
 Player --> "Position" Point
 Player --> "positionToUpdate" Point
 Player --> "start" Point
 Player --> "Tile" Image
 Player --> "Collisioner" Collisioner
+Player --> "transform" Transform
 class Program <<static>> {
     + {static} deltaTime : float
     + {static} showDebug : bool = true
@@ -311,6 +283,52 @@ class Program <<static>> {
 }
 Program o-> "lastFrameTime" DateTime
 Program o-> "gameManager" GameManager
+class DrawImageCommand {
+    + X : float
+    + Y : float
+    + ScaleX : float
+    + ScaleY : float
+    + Angle : float
+    + OffsetX : float
+    + OffsetY : float
+    + Draw(e:PaintEventArgs) : void
+}
+IDrawCommand <|-- DrawImageCommand
+DrawImageCommand --> "texture" Image
+class DrawRectCommand {
+    + Draw(e:PaintEventArgs) : void
+}
+IDrawCommand <|-- DrawRectCommand
+DrawRectCommand --> "rect" Rectangle
+DrawRectCommand --> "pen" Pen
+DrawRectCommand --> "brush" Brush
+class DrawTextCommand {
+    + text : string
+    + Draw(e:PaintEventArgs) : void
+}
+IDrawCommand <|-- DrawTextCommand
+DrawTextCommand --> "font" Font
+DrawTextCommand --> "brush" Brush
+DrawTextCommand --> "position" Point
+interface IDrawCommand {
+    + Draw(e:PaintEventArgs) : void
+}
+interface ICanvaElement {
+    + Input() : void
+    + Draw() : void
+}
+interface IDynamicNode {
+    + Update(deltaTime:float) : void
+    + Draw() : void
+}
+interface IInteractiveNode {
+    + Input() : void
+    + Update(deltaTime:float) : void
+    + Draw() : void
+}
+interface IStaticNode {
+    + Draw() : void
+}
 class PeelingCellAnimation {
     +  <<event>> OnFinish : EventHandler 
     - progress : float
@@ -318,21 +336,21 @@ class PeelingCellAnimation {
     + SetData(point:Point, size:Size) : void
     + Reset() : void
     + Update(deltaTime:float) : void
-    + <<override>> Draw(e:PaintEventArgs) : void
+    + Draw(e:PaintEventArgs) : void
 }
-DrawCommand <|-- PeelingCellAnimation
+IDrawCommand <|-- PeelingCellAnimation
 PeelingCellAnimation --> "point" Point
 PeelingCellAnimation --> "size" Size
 class DefeatScreen {
     + EnableDefeat() : void
-    + <<override>> Input() : void
-    + <<override>> Draw() : void
+    + Input() : void
+    + Draw() : void
 }
 enum DefeatResult {
     Retry,
     MainMenu,
 }
-Node <|-- DefeatScreen
+ICanvaElement <|-- DefeatScreen
 DefeatScreen o-> "bgImg" Image
 DefeatScreen o-> "result" DefeatResult
 DefeatScreen o-> "font" Font
@@ -340,39 +358,41 @@ DefeatScreen +-- DefeatResult
 class LevelUI {
     - level : int
     + SetLevel(level:int) : void
-    + <<override>> Draw() : void
+    + Input() : void
+    + Draw() : void
 }
-Node <|-- LevelUI
+ICanvaElement <|-- LevelUI
 LevelUI o-> "playerInfo" PlayerInfo
 LevelUI o-> "font" Font
 class MainMenu {
-    + <<override>> Input() : void
-    + <<override>> Draw() : void
+    + Input() : void
+    + Draw() : void
 }
 enum MenuResult {
     Play,
     Exit,
 }
-Node <|-- MainMenu
+ICanvaElement <|-- MainMenu
 MainMenu o-> "font" Font
 MainMenu o-> "menuImg" Image
 MainMenu o-> "result" MenuResult
 MainMenu +-- MenuResult
 class PlayerInfo {
-    + <<override>> Draw() : void
+    + Input() : void
+    + Draw() : void
 }
-Node <|-- PlayerInfo
+ICanvaElement <|-- PlayerInfo
 PlayerInfo o-> "player" Player
 PlayerInfo o-> "font" Font
 class VictoryScreen {
-    + <<override>> Input() : void
-    + <<override>> Draw() : void
+    + Input() : void
+    + Draw() : void
 }
 enum Option {
     Next,
     MainMenu,
 }
-Node <|-- VictoryScreen
+ICanvaElement <|-- VictoryScreen
 VictoryScreen o-> "backgroundImg" Image
 VictoryScreen o-> "font" Font
 VictoryScreen o-> "option" Option
