@@ -25,3 +25,7 @@ dotnet tool restore
 ```sh
 dotnet puml-gen .\\EngineGDI\\Src .\\uml -dir -allInOne -createAssociation
 ```
+
+## Coverage
+
+![Coverage](docs/coverage.png)
