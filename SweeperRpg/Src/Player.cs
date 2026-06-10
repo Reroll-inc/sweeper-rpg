@@ -57,7 +57,7 @@ namespace SweeperRpg.Src
 
             Hp = maxHealth;
 
-            Collisioner.Reset(positionToUpdate);
+            Collisioner.UpdatePosition(positionToUpdate);
         }
 
         public void TakeDamage(int damage)

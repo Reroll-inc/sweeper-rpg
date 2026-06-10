@@ -62,7 +62,7 @@ namespace SweeperRpg.Src
         public int Damage { get; }
         private State state = State.ALIVE;
 
-        public Collisioner Collisioner { get; }
+        public Collisioner Collisioner { get; private set; }
 
         public Enemy(int x, int y, EnemyKind kind)
         {
@@ -96,8 +96,6 @@ namespace SweeperRpg.Src
         public void Reset()
         {
             state = State.ALIVE;
-
-            Collisioner.Reset(null);
         }
 
         public Enemy Clone(int x, int y)
@@ -106,7 +104,10 @@ namespace SweeperRpg.Src
 
             clone.position = new Point(x: x, y: y);
             clone.actualPosition = new Point(x: clone.position.X * 32, y: clone.position.Y * 32);
-            clone.Collisioner.UpdatePosition(clone.actualPosition);
+            clone.Collisioner = new Collisioner(
+                position: clone.actualPosition,
+                size: new Size(width: 32, height: 32)
+            );
 
             return clone;
         }

@@ -18,18 +18,6 @@ dotnet restore
 dotnet tool restore
 ```
 
-## Restore MSBuild obj configuration
-
-```sh
-msbuild -t:restore
-```
-
-## First build with MSBuild
-
-```sh
-msbuild /p:Configuration=Debug /p:Platform="Any CPU"
-```
-
 ## Generate UML
 
 - VSCode: execute related task.

@@ -12,21 +12,10 @@ namespace EngineGDI.Src
             size: new Size(width: size.Width / 2, height: size.Height / 2)
         );
 
-        public Rectangle Rect => rect;
-
         public void UpdatePosition(Point position)
         {
             rect.X = position.X + (rect.Size.Width / 2);
             rect.Y = position.Y + (rect.Size.Height / 2);
-        }
-
-        public void Reset(Point? position)
-        {
-            if (position.HasValue)
-            {
-                rect.X = position.Value.X + (rect.Size.Width / 2);
-                rect.Y = position.Value.Y + (rect.Size.Height / 2);
-            }
         }
 
         public bool CheckCollision(Collisioner element)

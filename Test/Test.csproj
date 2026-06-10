@@ -23,6 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EngineGDI\EngineGDI.csproj" />
-    <ProjectReference Include="..\EngineGDI\SweeperRpg.csproj" />
+    <ProjectReference Include="..\SweeperRpg\SweeperRpg.csproj" />
   </ItemGroup>
 </Project>
