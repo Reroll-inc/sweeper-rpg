@@ -63,7 +63,7 @@ namespace SweeperRpg.Src
         private LevelManager()
         {
             Player.OnWillMove += PlayerWillMoveHandler;
-            Player.OnPlayerDeath += PlayerDeathHandler;
+            Player.OnDeath += PlayerDeathHandler;
         }
 
         public void LoadLevel(int level)

@@ -12,7 +12,7 @@ namespace SweeperRpg.Src
     public class Player : IInteractiveNode
     {
         public event PlayerEventWillMove OnWillMove;
-        public event PlayerEventIsDead OnPlayerDeath;
+        public event PlayerEventIsDead OnDeath;
 
         private Point position;
         public Point Position => position;
@@ -30,14 +30,13 @@ namespace SweeperRpg.Src
         public Player(int x, int y)
         {
             transform = new(new Vector2(x, y), 0, new Vector2(1, 1));
-            positionToUpdate.X = position.X * 32;
-            positionToUpdate.Y = position.Y * 32;
-            Tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
-
             Collisioner = new Collisioner(
-                position: position,
+                position: new Point(0, 0),
                 size: new Size(width: 32, height: 32)
             );
+            Tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
+
+            SetStart(x: x, y: y);
         }
 
         public void SetStart(int x, int y)
@@ -66,7 +65,7 @@ namespace SweeperRpg.Src
 
             if (IsDead())
             {
-                OnPlayerDeath();
+                OnDeath();
             }
         }
 
