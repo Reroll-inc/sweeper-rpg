@@ -20,4 +20,5 @@ Player --> "start" Point
 Player --> "Tile" Image
 Player --> "Collisioner" Collisioner
 Player --> "Transform" Transform
+Player --> "Renderer" Renderer
 @enduml

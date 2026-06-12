@@ -33,6 +33,7 @@ Enemy --> "Transform" Transform
 Enemy --> "tile" Image
 Enemy o-> "state" State
 Enemy --> "Collisioner" Collisioner
+Enemy --> "Renderer" Renderer
 Enemy +-- State
 Enemy +-- DataManager
 DataManager o-> "enemyData<EnemyKind,EnemyData>" "Dictionary`2"

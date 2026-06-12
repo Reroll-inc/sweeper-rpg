@@ -1,14 +1,8 @@
 @startuml
 class DrawImageCommand {
-    + X : float
-    + Y : float
-    + ScaleX : float
-    + ScaleY : float
-    + Angle : float
-    + OffsetX : float
-    + OffsetY : float
     + Draw(e:PaintEventArgs) : void
 }
 IDrawCommand <|-- DrawImageCommand
-DrawImageCommand --> "texture" Image
+DrawImageCommand o-> "texture" Image
+DrawImageCommand o-> "transform" Transform
 @enduml

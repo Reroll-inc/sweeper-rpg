@@ -1,0 +1,6 @@
+@startuml
+class Renderer {
+    + Draw() : void
+}
+Renderer o-> "Command" IDrawCommand
+@enduml

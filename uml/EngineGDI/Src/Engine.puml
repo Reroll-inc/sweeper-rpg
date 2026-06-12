@@ -5,7 +5,6 @@ class Engine <<static>> {
     + {static} UpdateWindow() : void
     + {static} PlaySound(path:string) : void
     + {static} DrawACommand(command:IDrawCommand) : void
-    + {static} DrawImage(texture:Image, x:float, y:float, scaleX:float, scaleY:float, angle:float, offsetX:float, offsetY:float) : void
     + {static} DrawRect(rect:Rectangle, pen:Pen, brush:Brush) : void
     + {static} DrawText(text:string, font:Font, brush:Brush, position:Point) : void
     + {static} Clear(color:Color) : void

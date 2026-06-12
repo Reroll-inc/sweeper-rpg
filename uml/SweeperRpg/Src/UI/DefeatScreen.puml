@@ -9,7 +9,7 @@ enum DefeatResult {
     MainMenu,
 }
 ICanvaElement <|-- DefeatScreen
-DefeatScreen o-> "bgImg" Image
+DefeatScreen o-> "Renderer" Renderer
 DefeatScreen o-> "result" DefeatResult
 DefeatScreen o-> "font" Font
 DefeatScreen +-- DefeatResult

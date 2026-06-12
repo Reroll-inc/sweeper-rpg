@@ -9,7 +9,7 @@ enum MenuResult {
 }
 ICanvaElement <|-- MainMenu
 MainMenu o-> "font" Font
-MainMenu o-> "menuImg" Image
+MainMenu o-> "Renderer" Renderer
 MainMenu o-> "result" MenuResult
 MainMenu +-- MenuResult
 @enduml

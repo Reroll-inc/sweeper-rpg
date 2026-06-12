@@ -17,7 +17,6 @@ class Engine <<static>> {
     + {static} UpdateWindow() : void
     + {static} PlaySound(path:string) : void
     + {static} DrawACommand(command:IDrawCommand) : void
-    + {static} DrawImage(texture:Image, x:float, y:float, scaleX:float, scaleY:float, angle:float, offsetX:float, offsetY:float) : void
     + {static} DrawRect(rect:Rectangle, pen:Pen, brush:Brush) : void
     + {static} DrawText(text:string, font:Font, brush:Brush, position:Point) : void
     + {static} Clear(color:Color) : void
@@ -59,6 +58,10 @@ class PointJsonConverter {
 class "JsonConverter`1"<T> {
 }
 "JsonConverter`1" "<Point>" <|-- PointJsonConverter
+class Renderer {
+    + Draw() : void
+}
+Renderer o-> "Command" IDrawCommand
 class TileMap {
     + {static} Size : int <<get>> = 32
     + {static} LoadSprite(path:string, row:int, column:int) : Bitmap
@@ -67,6 +70,7 @@ class Transform {
     + Rotation : float
 }
 Transform o-> "Position" Point
+Transform o-> "BaseUnit" Size
 Transform o-> "Scale" Size
 Transform --> "PositionAndScale" Point
 enum CellType {
@@ -135,6 +139,7 @@ Enemy --> "Transform" Transform
 Enemy --> "tile" Image
 Enemy o-> "state" State
 Enemy --> "Collisioner" Collisioner
+Enemy --> "Renderer" Renderer
 Enemy +-- State
 Enemy +-- DataManager
 DataManager o-> "enemyData<EnemyKind,EnemyData>" "Dictionary`2"
@@ -236,6 +241,7 @@ LevelData --> "grid<List<Cell>>" "List`1"
 IInteractiveNode <|-- LevelManager
 LevelManager o-> "levels<int,LevelData>" "Dictionary`2"
 LevelManager --> "currentLevel" LevelData
+LevelManager --> "Renderer" Renderer
 LevelManager o-> "player" Player
 LevelManager o-> "enemies<Enemy>" "List`1"
 LevelManager --> "ActiveEnemies<Enemy>" "List`1"
@@ -263,6 +269,7 @@ Player --> "start" Point
 Player --> "Tile" Image
 Player --> "Collisioner" Collisioner
 Player --> "Transform" Transform
+Player --> "Renderer" Renderer
 class Program <<static>> {
     + {static} deltaTime : float
     + {static} showDebug : bool = true
@@ -278,17 +285,11 @@ class Program <<static>> {
 Program o-> "lastFrameTime" DateTime
 Program o-> "gameManager" GameManager
 class DrawImageCommand {
-    + X : float
-    + Y : float
-    + ScaleX : float
-    + ScaleY : float
-    + Angle : float
-    + OffsetX : float
-    + OffsetY : float
     + Draw(e:PaintEventArgs) : void
 }
 IDrawCommand <|-- DrawImageCommand
-DrawImageCommand --> "texture" Image
+DrawImageCommand o-> "texture" Image
+DrawImageCommand o-> "transform" Transform
 class DrawRectCommand {
     + Draw(e:PaintEventArgs) : void
 }
@@ -344,7 +345,7 @@ enum DefeatResult {
     MainMenu,
 }
 ICanvaElement <|-- DefeatScreen
-DefeatScreen o-> "bgImg" Image
+DefeatScreen o-> "Renderer" Renderer
 DefeatScreen o-> "result" DefeatResult
 DefeatScreen o-> "font" Font
 DefeatScreen +-- DefeatResult
@@ -367,7 +368,7 @@ enum MenuResult {
 }
 ICanvaElement <|-- MainMenu
 MainMenu o-> "font" Font
-MainMenu o-> "menuImg" Image
+MainMenu o-> "Renderer" Renderer
 MainMenu o-> "result" MenuResult
 MainMenu +-- MenuResult
 class PlayerInfo {
@@ -377,6 +378,7 @@ class PlayerInfo {
 ICanvaElement <|-- PlayerInfo
 PlayerInfo o-> "player" Player
 PlayerInfo o-> "font" Font
+PlayerInfo o-> "Renderer" Renderer
 class VictoryScreen {
     + Input() : void
     + Draw() : void
@@ -389,5 +391,6 @@ ICanvaElement <|-- VictoryScreen
 VictoryScreen o-> "backgroundImg" Image
 VictoryScreen o-> "font" Font
 VictoryScreen o-> "option" Option
+VictoryScreen o-> "Renderer" Renderer
 VictoryScreen +-- Option
 @enduml

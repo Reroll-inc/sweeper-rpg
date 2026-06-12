@@ -11,5 +11,6 @@ ICanvaElement <|-- VictoryScreen
 VictoryScreen o-> "backgroundImg" Image
 VictoryScreen o-> "font" Font
 VictoryScreen o-> "option" Option
+VictoryScreen o-> "Renderer" Renderer
 VictoryScreen +-- Option
 @enduml

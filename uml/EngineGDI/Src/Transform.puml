@@ -3,6 +3,7 @@ class Transform {
     + Rotation : float
 }
 Transform o-> "Position" Point
+Transform o-> "BaseUnit" Size
 Transform o-> "Scale" Size
 Transform --> "PositionAndScale" Point
 @enduml
