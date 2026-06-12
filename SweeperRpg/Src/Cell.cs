@@ -54,8 +54,7 @@ namespace SweeperRpg.Src
             this.level = level;
 
             transform = new(position: new(x: columnId + fillColumns, y: rowId + fillRows));
-
-            rect = new(location: transform.PositionAndScale, size: transform.Scale);
+            rect = new(location: transform.PositionAndScale, size: transform.BaseUnit);
 
             animation.SetData(transform: transform);
 

@@ -1,7 +1,6 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using EngineGDI.Src;
 using EngineGDI.Src.Nodes;
 using SweeperRpg.Src.UI;
 

@@ -6,15 +6,15 @@ namespace EngineGDI.Src
     {
         private Rectangle rect = new(
             location: new Point(
-                x: transform.PositionAndScale.X + (transform.Scale.Width / 4),
-                y: transform.PositionAndScale.Y + (transform.Scale.Height / 4)
+                x: transform.PositionAndScale.X + (transform.BaseUnit.Width / 4),
+                y: transform.PositionAndScale.Y + (transform.BaseUnit.Height / 4)
             ),
-            size: transform.Scale / 2
+            size: transform.BaseUnit / 2
         );
 
         public void UpdatePosition(Transform transform)
         {
-            rect.Size = transform.Scale / 2;
+            rect.Size = transform.BaseUnit / 2;
             rect.X = transform.PositionAndScale.X + (rect.Size.Width / 2);
             rect.Y = transform.PositionAndScale.Y + (rect.Size.Height / 2);
         }

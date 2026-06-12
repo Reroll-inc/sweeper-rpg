@@ -51,6 +51,7 @@ namespace SweeperRpg.Src
         private int fillRows;
         private int fillColumns;
 
+        public Renderer Renderer { get; }
         private readonly Player player = new(x: 0, y: 0);
         private static readonly List<Enemy> enemies = [];
         public static List<Enemy> ActiveEnemies => enemies.FindAll(static enemy => enemy.IsAlive());

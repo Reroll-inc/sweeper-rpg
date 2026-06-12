@@ -1,13 +1,19 @@
 using System.Drawing;
 using System.Windows.Forms;
 using EngineGDI.Src;
+using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src.UI
 {
     public class DefeatScreen(Font font) : ICanvaElement
     {
-        private readonly Image bgImg = Image.FromFile("Assets/Imgs/defeat_placeholder.png");
+        private readonly Renderer Renderer = new(
+            new DrawImageCommand(
+                texture: Image.FromFile("Assets/Imgs/defeat_placeholder.png"),
+                transform: new(position: new(x: 0, y: 0))
+            )
+        );
 
         private enum DefeatResult
         {
@@ -54,7 +60,7 @@ namespace SweeperRpg.Src.UI
 
         public void Draw()
         {
-            Engine.DrawImage(texture: bgImg, x: 0, y: 0);
+            Renderer.Draw();
 
             string retryText = (result == DefeatResult.Retry) ? "> Retry" : " Retry";
             string menuText = (result == DefeatResult.MainMenu) ? "> Main Menu" : " Main Menu";

@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using EngineGDI.Src;
+using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src
@@ -62,6 +63,7 @@ namespace SweeperRpg.Src
         private State state = State.ALIVE;
 
         public Collisioner Collisioner { get; private set; }
+        private Renderer Renderer;
 
         public Enemy(int x, int y, EnemyKind kind)
         {
@@ -76,6 +78,7 @@ namespace SweeperRpg.Src
             );
             Transform = new(position: new(x: x, y: y));
             Collisioner = new Collisioner(transform: Transform);
+            Renderer = new(new DrawImageCommand(texture: tile, transform: Transform));
         }
 
         public void Defeat()
@@ -99,17 +102,14 @@ namespace SweeperRpg.Src
 
             clone.Transform = new(position: new(x: x, y: y));
             clone.Collisioner = new Collisioner(transform: clone.Transform);
+            clone.Renderer = new(new DrawImageCommand(texture: tile, transform: clone.Transform));
 
             return clone;
         }
 
         public void Draw()
         {
-            Engine.DrawImage(
-                texture: tile,
-                x: Transform.PositionAndScale.X,
-                y: Transform.PositionAndScale.Y
-            );
+            Renderer.Draw();
         }
     }
 }

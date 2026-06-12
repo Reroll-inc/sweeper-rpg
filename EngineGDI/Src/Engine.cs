@@ -92,32 +92,6 @@ namespace EngineGDI.Src
             drawQueue.Add(command);
         }
 
-        public static void DrawImage(
-            Image texture,
-            float x,
-            float y,
-            float scaleX = 1f,
-            float scaleY = 1f,
-            float angle = 0f,
-            float offsetX = 0f,
-            float offsetY = 0f
-        )
-        {
-            drawQueue.Add(
-                new DrawImageCommand
-                {
-                    texture = texture,
-                    X = x,
-                    Y = y,
-                    ScaleX = scaleX,
-                    ScaleY = scaleY,
-                    Angle = angle,
-                    OffsetX = offsetX,
-                    OffsetY = offsetY,
-                }
-            );
-        }
-
         public static void DrawRect(Rectangle rect, Pen pen, Brush brush = null)
         {
             drawQueue.Add(

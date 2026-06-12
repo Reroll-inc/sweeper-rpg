@@ -1,7 +1,7 @@
 using System.Drawing;
-using System.Numerics;
 using System.Windows.Forms;
 using EngineGDI.Src;
+using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src
@@ -23,12 +23,14 @@ namespace SweeperRpg.Src
         public Collisioner Collisioner { get; }
 
         public Transform Transform { get; }
+        private readonly Renderer Renderer;
 
         public Player(int x, int y)
         {
-            Transform = new(position: new Point(x, y));
-            Collisioner = new Collisioner(transform: Transform);
             Tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
+            Transform = new(position: new Point(x, y));
+            Renderer = new(command: new DrawImageCommand(texture: Tile, transform: Transform));
+            Collisioner = new Collisioner(transform: Transform);
 
             SetStart(x: x, y: y);
         }
@@ -123,11 +125,7 @@ namespace SweeperRpg.Src
 
         public void Draw()
         {
-            Engine.DrawImage(
-                texture: Tile,
-                x: Transform.PositionAndScale.X,
-                y: Transform.PositionAndScale.Y
-            );
+            Renderer.Draw();
         }
     }
 }

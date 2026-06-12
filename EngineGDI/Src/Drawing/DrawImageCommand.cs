@@ -4,28 +4,26 @@ using System.Windows.Forms;
 
 namespace EngineGDI.Src.Drawing
 {
-    public class DrawImageCommand : IDrawCommand
+    public class DrawImageCommand(Image texture, Transform transform) : IDrawCommand
     {
-        public Image texture;
-        public float X,
-            Y,
-            ScaleX,
-            ScaleY;
-        public float Angle,
-            OffsetX,
-            OffsetY;
+        public Image texture = texture;
+        private readonly Transform transform = transform;
 
         public void Draw(PaintEventArgs e)
         {
-            float width = texture.Width * ScaleX;
-            float height = texture.Height * ScaleY;
+            float width = texture.Width * transform.Scale.Width;
+            float height = texture.Height * transform.Scale.Height;
 
             InterpolationMode prevInterpolation = e.Graphics.InterpolationMode;
-            e.Graphics.TranslateTransform(X, Y);
-            e.Graphics.RotateTransform(Angle);
 
             e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-            e.Graphics.DrawImage(texture, -OffsetX * width, -OffsetY * height, width, height);
+            e.Graphics.DrawImage(
+                texture,
+                transform.PositionAndScale.X,
+                transform.PositionAndScale.Y,
+                width,
+                height
+            );
             e.Graphics.InterpolationMode = prevInterpolation;
 
             e.Graphics.ResetTransform();

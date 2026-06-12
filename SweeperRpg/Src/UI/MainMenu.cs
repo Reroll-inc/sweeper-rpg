@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using EngineGDI.Src;
+using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src.UI
@@ -14,7 +15,12 @@ namespace SweeperRpg.Src.UI
         }
 
         private readonly Font font = font;
-        private readonly Image menuImg = Image.FromFile("Assets/Imgs/retro_main_menu.png");
+        private readonly Renderer Renderer = new(
+            new DrawImageCommand(
+                texture: Image.FromFile("Assets/Imgs/retro_main_menu.png"),
+                transform: new(position: new(x: 0, y: 0))
+            )
+        );
 
         private MenuResult result = MenuResult.Play;
 
@@ -48,7 +54,7 @@ namespace SweeperRpg.Src.UI
 
         public void Draw()
         {
-            Engine.DrawImage(texture: menuImg, x: 0, y: 0);
+            Renderer.Draw();
 
             string playText = (result == MenuResult.Play) ? "> Play" : " Play";
             string exitText = (result == MenuResult.Exit) ? "> Exit" : " Exit";

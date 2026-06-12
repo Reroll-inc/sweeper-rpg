@@ -39,7 +39,7 @@ namespace SweeperRpg.Src.Animations
         {
             GraphicsState state = e.Graphics.Save();
 
-            int withHeight = transform.Scale.Width;
+            int withHeight = transform.BaseUnit.Width;
             int cutSize = (int)(withHeight * progress) / 50;
 
             GraphicsPath path = new();
@@ -76,7 +76,7 @@ namespace SweeperRpg.Src.Animations
 
             e.Graphics.FillRectangle(
                 new SolidBrush(Color.Green),
-                new Rectangle(location: transform.PositionAndScale, size: transform.Scale)
+                new Rectangle(location: transform.PositionAndScale, size: transform.BaseUnit)
             );
 
             e.Graphics.Restore(state);

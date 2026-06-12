@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using EngineGDI.Src;
+using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src.UI
@@ -19,6 +20,13 @@ namespace SweeperRpg.Src.UI
         private readonly Font font = font;
 
         private Option option = Option.Next;
+
+        private readonly Renderer Renderer = new(
+            new DrawImageCommand(
+                texture: Image.FromFile("Assets/Imgs/victory_Placeholder.png"),
+                transform: new(position: new(x: 0, y: 0))
+            )
+        );
 
         public void Input()
         {
@@ -50,7 +58,7 @@ namespace SweeperRpg.Src.UI
 
         public void Draw()
         {
-            Engine.DrawImage(texture: backgroundImg, x: 0, y: 0);
+            Renderer.Draw();
 
             string retryText = (option == Option.Next) ? "> Next level" : " Next Level";
             string menuText = (option == Option.MainMenu) ? "> Main Menu" : " Main Menu";
