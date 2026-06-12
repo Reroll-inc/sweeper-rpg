@@ -41,10 +41,9 @@ namespace SweeperRpg.Src
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public EnemyKind? kind { get; set; } = null;
         public int currency { get; set; }
-        public static readonly int SIZE = 32;
 
         private Rectangle rect;
-        public Rectangle Rect => rect;
+        private Transform transform;
 
         private State state = State.OPENING;
         private LevelData level;
@@ -54,15 +53,11 @@ namespace SweeperRpg.Src
         {
             this.level = level;
 
-            Point point = new(
-                x: (columnId * SIZE) + (fillColumns * SIZE),
-                y: (rowId * SIZE) + (fillRows * SIZE)
-            );
-            Size size = new(SIZE, SIZE);
+            transform = new(position: new(x: columnId + fillColumns, y: rowId + fillRows));
 
-            rect = new Rectangle(location: point, size: size);
+            rect = new(location: transform.PositionAndScale, size: transform.Scale);
 
-            animation.SetData(point: point, size: size);
+            animation.SetData(transform: transform);
 
             animation.OnFinish += FinishOpening;
         }
@@ -107,21 +102,21 @@ namespace SweeperRpg.Src
             {
                 case CellType.COIN:
                     Engine.DrawRect(
-                        rect: Rect,
+                        rect: rect,
                         pen: new Pen(level.props.lineMesh),
                         brush: new SolidBrush(level.props.treasure)
                     );
                     return;
                 case CellType.START:
                     Engine.DrawRect(
-                        rect: Rect,
+                        rect: rect,
                         pen: new Pen(level.props.lineMesh),
                         brush: new SolidBrush(level.props.start)
                     );
                     return;
                 case CellType.END:
                     Engine.DrawRect(
-                        rect: Rect,
+                        rect: rect,
                         pen: new Pen(level.props.lineMesh),
                         brush: new SolidBrush(level.props.end)
                     );
@@ -135,7 +130,7 @@ namespace SweeperRpg.Src
             }
 
             Engine.DrawRect(
-                rect: Rect,
+                rect: rect,
                 pen: new Pen(level.props.lineMesh),
                 brush: new SolidBrush(level.props.basic)
             );

@@ -1,7 +1,7 @@
 @startuml
 class Player {
     +  <<event>> OnWillMove : PlayerEventWillMove 
-    +  <<event>> OnPlayerDeath : PlayerEventIsDead 
+    +  <<event>> OnDeath : PlayerEventIsDead 
     - <<readonly>> maxHealth : int = 8
     + Hp : int <<get>>
     + Player(x:int, y:int)
@@ -16,11 +16,8 @@ class Player {
     + Draw() : void
 }
 IInteractiveNode <|-- Player
-Player --> "position" Point
-Player --> "Position" Point
-Player --> "positionToUpdate" Point
 Player --> "start" Point
 Player --> "Tile" Image
 Player --> "Collisioner" Collisioner
-Player --> "transform" Transform
+Player --> "Transform" Transform
 @enduml

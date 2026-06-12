@@ -9,7 +9,6 @@ enum CellType {
 class Cell {
     + id : string <<get>> <<set>>
     + currency : int <<get>> <<set>>
-    + {static} <<readonly>> SIZE : int = 32
     + SetData(level:LevelData, columnId:int, rowId:int, fillColumns:int, fillRows:int) : void
     + StartOpening() : void
     + FinishOpening(sender:object, e:EventArgs) : void
@@ -27,7 +26,7 @@ IDynamicNode <|-- Cell
 Cell o-> "type" CellType
 Cell o-> "kind" EnemyKind
 Cell --> "rect" Rectangle
-Cell --> "Rect" Rectangle
+Cell --> "transform" Transform
 Cell o-> "state" State
 Cell --> "level" LevelData
 Cell o-> "animation" PeelingCellAnimation

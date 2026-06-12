@@ -1,9 +1,7 @@
 @startuml
 class Collisioner {
-    + UpdatePosition(position:Point) : void
-    + Reset(position:Point?) : void
+    + UpdatePosition(transform:Transform) : void
     + CheckCollision(element:Collisioner) : bool
 }
 Collisioner o-> "rect" Rectangle
-Collisioner --> "Rect" Rectangle
 @enduml

@@ -2,6 +2,7 @@
 class Transform {
     + Rotation : float
 }
-Transform o-> "Position" Vector2
-Transform o-> "Scale" Vector2
+Transform o-> "Position" Point
+Transform o-> "Scale" Size
+Transform --> "PositionAndScale" Point
 @enduml

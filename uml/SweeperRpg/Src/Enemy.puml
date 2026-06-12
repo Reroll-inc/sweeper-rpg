@@ -29,8 +29,7 @@ class EnemyData {
 class "Dictionary`2"<T1,T2> {
 }
 IStaticNode <|-- Enemy
-Enemy --> "position" Point
-Enemy --> "actualPosition" Point
+Enemy --> "Transform" Transform
 Enemy --> "tile" Image
 Enemy o-> "state" State
 Enemy --> "Collisioner" Collisioner

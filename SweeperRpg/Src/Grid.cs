@@ -87,8 +87,8 @@ namespace SweeperRpg.Src
                 {
                     Engine.DrawRect(
                         rect: new Rectangle(
-                            location: new Point(x: columnId * Cell.SIZE, y: rowId * Cell.SIZE),
-                            size: new Size(width: Cell.SIZE, height: Cell.SIZE)
+                            location: new Point(x: columnId * 32, y: rowId * 32),
+                            size: new Size(width: 32, height: 32)
                         ),
                         pen: new Pen(level.props.background),
                         brush: new SolidBrush(level.props.background)

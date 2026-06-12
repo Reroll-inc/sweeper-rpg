@@ -1,11 +1,9 @@
 @startuml
 class Collisioner {
-    + UpdatePosition(position:Point) : void
-    + Reset(position:Point?) : void
+    + UpdatePosition(transform:Transform) : void
     + CheckCollision(element:Collisioner) : bool
 }
 Collisioner o-> "rect" Rectangle
-Collisioner --> "Rect" Rectangle
 class ColorJsonConverter {
     + <<override>> Read(reader:Utf8JsonReader, typeToConvert:System.Type, options:JsonSerializerOptions) : Color
     + <<override>> Write(writer:Utf8JsonWriter, value:Color, options:JsonSerializerOptions) : void
@@ -68,8 +66,9 @@ class TileMap {
 class Transform {
     + Rotation : float
 }
-Transform o-> "Position" Vector2
-Transform o-> "Scale" Vector2
+Transform o-> "Position" Point
+Transform o-> "Scale" Size
+Transform --> "PositionAndScale" Point
 enum CellType {
     NULL,
     ENEMY,
@@ -80,7 +79,6 @@ enum CellType {
 class Cell {
     + id : string <<get>> <<set>>
     + currency : int <<get>> <<set>>
-    + {static} <<readonly>> SIZE : int = 32
     + SetData(level:LevelData, columnId:int, rowId:int, fillColumns:int, fillRows:int) : void
     + StartOpening() : void
     + FinishOpening(sender:object, e:EventArgs) : void
@@ -98,7 +96,7 @@ IDynamicNode <|-- Cell
 Cell o-> "type" CellType
 Cell o-> "kind" EnemyKind
 Cell --> "rect" Rectangle
-Cell --> "Rect" Rectangle
+Cell --> "transform" Transform
 Cell o-> "state" State
 Cell --> "level" LevelData
 Cell o-> "animation" PeelingCellAnimation
@@ -133,8 +131,7 @@ class EnemyData {
 class "Dictionary`2"<T1,T2> {
 }
 IStaticNode <|-- Enemy
-Enemy --> "position" Point
-Enemy --> "actualPosition" Point
+Enemy --> "Transform" Transform
 Enemy --> "tile" Image
 Enemy o-> "state" State
 Enemy --> "Collisioner" Collisioner
@@ -239,7 +236,7 @@ LevelData --> "grid<List<Cell>>" "List`1"
 IInteractiveNode <|-- LevelManager
 LevelManager o-> "levels<int,LevelData>" "Dictionary`2"
 LevelManager --> "currentLevel" LevelData
-LevelManager o-> "Player" Player
+LevelManager o-> "player" Player
 LevelManager o-> "enemies<Enemy>" "List`1"
 LevelManager --> "ActiveEnemies<Enemy>" "List`1"
 LevelManager o-> "grid" Grid
@@ -247,7 +244,7 @@ LevelManager --> "ui" LevelUI
 LevelManager o-> "Instance" LevelManager
 class Player {
     +  <<event>> OnWillMove : PlayerEventWillMove 
-    +  <<event>> OnPlayerDeath : PlayerEventIsDead 
+    +  <<event>> OnDeath : PlayerEventIsDead 
     - <<readonly>> maxHealth : int = 8
     + Hp : int <<get>>
     + Player(x:int, y:int)
@@ -262,13 +259,10 @@ class Player {
     + Draw() : void
 }
 IInteractiveNode <|-- Player
-Player --> "position" Point
-Player --> "Position" Point
-Player --> "positionToUpdate" Point
 Player --> "start" Point
 Player --> "Tile" Image
 Player --> "Collisioner" Collisioner
-Player --> "transform" Transform
+Player --> "Transform" Transform
 class Program <<static>> {
     + {static} deltaTime : float
     + {static} showDebug : bool = true
@@ -333,14 +327,13 @@ class PeelingCellAnimation {
     +  <<event>> OnFinish : EventHandler 
     - progress : float
     - <<readonly>> sec : float = 1.5f
-    + SetData(point:Point, size:Size) : void
+    + SetData(transform:Transform) : void
     + Reset() : void
     + Update(deltaTime:float) : void
     + Draw(e:PaintEventArgs) : void
 }
 IDrawCommand <|-- PeelingCellAnimation
-PeelingCellAnimation --> "point" Point
-PeelingCellAnimation --> "size" Size
+PeelingCellAnimation --> "transform" Transform
 class DefeatScreen {
     + EnableDefeat() : void
     + Input() : void

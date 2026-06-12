@@ -40,7 +40,7 @@ LevelData --> "grid<List<Cell>>" "List`1"
 IInteractiveNode <|-- LevelManager
 LevelManager o-> "levels<int,LevelData>" "Dictionary`2"
 LevelManager --> "currentLevel" LevelData
-LevelManager o-> "Player" Player
+LevelManager o-> "player" Player
 LevelManager o-> "enemies<Enemy>" "List`1"
 LevelManager --> "ActiveEnemies<Enemy>" "List`1"
 LevelManager o-> "grid" Grid

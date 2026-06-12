@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using EngineGDI.Src;
 using EngineGDI.Src.Drawing;
 
 namespace SweeperRpg.Src.Animations
@@ -12,13 +13,11 @@ namespace SweeperRpg.Src.Animations
         private float progress;
         private readonly float sec = 1.5f;
 
-        private Point point;
-        private Size size;
+        private Transform transform;
 
-        public void SetData(Point point, Size size)
+        public void SetData(Transform transform)
         {
-            this.point = point;
-            this.size = size;
+            this.transform = transform;
         }
 
         public void Reset()
@@ -40,7 +39,7 @@ namespace SweeperRpg.Src.Animations
         {
             GraphicsState state = e.Graphics.Save();
 
-            int withHeight = size.Width;
+            int withHeight = transform.Scale.Width;
             int cutSize = (int)(withHeight * progress) / 50;
 
             GraphicsPath path = new();
@@ -48,11 +47,26 @@ namespace SweeperRpg.Src.Animations
             path.AddPolygon(
                 points:
                 [
-                    new Point(x: point.X + cutSize, y: point.Y),
-                    new Point(x: point.X + withHeight, y: point.Y),
-                    new Point(x: point.X + withHeight, y: point.Y + withHeight),
-                    new Point(x: point.X, y: point.Y + withHeight),
-                    new Point(x: point.X, y: point.Y + cutSize),
+                    new Point(
+                        x: transform.PositionAndScale.X + cutSize,
+                        y: transform.PositionAndScale.Y
+                    ),
+                    new Point(
+                        x: transform.PositionAndScale.X + withHeight,
+                        y: transform.PositionAndScale.Y
+                    ),
+                    new Point(
+                        x: transform.PositionAndScale.X + withHeight,
+                        y: transform.PositionAndScale.Y + withHeight
+                    ),
+                    new Point(
+                        x: transform.PositionAndScale.X,
+                        y: transform.PositionAndScale.Y + withHeight
+                    ),
+                    new Point(
+                        x: transform.PositionAndScale.X,
+                        y: transform.PositionAndScale.Y + cutSize
+                    ),
                 ]
             );
 
@@ -62,7 +76,7 @@ namespace SweeperRpg.Src.Animations
 
             e.Graphics.FillRectangle(
                 new SolidBrush(Color.Green),
-                new Rectangle(location: point, size: size)
+                new Rectangle(location: transform.PositionAndScale, size: transform.Scale)
             );
 
             e.Graphics.Restore(state);

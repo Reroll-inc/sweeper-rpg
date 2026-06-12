@@ -3,12 +3,11 @@ class PeelingCellAnimation {
     +  <<event>> OnFinish : EventHandler 
     - progress : float
     - <<readonly>> sec : float = 1.5f
-    + SetData(point:Point, size:Size) : void
+    + SetData(transform:Transform) : void
     + Reset() : void
     + Update(deltaTime:float) : void
     + Draw(e:PaintEventArgs) : void
 }
 IDrawCommand <|-- PeelingCellAnimation
-PeelingCellAnimation --> "point" Point
-PeelingCellAnimation --> "size" Size
+PeelingCellAnimation --> "transform" Transform
 @enduml

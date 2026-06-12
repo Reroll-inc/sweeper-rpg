@@ -51,19 +51,19 @@ namespace SweeperRpg.Src
         private int fillRows;
         private int fillColumns;
 
-        private Player Player { get; } = new(x: 0, y: 0);
+        private readonly Player player = new(x: 0, y: 0);
         private static readonly List<Enemy> enemies = [];
         public static List<Enemy> ActiveEnemies => enemies.FindAll(static enemy => enemy.IsAlive());
         private static readonly Grid grid = new();
 
         private LevelUI ui;
 
-        public static LevelManager Instance { get; } = new LevelManager();
+        public static readonly LevelManager Instance = new();
 
         private LevelManager()
         {
-            Player.OnWillMove += PlayerWillMoveHandler;
-            Player.OnDeath += PlayerDeathHandler;
+            player.OnWillMove += PlayerWillMoveHandler;
+            player.OnDeath += PlayerDeathHandler;
         }
 
         public void LoadLevel(int level)
@@ -117,7 +117,7 @@ namespace SweeperRpg.Src
                             );
                             break;
                         case CellType.START:
-                            Player.SetStart(x: columnId + fillColumns, y: rowId + fillRows);
+                            player.SetStart(x: columnId + fillColumns, y: rowId + fillRows);
                             continue;
                         case CellType.END:
                             continue;
@@ -132,7 +132,7 @@ namespace SweeperRpg.Src
 
         public void ResetLevel()
         {
-            Player.Reset();
+            player.Reset();
             grid.Reset();
 
             foreach (Enemy enemy in enemies)
@@ -155,7 +155,7 @@ namespace SweeperRpg.Src
                 && position.Y <= (fillRows + lvlRows - 1)
             )
             {
-                Player.Move(position);
+                player.Move(position);
 
                 RunCollisions();
                 CheckVictoryCondition();
@@ -166,7 +166,7 @@ namespace SweeperRpg.Src
         {
             foreach (Enemy enemy in ActiveEnemies)
             {
-                if (Player.TryCollide(enemy))
+                if (player.TryCollide(enemy))
                 {
                     return;
                 }
@@ -176,7 +176,9 @@ namespace SweeperRpg.Src
         private void CheckVictoryCondition()
         {
             CellType playerInCellType = currentLevel
-                .grid[Player.Position.X - fillColumns][Player.Position.Y - fillRows]
+                .grid[player.Transform.Position.X - fillColumns][
+                    player.Transform.Position.Y - fillRows
+                ]
                 .type;
 
             if (playerInCellType == CellType.END)
@@ -199,17 +201,17 @@ namespace SweeperRpg.Src
 
         public void Init(Font font)
         {
-            ui = new LevelUI(font: font, player: Player);
+            ui = new LevelUI(font: font, player: player);
         }
 
         public void Input()
         {
-            Player.Input();
+            player.Input();
         }
 
         public void Update(float deltaTime)
         {
-            Player.Update(deltaTime: deltaTime);
+            player.Update(deltaTime: deltaTime);
             grid.Update(deltaTime: deltaTime);
         }
 
@@ -222,7 +224,7 @@ namespace SweeperRpg.Src
                 enemy.Draw();
             }
 
-            Player.Draw();
+            player.Draw();
 
             grid.DrawAfter();
 

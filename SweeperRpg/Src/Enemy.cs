@@ -55,8 +55,7 @@ namespace SweeperRpg.Src
             public int damage { get; set; }
         }
 
-        private Point position;
-        private Point actualPosition;
+        public Transform Transform { get; private set; }
         private readonly Image tile;
 
         public int Damage { get; }
@@ -75,12 +74,8 @@ namespace SweeperRpg.Src
                 row: data.point.X,
                 column: data.point.Y
             );
-            position = new Point(x: x, y: y);
-            actualPosition = new Point(x: position.X * 32, y: position.Y * 32);
-            Collisioner = new Collisioner(
-                position: actualPosition,
-                size: new Size(width: 32, height: 32)
-            );
+            Transform = new(position: new(x: x, y: y));
+            Collisioner = new Collisioner(transform: Transform);
         }
 
         public void Defeat()
@@ -102,19 +97,19 @@ namespace SweeperRpg.Src
         {
             Enemy clone = (Enemy)MemberwiseClone();
 
-            clone.position = new Point(x: x, y: y);
-            clone.actualPosition = new Point(x: clone.position.X * 32, y: clone.position.Y * 32);
-            clone.Collisioner = new Collisioner(
-                position: clone.actualPosition,
-                size: new Size(width: 32, height: 32)
-            );
+            clone.Transform = new(position: new(x: x, y: y));
+            clone.Collisioner = new Collisioner(transform: clone.Transform);
 
             return clone;
         }
 
         public void Draw()
         {
-            Engine.DrawImage(texture: tile, x: actualPosition.X, y: actualPosition.Y);
+            Engine.DrawImage(
+                texture: tile,
+                x: Transform.PositionAndScale.X,
+                y: Transform.PositionAndScale.Y
+            );
         }
     }
 }

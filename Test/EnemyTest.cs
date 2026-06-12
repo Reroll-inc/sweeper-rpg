@@ -28,6 +28,7 @@ namespace Test
             Enemy clone = enemy.Clone(x: 2, y: 2);
 
             Assert.False(enemy.Equals(clone));
+            Assert.False(enemy.Transform.Equals(clone.Transform));
             Assert.False(enemy.Collisioner.Equals(clone.Collisioner));
             Assert.False(enemy.Collisioner.CheckCollision(clone.Collisioner));
         }

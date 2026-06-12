@@ -14,9 +14,6 @@ namespace SweeperRpg.Src
         public event PlayerEventWillMove OnWillMove;
         public event PlayerEventIsDead OnDeath;
 
-        private Point position;
-        public Point Position => position;
-        private Point positionToUpdate;
         private Point start;
 
         public Image Tile { get; }
@@ -25,15 +22,12 @@ namespace SweeperRpg.Src
         public int Hp { get; private set; }
         public Collisioner Collisioner { get; }
 
-        private readonly Transform transform;
+        public Transform Transform { get; }
 
         public Player(int x, int y)
         {
-            transform = new(new Vector2(x, y), 0, new Vector2(1, 1));
-            Collisioner = new Collisioner(
-                position: new Point(0, 0),
-                size: new Size(width: 32, height: 32)
-            );
+            Transform = new(position: new Point(x, y));
+            Collisioner = new Collisioner(transform: Transform);
             Tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
 
             SetStart(x: x, y: y);
@@ -49,14 +43,12 @@ namespace SweeperRpg.Src
 
         public void Reset()
         {
-            position.X = start.X;
-            position.Y = start.Y;
-            positionToUpdate.X = position.X * 32;
-            positionToUpdate.Y = position.Y * 32;
+            Transform.Position.X = start.X;
+            Transform.Position.Y = start.Y;
 
             Hp = maxHealth;
 
-            Collisioner.UpdatePosition(positionToUpdate);
+            Collisioner.UpdatePosition(transform: Transform);
         }
 
         public void TakeDamage(int damage)
@@ -76,11 +68,10 @@ namespace SweeperRpg.Src
 
         public void Move(Point newPosition)
         {
-            position = newPosition;
-            positionToUpdate.X = position.X * 32;
-            positionToUpdate.Y = position.Y * 32;
+            Transform.Position.X = newPosition.X;
+            Transform.Position.Y = newPosition.Y;
 
-            Collisioner.UpdatePosition(position: positionToUpdate);
+            Collisioner.UpdatePosition(transform: Transform);
         }
 
         public bool TryCollide(Enemy enemy)
@@ -99,7 +90,7 @@ namespace SweeperRpg.Src
         public void Input()
         {
             bool changed = false;
-            Point newPosition = new(x: position.X, y: position.Y);
+            Point newPosition = new(x: Transform.Position.X, y: Transform.Position.Y);
 
             if (Engine.OnKeyDown(Keys.W))
             {
@@ -132,7 +123,11 @@ namespace SweeperRpg.Src
 
         public void Draw()
         {
-            Engine.DrawImage(texture: Tile, x: positionToUpdate.X, y: positionToUpdate.Y);
+            Engine.DrawImage(
+                texture: Tile,
+                x: Transform.PositionAndScale.X,
+                y: Transform.PositionAndScale.Y
+            );
         }
     }
 }

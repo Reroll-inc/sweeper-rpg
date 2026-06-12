@@ -2,20 +2,21 @@ using System.Drawing;
 
 namespace EngineGDI.Src
 {
-    public class Collisioner(Point position, Size size)
+    public class Collisioner(Transform transform)
     {
         private Rectangle rect = new(
             location: new Point(
-                x: position.X + (size.Width / 4),
-                y: position.Y + (size.Height / 4)
+                x: transform.PositionAndScale.X + (transform.Scale.Width / 4),
+                y: transform.PositionAndScale.Y + (transform.Scale.Height / 4)
             ),
-            size: new Size(width: size.Width / 2, height: size.Height / 2)
+            size: transform.Scale / 2
         );
 
-        public void UpdatePosition(Point position)
+        public void UpdatePosition(Transform transform)
         {
-            rect.X = position.X + (rect.Size.Width / 2);
-            rect.Y = position.Y + (rect.Size.Height / 2);
+            rect.Size = transform.Scale / 2;
+            rect.X = transform.PositionAndScale.X + (rect.Size.Width / 2);
+            rect.Y = transform.PositionAndScale.Y + (rect.Size.Height / 2);
         }
 
         public bool CheckCollision(Collisioner element)

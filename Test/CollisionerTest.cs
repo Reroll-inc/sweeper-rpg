@@ -9,14 +9,14 @@ namespace Test
         [Fact]
         public void ShouldCollideOrNotAsExpected()
         {
-            Collisioner collisionerOne = new(position: new Point(1, 1), size: new Size(2, 2));
-            Collisioner collisionerTwo = new(position: new Point(1, 1), size: new Size(2, 2));
+            Collisioner collisionerOne = new(transform: new(position: new(1, 1)));
+            Collisioner collisionerTwo = new(transform: new(position: new(1, 1)));
 
-            Assert.True(collisionerOne.CheckCollision(collisionerTwo));
+            Assert.True(collisionerOne.CheckCollision(element: collisionerTwo));
 
-            collisionerTwo.UpdatePosition(position: new Point(10, 10));
+            collisionerTwo.UpdatePosition(transform: new(position: new(2, 2)));
 
-            Assert.False(collisionerOne.CheckCollision(collisionerTwo));
+            Assert.False(collisionerOne.CheckCollision(element: collisionerTwo));
         }
     }
 }

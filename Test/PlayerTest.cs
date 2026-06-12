@@ -46,13 +46,13 @@ namespace Test
 
             player.Move(new Point(x: 2, y: 3));
 
-            Assert.Equal(2, player.Position.X);
-            Assert.Equal(3, player.Position.Y);
+            Assert.Equal(2, player.Transform.Position.X);
+            Assert.Equal(3, player.Transform.Position.Y);
 
             player.SetStart(x: 5, y: 7);
 
-            Assert.Equal(5, player.Position.X);
-            Assert.Equal(7, player.Position.Y);
+            Assert.Equal(5, player.Transform.Position.X);
+            Assert.Equal(7, player.Transform.Position.Y);
         }
 
         private void ShouldNotifyWillToMove()
