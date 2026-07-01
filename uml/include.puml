@@ -163,7 +163,7 @@ class GameManager {
     + OnRetry() : void
     + OnExit() : void
     - HandleLose() : void
-    + OnVictory() : void
+    + HandleVictory() : void
     + NextLevel() : void
     + OnMainMenu() : void
     + Input() : void
@@ -186,14 +186,17 @@ GameManager --> "defeat" DefeatScreen
 GameManager --> "victory" VictoryScreen
 GameManager +-- GameState
 class Grid {
-    - <<readonly>> MAX_ROW : int = 16
-    - <<readonly>> MAX_COLUMN : int = 32
-    - lvlRow : int
-    - lvlColumn : int
+    +  <<event>> OnWin : LevelEventWin 
+    + <<const>> MAX_ROW : int = 16
+    + <<const>> MAX_COLUMN : int = 32
+    - lvlRows : int
+    - lvlColumns : int
     - fillRows : int
     - fillColumns : int
-    + SetLevel(level:LevelData) : void
+    + GenerateLevel(level:LevelData, enemies:List<Enemy>, player:Player) : void
     + Reset() : void
+    + PlayerCanMove(position:Point) : bool
+    + CheckIfPlayerWon(player:Player) : void
     + Update(deltaTime:float) : void
     + Draw() : void
     + DrawAfter() : void
@@ -203,32 +206,9 @@ Grid --> "level" LevelData
 class LevelDataProps {
 }
 class LevelData {
-}
-class LevelManager {
-    +  <<event>> OnLose : LevelEventLose 
-    - <<readonly>> MAX_ROW : int = 16
-    - <<readonly>> MAX_COLUMN : int = 32
-    - lvlRows : int
-    - lvlColumns : int
-    - fillRows : int
-    - fillColumns : int
-    - LevelManager()
-    + LoadLevel(level:int) : void
-    - CreateLevel() : void
-    + ResetLevel() : void
-    - PlayerDeathHandler() : void
-    - PlayerWillMoveHandler(position:Point) : void
-    - RunCollisions() : void
-    - CheckVictoryCondition() : void
-    + StartLevel(level:int) : void
-    + Init(font:Font) : void
-    + Input() : void
-    + Update(deltaTime:float) : void
-    + Draw() : void
+    + Reset() : void
 }
 class "List`1"<T> {
-}
-class "Dictionary`2"<T1,T2> {
 }
 LevelDataProps --> "start" Color
 LevelDataProps --> "end" Color
@@ -238,9 +218,28 @@ LevelDataProps --> "treasure" Color
 LevelDataProps --> "background" Color
 LevelData --> "props" LevelDataProps
 LevelData --> "grid<List<Cell>>" "List`1"
-IInteractiveNode <|-- LevelManager
+class LevelManager {
+    +  <<event>> OnLose : LevelEventLose 
+    +  <<event>> OnWin : LevelEventWin 
+    - LevelManager()
+    - LoadLevel(level:int) : LevelData
+    + ResetLevel() : void
+    - PlayerDeathHandler() : void
+    - PlayerWillMoveHandler(position:Point) : void
+    - RunCollisions() : void
+    - CheckVictoryCondition() : void
+    + StartLevel(level:int) : void
+    + Init(font:Font) : void
+    + <<override>> Input() : void
+    + <<override>> Update(deltaTime:float) : void
+    + <<override>> Draw() : void
+}
+class "Dictionary`2"<T1,T2> {
+}
+class "List`1"<T> {
+}
+InteractiveNode <|-- LevelManager
 LevelManager o-> "levels<int,LevelData>" "Dictionary`2"
-LevelManager --> "currentLevel" LevelData
 LevelManager --> "Renderer" Renderer
 LevelManager o-> "player" Player
 LevelManager o-> "enemies<Enemy>" "List`1"
@@ -260,11 +259,10 @@ class Player {
     - IsDead() : bool
     + Move(newPosition:Point) : void
     + TryCollide(enemy:Enemy) : bool
-    + Input() : void
-    + Update(deltaTime:float) : void
-    + Draw() : void
+    + <<override>> Input() : void
+    + <<override>> Draw() : void
 }
-IInteractiveNode <|-- Player
+InteractiveNode <|-- Player
 Player --> "start" Point
 Player --> "Tile" Image
 Player --> "Collisioner" Collisioner
@@ -316,10 +314,10 @@ interface IDynamicNode {
     + Update(deltaTime:float) : void
     + Draw() : void
 }
-interface IInteractiveNode {
-    + Input() : void
-    + Update(deltaTime:float) : void
-    + Draw() : void
+abstract class InteractiveNode {
+    + {abstract} Input() : void
+    + <<virtual>> Update(deltaTime:float) : void
+    + {abstract} Draw() : void
 }
 interface IStaticNode {
     + Draw() : void

@@ -11,11 +11,10 @@ class Player {
     - IsDead() : bool
     + Move(newPosition:Point) : void
     + TryCollide(enemy:Enemy) : bool
-    + Input() : void
-    + Update(deltaTime:float) : void
-    + Draw() : void
+    + <<override>> Input() : void
+    + <<override>> Draw() : void
 }
-IInteractiveNode <|-- Player
+InteractiveNode <|-- Player
 Player --> "start" Point
 Player --> "Tile" Image
 Player --> "Collisioner" Collisioner

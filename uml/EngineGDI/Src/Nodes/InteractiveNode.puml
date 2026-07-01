@@ -1,0 +1,7 @@
+@startuml
+abstract class InteractiveNode {
+    + {abstract} Input() : void
+    + <<virtual>> Update(deltaTime:float) : void
+    + {abstract} Draw() : void
+}
+@enduml

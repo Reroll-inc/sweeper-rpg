@@ -44,6 +44,7 @@ namespace SweeperRpg.Src
             levelManager.Init(font: font);
 
             levelManager.OnLose += HandleLose;
+            levelManager.OnWin += HandleVictory;
         }
 
         private void ReadLevelCount()
@@ -78,7 +79,7 @@ namespace SweeperRpg.Src
             defeat.EnableDefeat();
         }
 
-        public void OnVictory()
+        public void HandleVictory()
         {
             state = GameState.VICTORY;
         }

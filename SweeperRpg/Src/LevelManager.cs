@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using EngineGDI.Src;
 using EngineGDI.Src.Nodes;
 using SweeperRpg.Src.UI;
@@ -10,46 +9,14 @@ using SweeperRpg.Src.UI;
 namespace SweeperRpg.Src
 {
     public delegate void LevelEventLose();
+    public delegate void LevelEventWin();
 
-    public class LevelDataProps
-    {
-        [JsonConverter(typeof(ColorJsonConverter))]
-        public Color start { get; set; }
-
-        [JsonConverter(typeof(ColorJsonConverter))]
-        public Color end { get; set; }
-
-        [JsonConverter(typeof(ColorJsonConverter))]
-        public Color basic { get; set; }
-
-        [JsonConverter(typeof(ColorJsonConverter))]
-        public Color lineMesh { get; set; }
-
-        [JsonConverter(typeof(ColorJsonConverter))]
-        public Color treasure { get; set; }
-
-        [JsonConverter(typeof(ColorJsonConverter))]
-        public Color background { get; set; }
-    }
-
-    public class LevelData
-    {
-        public LevelDataProps props { get; set; }
-        public List<List<Cell>> grid { get; set; }
-    }
-
-    public class LevelManager : IInteractiveNode
+    public class LevelManager : InteractiveNode
     {
         public event LevelEventLose OnLose;
-        private readonly Dictionary<int, LevelData> levels = [];
-        private LevelData currentLevel;
-        private readonly int MAX_ROW = 16;
-        private readonly int MAX_COLUMN = 32;
+        public event LevelEventWin OnWin;
 
-        private int lvlRows;
-        private int lvlColumns;
-        private int fillRows;
-        private int fillColumns;
+        private readonly Dictionary<int, LevelData> levels = [];
 
         public Renderer Renderer { get; }
         private readonly Player player = new(x: 0, y: 0);
@@ -65,70 +32,24 @@ namespace SweeperRpg.Src
         {
             player.OnWillMove += PlayerWillMoveHandler;
             player.OnDeath += PlayerDeathHandler;
+            grid.OnWin += CheckVictoryCondition;
         }
 
-        public void LoadLevel(int level)
+        private LevelData LoadLevel(int level)
         {
-            if (levels.TryGetValue(key: level, out currentLevel))
+            if (levels.TryGetValue(key: level, out LevelData currentLevel))
             {
-                return;
+                currentLevel.Reset();
+
+                return currentLevel;
             }
 
             string jsonContent = File.ReadAllText($"Assets/Levels/{level}.json");
             currentLevel = JsonSerializer.Deserialize<LevelData>(jsonContent);
 
             levels.Add(level, currentLevel);
-        }
 
-        private void CreateLevel()
-        {
-            lvlRows = currentLevel.grid.Count;
-            lvlColumns = currentLevel.grid[0].Count;
-
-            if (lvlRows > 16 || lvlColumns > 32)
-            {
-                throw new System.Exception(
-                    $"Level size is [{lvlRows},{lvlColumns}] which is bigger than [16,32]"
-                );
-            }
-
-            fillRows = (MAX_ROW - lvlRows) / 2;
-            fillColumns = (MAX_COLUMN - lvlColumns) / 2;
-
-            for (int rowId = 0; rowId < lvlRows; rowId++)
-            {
-                List<Cell> row = currentLevel.grid[rowId];
-
-                for (int columnId = 0; columnId < row.Count; columnId++)
-                {
-                    Cell cell = row[columnId];
-
-                    switch (cell.type)
-                    {
-                        case CellType.COIN:
-                            //si la celda alguna moneda, los dibujamos :)
-                            break;
-                        case CellType.ENEMY:
-                            enemies.Add(
-                                EnemyFactory.Create(
-                                    x: columnId + fillColumns,
-                                    y: rowId + fillRows,
-                                    kind: cell.kind.Value
-                                )
-                            );
-                            break;
-                        case CellType.START:
-                            player.SetStart(x: columnId + fillColumns, y: rowId + fillRows);
-                            continue;
-                        case CellType.END:
-                            continue;
-                        case CellType.NULL:
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
+            return currentLevel;
         }
 
         public void ResetLevel()
@@ -149,14 +70,10 @@ namespace SweeperRpg.Src
 
         private void PlayerWillMoveHandler(Point position)
         {
-            if (
-                position.X >= fillColumns
-                && position.X <= (fillColumns + lvlColumns - 1)
-                && position.Y >= fillRows
-                && position.Y <= (fillRows + lvlRows - 1)
-            )
+            if (grid.PlayerCanMove(position: position))
             {
                 player.Move(position);
+                grid.CheckIfPlayerWon(player: player);
 
                 RunCollisions();
                 CheckVictoryCondition();
@@ -176,26 +93,15 @@ namespace SweeperRpg.Src
 
         private void CheckVictoryCondition()
         {
-            CellType playerInCellType = currentLevel
-                .grid[player.Transform.Position.X - fillColumns][
-                    player.Transform.Position.Y - fillRows
-                ]
-                .type;
-
-            if (playerInCellType == CellType.END)
-            {
-                GameManager.Instance.OnVictory();
-            }
+            OnWin();
         }
 
         public void StartLevel(int level)
         {
             enemies.Clear();
-            LoadLevel(level);
+            LevelData currentLevel = LoadLevel(level);
 
-            grid.SetLevel(currentLevel);
-
-            CreateLevel();
+            grid.GenerateLevel(level: currentLevel, enemies: enemies, player: player);
 
             ui.SetLevel(level);
         }
@@ -205,18 +111,18 @@ namespace SweeperRpg.Src
             ui = new LevelUI(font: font, player: player);
         }
 
-        public void Input()
+        public override void Input()
         {
             player.Input();
         }
 
-        public void Update(float deltaTime)
+        public override void Update(float deltaTime)
         {
             player.Update(deltaTime: deltaTime);
             grid.Update(deltaTime: deltaTime);
         }
 
-        public void Draw()
+        public override void Draw()
         {
             grid.Draw();
 

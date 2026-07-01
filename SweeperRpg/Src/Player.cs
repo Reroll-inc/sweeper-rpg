@@ -9,7 +9,7 @@ namespace SweeperRpg.Src
     public delegate void PlayerEventWillMove(Point newPosition);
     public delegate void PlayerEventIsDead();
 
-    public class Player : IInteractiveNode
+    public class Player : InteractiveNode
     {
         public event PlayerEventWillMove OnWillMove;
         public event PlayerEventIsDead OnDeath;
@@ -89,7 +89,7 @@ namespace SweeperRpg.Src
             return DidCollision;
         }
 
-        public void Input()
+        public override void Input()
         {
             bool changed = false;
             Point newPosition = new(x: Transform.Position.X, y: Transform.Position.Y);
@@ -121,9 +121,7 @@ namespace SweeperRpg.Src
             }
         }
 
-        public void Update(float deltaTime) { }
-
-        public void Draw()
+        public override void Draw()
         {
             Renderer.Draw();
         }

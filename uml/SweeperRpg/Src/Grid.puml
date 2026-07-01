@@ -1,13 +1,16 @@
 @startuml
 class Grid {
-    - <<readonly>> MAX_ROW : int = 16
-    - <<readonly>> MAX_COLUMN : int = 32
-    - lvlRow : int
-    - lvlColumn : int
+    +  <<event>> OnWin : LevelEventWin 
+    + <<const>> MAX_ROW : int = 16
+    + <<const>> MAX_COLUMN : int = 32
+    - lvlRows : int
+    - lvlColumns : int
     - fillRows : int
     - fillColumns : int
-    + SetLevel(level:LevelData) : void
+    + GenerateLevel(level:LevelData, enemies:List<Enemy>, player:Player) : void
     + Reset() : void
+    + PlayerCanMove(position:Point) : bool
+    + CheckIfPlayerWon(player:Player) : void
     + Update(deltaTime:float) : void
     + Draw() : void
     + DrawAfter() : void

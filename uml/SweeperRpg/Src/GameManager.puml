@@ -8,7 +8,7 @@ class GameManager {
     + OnRetry() : void
     + OnExit() : void
     - HandleLose() : void
-    + OnVictory() : void
+    + HandleVictory() : void
     + NextLevel() : void
     + OnMainMenu() : void
     + Input() : void

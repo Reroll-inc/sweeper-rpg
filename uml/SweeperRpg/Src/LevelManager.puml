@@ -1,19 +1,9 @@
 @startuml
-class LevelDataProps {
-}
-class LevelData {
-}
 class LevelManager {
     +  <<event>> OnLose : LevelEventLose 
-    - <<readonly>> MAX_ROW : int = 16
-    - <<readonly>> MAX_COLUMN : int = 32
-    - lvlRows : int
-    - lvlColumns : int
-    - fillRows : int
-    - fillColumns : int
+    +  <<event>> OnWin : LevelEventWin 
     - LevelManager()
-    + LoadLevel(level:int) : void
-    - CreateLevel() : void
+    - LoadLevel(level:int) : LevelData
     + ResetLevel() : void
     - PlayerDeathHandler() : void
     - PlayerWillMoveHandler(position:Point) : void
@@ -21,25 +11,16 @@ class LevelManager {
     - CheckVictoryCondition() : void
     + StartLevel(level:int) : void
     + Init(font:Font) : void
-    + Input() : void
-    + Update(deltaTime:float) : void
-    + Draw() : void
-}
-class "List`1"<T> {
+    + <<override>> Input() : void
+    + <<override>> Update(deltaTime:float) : void
+    + <<override>> Draw() : void
 }
 class "Dictionary`2"<T1,T2> {
 }
-LevelDataProps --> "start" Color
-LevelDataProps --> "end" Color
-LevelDataProps --> "basic" Color
-LevelDataProps --> "lineMesh" Color
-LevelDataProps --> "treasure" Color
-LevelDataProps --> "background" Color
-LevelData --> "props" LevelDataProps
-LevelData --> "grid<List<Cell>>" "List`1"
-IInteractiveNode <|-- LevelManager
+class "List`1"<T> {
+}
+InteractiveNode <|-- LevelManager
 LevelManager o-> "levels<int,LevelData>" "Dictionary`2"
-LevelManager --> "currentLevel" LevelData
 LevelManager --> "Renderer" Renderer
 LevelManager o-> "player" Player
 LevelManager o-> "enemies<Enemy>" "List`1"

@@ -1,4 +1,3 @@
-using System.Drawing;
 using EngineGDI.Src;
 using Xunit;
 

@@ -6,36 +6,34 @@ using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src
 {
-    /**
-     * El tamaño de la grilla máxima tiene 16x32 cuadrantes de 32px.
-     */
     public class Grid : IDynamicNode
     {
-        private readonly int MAX_ROW = 16;
-        private readonly int MAX_COLUMN = 32;
+        public event LevelEventWin OnWin;
+        public const int MAX_ROW = 16;
+        public const int MAX_COLUMN = 32;
 
         private LevelData level;
-        private int lvlRow;
-        private int lvlColumn;
+        private int lvlRows;
+        private int lvlColumns;
         private int fillRows;
         private int fillColumns;
 
-        public void SetLevel(LevelData level)
+        public void GenerateLevel(LevelData level, List<Enemy> enemies, Player player)
         {
             this.level = level;
 
-            lvlRow = level.grid.Count;
-            lvlColumn = level.grid[0].Count;
+            lvlRows = level.grid.Count;
+            lvlColumns = level.grid[0].Count;
 
-            if (lvlRow > MAX_ROW || lvlColumn > MAX_COLUMN)
+            if (lvlRows > MAX_ROW || lvlColumns > MAX_COLUMN)
             {
                 throw new Exception(
-                    $"Level size is [{lvlRow},{lvlColumn}] which is bigger than [16,32]"
+                    $"Level size is [{lvlRows},{lvlColumns}] which is bigger than [16,32]"
                 );
             }
 
-            fillRows = (MAX_ROW - lvlRow) / 2;
-            fillColumns = (MAX_COLUMN - lvlColumn) / 2;
+            fillRows = (MAX_ROW - lvlRows) / 2;
+            fillColumns = (MAX_COLUMN - lvlColumns) / 2;
 
             for (int rowId = 0; rowId < level.grid.Count; rowId++)
             {
@@ -45,6 +43,7 @@ namespace SweeperRpg.Src
                 {
                     Cell cell = row[columnId];
 
+                    // 1. Configure cell
                     cell.SetData(
                         level: level,
                         columnId: columnId,
@@ -52,18 +51,61 @@ namespace SweeperRpg.Src
                         fillColumns: fillColumns,
                         fillRows: fillRows
                     );
+
+                    // 2. Configure what's in the cell
+                    switch (cell.type)
+                    {
+                        case CellType.COIN:
+                            break;
+                        case CellType.ENEMY:
+                            enemies.Add(
+                                EnemyFactory.Create(
+                                    x: columnId + fillColumns,
+                                    y: rowId + fillRows,
+                                    kind: cell.kind.Value
+                                )
+                            );
+                            break;
+                        case CellType.START:
+                            player.SetStart(x: columnId + fillColumns, y: rowId + fillRows);
+                            continue;
+                        case CellType.END:
+                            continue;
+                        case CellType.NULL:
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
 
         public void Reset()
         {
-            foreach (List<Cell> row in level.grid)
+            level.Reset();
+        }
+
+        public bool PlayerCanMove(Point position)
+        {
+            return (
+                position.X >= fillColumns
+                && position.X <= (fillColumns + lvlColumns - 1)
+                && position.Y >= fillRows
+                && position.Y <= (fillRows + lvlRows - 1)
+            );
+        }
+
+        public void CheckIfPlayerWon(Player player)
+        {
+            CellType playerInCellType = level
+                .grid[player.Transform.Position.X - fillColumns][
+                    player.Transform.Position.Y - fillRows
+                ]
+                .type;
+
+            if (playerInCellType == CellType.END)
             {
-                foreach (Cell cell in row)
-                {
-                    cell.Reset();
-                }
+                OnWin();
             }
         }
 
@@ -80,7 +122,6 @@ namespace SweeperRpg.Src
 
         public void Draw()
         {
-            // Draw filling cells
             for (int rowId = 0; rowId < MAX_ROW; rowId++)
             {
                 for (int columnId = 0; columnId < MAX_COLUMN; columnId++)
