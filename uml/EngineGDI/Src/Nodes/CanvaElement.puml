@@ -1,0 +1,4 @@
+abstract class CanvaElement {
+    + <<virtual>> Input() : void
+    + {abstract} Draw() : void
+}

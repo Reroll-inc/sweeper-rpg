@@ -1,13 +1,16 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 using SweeperRpg.Src.UI;
 
 namespace SweeperRpg.Src
 {
     public class GameManager : IDynamicNode
     {
+        [PlantUmlIgnore]
         private enum GameState
         {
             MAIN_MENU,
@@ -21,14 +24,18 @@ namespace SweeperRpg.Src
             QUIT,
         }
 
+        [PlantUmlIgnoreAssociation]
         private GameState state = GameState.MAIN_MENU;
 
         public static GameManager Instance { get; } = new();
+
+        [PlantUmlIgnoreAssociation]
         private readonly Font font = new("Assets/Fonts/pixel.ttf", 16);
-        private readonly LevelManager levelManager = LevelManager.Instance;
+        private readonly LevelManager levelManager;
         private readonly UI.MainMenu mainMenu;
         private readonly DefeatScreen defeat;
         private readonly VictoryScreen victory;
+        private readonly EventBus bus = new();
 
         private int level;
         private int maxLvls;
@@ -41,10 +48,10 @@ namespace SweeperRpg.Src
 
             ReadLevelCount();
 
-            levelManager.Init(font: font);
+            levelManager = new(font: font, bus: bus);
 
-            levelManager.OnLose += HandleLose;
-            levelManager.OnWin += HandleVictory;
+            bus.Subscribe<LevelWinEvent>(handler: HandleVictory);
+            bus.Subscribe<PlayerDiedEvent>(handler: HandleLose);
         }
 
         private void ReadLevelCount()
@@ -73,13 +80,13 @@ namespace SweeperRpg.Src
             state = GameState.QUIT;
         }
 
-        private void HandleLose()
+        private void HandleLose(PlayerDiedEvent data)
         {
             state = GameState.DEFEAT;
             defeat.EnableDefeat();
         }
 
-        public void HandleVictory()
+        public void HandleVictory(LevelWinEvent data)
         {
             state = GameState.VICTORY;
         }

@@ -1,20 +1,22 @@
 using System.Drawing;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace EngineGDI.Src
 {
     public class Collisioner(Transform transform)
     {
+        [PlantUmlIgnoreAssociation]
         private Rectangle rect = new(
             location: new Point(
-                x: transform.PositionAndScale.X + (transform.BaseUnit.Width / 4),
-                y: transform.PositionAndScale.Y + (transform.BaseUnit.Height / 4)
+                x: transform.PositionAndScale.X + (Transform.BaseUnit.Width / 4),
+                y: transform.PositionAndScale.Y + (Transform.BaseUnit.Height / 4)
             ),
-            size: transform.BaseUnit / 2
+            size: Transform.BaseUnit / 2
         );
 
         public void UpdatePosition(Transform transform)
         {
-            rect.Size = transform.BaseUnit / 2;
+            rect.Size = Transform.BaseUnit / 2;
             rect.X = transform.PositionAndScale.X + (rect.Size.Width / 2);
             rect.Y = transform.PositionAndScale.Y + (rect.Size.Height / 2);
         }

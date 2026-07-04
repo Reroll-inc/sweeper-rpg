@@ -1,0 +1,6 @@
+class EventBus {
+    - <<readonly>> subscribers : Dictionary<Type, List<object>>
+    + Subscribe(handler:Action<T>) : void
+    + Unsubscribe(handler:Action<T>) : void
+    + Publish(eventData:T) : void
+}

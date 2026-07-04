@@ -1,5 +1,6 @@
-@startuml
 class GameManager {
+    - state : GameState
+    - <<readonly>> font : Font
     - level : int
     - maxLvls : int
     - GameManager()
@@ -7,27 +8,17 @@ class GameManager {
     + OnPlay() : void
     + OnRetry() : void
     + OnExit() : void
-    - HandleLose() : void
-    + HandleVictory() : void
+    - HandleLose(data:PlayerDiedEvent) : void
+    + HandleVictory(data:LevelWinEvent) : void
     + NextLevel() : void
     + OnMainMenu() : void
     + Input() : void
     + Update(deltaTime:float) : void
     + Draw() : void
 }
-enum GameState {
-    MAIN_MENU,
-    PLAYING_LEVEL,
-    VICTORY,
-    DEFEAT,
-    QUIT,
-}
 IDynamicNode <|-- GameManager
-GameManager o-> "state" GameState
 GameManager o-> "Instance" GameManager
-GameManager o-> "font" Font
-GameManager o-> "levelManager" LevelManager
+GameManager --> "levelManager" LevelManager
 GameManager --> "defeat" DefeatScreen
 GameManager --> "victory" VictoryScreen
-GameManager +-- GameState
-@enduml
+GameManager o-> "bus" EventBus

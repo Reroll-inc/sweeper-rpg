@@ -1,6 +1,4 @@
-@startuml
 class Grid {
-    +  <<event>> OnWin : LevelEventWin 
     + <<const>> MAX_ROW : int = 16
     + <<const>> MAX_COLUMN : int = 32
     - lvlRows : int
@@ -16,5 +14,5 @@ class Grid {
     + DrawAfter() : void
 }
 IDynamicNode <|-- Grid
+Grid o-> "bus" EventBus
 Grid --> "level" LevelData
-@enduml

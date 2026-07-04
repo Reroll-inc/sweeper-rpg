@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src
 {
     public class EnemyFactory
     {
+        [PlantUmlIgnoreAssociation]
         private readonly Dictionary<EnemyKind, Enemy> EnemyPrototypes = [];
 
         private static EnemyFactory Instance { get; } = new();

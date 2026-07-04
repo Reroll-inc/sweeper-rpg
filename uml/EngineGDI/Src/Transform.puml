@@ -1,9 +1,7 @@
-@startuml
 class Transform {
+    + {static} <<readonly>> BaseUnit : Size
+    + Position : Point
     + Rotation : float
+    + Scale : Size
+    + PositionAndScale : Point <<get>>
 }
-Transform o-> "Position" Point
-Transform o-> "BaseUnit" Size
-Transform o-> "Scale" Size
-Transform --> "PositionAndScale" Point
-@enduml

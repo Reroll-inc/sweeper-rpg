@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text.Json.Serialization;
 using EngineGDI.Src;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src
 {
+    [PlantUmlIgnore]
     public class LevelDataProps
     {
         [JsonConverter(typeof(ColorJsonConverter))]
@@ -28,7 +30,10 @@ namespace SweeperRpg.Src
 
     public class LevelData
     {
+        [PlantUmlIgnoreAssociation]
         public LevelDataProps props { get; set; }
+
+        [PlantUmlIgnoreAssociation]
         public List<List<Cell>> grid { get; set; }
 
         public void Reset()

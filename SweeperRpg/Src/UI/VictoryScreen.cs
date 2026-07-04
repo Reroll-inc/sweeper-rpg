@@ -3,32 +3,33 @@ using System.Windows.Forms;
 using EngineGDI.Src;
 using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src.UI
 {
-    public class VictoryScreen(Font font) : ICanvaElement
+    public class VictoryScreen(Font font) : CanvaElement
     {
+        [PlantUmlIgnore]
         private enum Option
         {
             Next,
             MainMenu,
         }
 
-        private readonly Image backgroundImg = Image.FromFile(
-            "Assets/Imgs/victory_Placeholder.png"
-        );
+        [PlantUmlIgnoreAssociation]
         private readonly Font font = font;
 
+        [PlantUmlIgnoreAssociation]
         private Option option = Option.Next;
 
-        private readonly Renderer Renderer = new(
+        private readonly Renderer renderer = new(
             new DrawImageCommand(
                 texture: Image.FromFile("Assets/Imgs/victory_Placeholder.png"),
                 transform: new(position: new(x: 0, y: 0))
             )
         );
 
-        public void Input()
+        public override void Input()
         {
             if (Engine.OnKeyDown(Keys.W))
             {
@@ -56,9 +57,9 @@ namespace SweeperRpg.Src.UI
             }
         }
 
-        public void Draw()
+        public override void Draw()
         {
-            Renderer.Draw();
+            renderer.Draw();
 
             string retryText = (option == Option.Next) ? "> Next level" : " Next Level";
             string menuText = (option == Option.MainMenu) ? "> Main Menu" : " Main Menu";

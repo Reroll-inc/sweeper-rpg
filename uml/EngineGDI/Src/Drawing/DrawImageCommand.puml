@@ -1,8 +1,6 @@
-@startuml
 class DrawImageCommand {
+    + texture : Image
     + Draw(e:PaintEventArgs) : void
 }
 IDrawCommand <|-- DrawImageCommand
-DrawImageCommand o-> "texture" Image
 DrawImageCommand o-> "transform" Transform
-@enduml

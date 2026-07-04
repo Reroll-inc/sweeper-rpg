@@ -3,26 +3,30 @@ using System.Windows.Forms;
 using EngineGDI.Src;
 using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src.UI
 {
-    public class DefeatScreen(Font font) : ICanvaElement
+    public class DefeatScreen(Font font) : CanvaElement
     {
-        private readonly Renderer Renderer = new(
+        private readonly Renderer renderer = new(
             new DrawImageCommand(
                 texture: Image.FromFile("Assets/Imgs/defeat_placeholder.png"),
                 transform: new(position: new(x: 0, y: 0))
             )
         );
 
+        [PlantUmlIgnore]
         private enum DefeatResult
         {
             Retry,
             MainMenu,
         }
 
+        [PlantUmlIgnoreAssociation]
         private DefeatResult result = DefeatResult.Retry;
 
+        [PlantUmlIgnoreAssociation]
         private readonly Font font = font;
 
         public void EnableDefeat()
@@ -30,7 +34,7 @@ namespace SweeperRpg.Src.UI
             result = DefeatResult.Retry;
         }
 
-        public void Input()
+        public override void Input()
         {
             if (Engine.OnKeyDown(Keys.W))
             {
@@ -58,9 +62,9 @@ namespace SweeperRpg.Src.UI
             }
         }
 
-        public void Draw()
+        public override void Draw()
         {
-            Renderer.Draw();
+            renderer.Draw();
 
             string retryText = (result == DefeatResult.Retry) ? "> Retry" : " Retry";
             string menuText = (result == DefeatResult.MainMenu) ? "> Main Menu" : " Main Menu";

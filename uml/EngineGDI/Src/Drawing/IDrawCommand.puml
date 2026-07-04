@@ -1,5 +1,3 @@
-@startuml
 interface IDrawCommand {
     + Draw(e:PaintEventArgs) : void
 }
-@enduml

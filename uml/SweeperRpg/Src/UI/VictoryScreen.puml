@@ -1,16 +1,8 @@
-@startuml
 class VictoryScreen {
-    + Input() : void
-    + Draw() : void
+    - <<readonly>> font : Font
+    - option : Option
+    + <<override>> Input() : void
+    + <<override>> Draw() : void
 }
-enum Option {
-    Next,
-    MainMenu,
-}
-ICanvaElement <|-- VictoryScreen
-VictoryScreen o-> "backgroundImg" Image
-VictoryScreen o-> "font" Font
-VictoryScreen o-> "option" Option
-VictoryScreen o-> "Renderer" Renderer
-VictoryScreen +-- Option
-@enduml
+CanvaElement <|-- VictoryScreen
+VictoryScreen o-> "renderer" Renderer

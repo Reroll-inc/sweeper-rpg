@@ -1,10 +1,21 @@
-@startuml
+class PlayerMoveEvent {
+    + <<readonly>> Position : Point
+}
+class PlayerDmgEvent {
+    + <<readonly>> Hp : int
+    + <<readonly>> Dmg : int
+}
+class PlayerResetEvent {
+    + <<readonly>> Hp : int
+}
+class PlayerDiedEvent {
+}
 class Player {
-    +  <<event>> OnWillMove : PlayerEventWillMove 
-    +  <<event>> OnDeath : PlayerEventIsDead 
+    - start : Point
+    + Tile : Image <<get>>
     - <<readonly>> maxHealth : int = 8
     + Hp : int <<get>>
-    + Player(x:int, y:int)
+    + Player(bus:EventBus, x:int, y:int)
     + SetStart(x:int, y:int) : void
     + Reset() : void
     + TakeDamage(damage:int) : void
@@ -14,10 +25,12 @@ class Player {
     + <<override>> Input() : void
     + <<override>> Draw() : void
 }
+Event <|-- PlayerMoveEvent
+Event <|-- PlayerDmgEvent
+Event <|-- PlayerResetEvent
+Event <|-- PlayerDiedEvent
 InteractiveNode <|-- Player
-Player --> "start" Point
-Player --> "Tile" Image
 Player --> "Collisioner" Collisioner
 Player --> "Transform" Transform
-Player --> "Renderer" Renderer
-@enduml
+Player --> "renderer" Renderer
+Player --> "bus" EventBus

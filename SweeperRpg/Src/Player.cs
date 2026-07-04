@@ -2,20 +2,37 @@ using System.Drawing;
 using System.Windows.Forms;
 using EngineGDI.Src;
 using EngineGDI.Src.Drawing;
+using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src
 {
-    public delegate void PlayerEventWillMove(Point newPosition);
-    public delegate void PlayerEventIsDead();
+    public class PlayerMoveEvent(Point position) : Event
+    {
+        [PlantUmlIgnoreAssociation]
+        public readonly Point Position = position;
+    }
+
+    public class PlayerDmgEvent(int hp, int dmg) : Event
+    {
+        public readonly int Hp = hp;
+        public readonly int Dmg = dmg;
+    }
+
+    public class PlayerResetEvent(int hp) : Event
+    {
+        public readonly int Hp = hp;
+    }
+
+    public class PlayerDiedEvent : Event { }
 
     public class Player : InteractiveNode
     {
-        public event PlayerEventWillMove OnWillMove;
-        public event PlayerEventIsDead OnDeath;
-
+        [PlantUmlIgnoreAssociation]
         private Point start;
 
+        [PlantUmlIgnoreAssociation]
         public Image Tile { get; }
         private readonly int maxHealth = 8;
 
@@ -23,13 +40,16 @@ namespace SweeperRpg.Src
         public Collisioner Collisioner { get; }
 
         public Transform Transform { get; }
-        private readonly Renderer Renderer;
+        private readonly Renderer renderer;
 
-        public Player(int x, int y)
+        private readonly EventBus bus;
+
+        public Player(EventBus bus, int x, int y)
         {
+            this.bus = bus;
             Tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
             Transform = new(position: new Point(x, y));
-            Renderer = new(command: new DrawImageCommand(texture: Tile, transform: Transform));
+            renderer = new(command: new DrawImageCommand(texture: Tile, transform: Transform));
             Collisioner = new Collisioner(transform: Transform);
 
             SetStart(x: x, y: y);
@@ -51,15 +71,19 @@ namespace SweeperRpg.Src
             Hp = maxHealth;
 
             Collisioner.UpdatePosition(transform: Transform);
+
+            bus.Publish<PlayerResetEvent>(new(hp: Hp));
         }
 
         public void TakeDamage(int damage)
         {
+            bus.Publish<PlayerDmgEvent>(new(hp: Hp, dmg: damage));
+
             Hp -= damage;
 
             if (IsDead())
             {
-                OnDeath();
+                bus.Publish<PlayerDiedEvent>(new());
             }
         }
 
@@ -117,13 +141,13 @@ namespace SweeperRpg.Src
 
             if (changed)
             {
-                OnWillMove(newPosition: newPosition);
+                bus.Publish<PlayerMoveEvent>(new(position: newPosition));
             }
         }
 
         public override void Draw()
         {
-            Renderer.Draw();
+            renderer.Draw();
         }
     }
 }

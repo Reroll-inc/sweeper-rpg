@@ -1,10 +1,8 @@
-@startuml
 class DrawTextCommand {
     + text : string
+    + font : Font
+    + brush : Brush
+    + position : Point
     + Draw(e:PaintEventArgs) : void
 }
 IDrawCommand <|-- DrawTextCommand
-DrawTextCommand --> "font" Font
-DrawTextCommand --> "brush" Brush
-DrawTextCommand --> "position" Point
-@enduml

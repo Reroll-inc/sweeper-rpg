@@ -1,17 +1,5 @@
-@startuml
-class LevelDataProps {
-}
 class LevelData {
+    + props : LevelDataProps <<get>> <<set>>
+    + grid : List<List<Cell>> <<get>> <<set>>
     + Reset() : void
 }
-class "List`1"<T> {
-}
-LevelDataProps --> "start" Color
-LevelDataProps --> "end" Color
-LevelDataProps --> "basic" Color
-LevelDataProps --> "lineMesh" Color
-LevelDataProps --> "treasure" Color
-LevelDataProps --> "background" Color
-LevelData --> "props" LevelDataProps
-LevelData --> "grid<List<Cell>>" "List`1"
-@enduml

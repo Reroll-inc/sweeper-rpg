@@ -7,6 +7,12 @@
       "request": "attach",
       "processName": "SweeperRpg",
       "justMyCode": true
+    },
+    {
+      "name": "C#: SweeperRpg Debug",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/SweeperRpg/SweeperRpg.csproj"
     }
   ]
 }

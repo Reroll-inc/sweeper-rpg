@@ -1,12 +1,16 @@
 using System.Drawing;
 using EngineGDI.Src;
+using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src.UI
 {
-    public class LevelUI(Font font, Player player) : ICanvaElement
+    public class LevelUI(Font font, EventBus bus) : CanvaElement
     {
-        private readonly PlayerInfo playerInfo = new(font: font, player: player);
+        private readonly PlayerInfo playerInfo = new(font: font, bus: bus);
+
+        [PlantUmlIgnoreAssociation]
         private readonly Font font = font;
         private int level;
 
@@ -15,9 +19,7 @@ namespace SweeperRpg.Src.UI
             this.level = level;
         }
 
-        public void Input() { }
-
-        public void Draw()
+        public override void Draw()
         {
             playerInfo.Draw();
 

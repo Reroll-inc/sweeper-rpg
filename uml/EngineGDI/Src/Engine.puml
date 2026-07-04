@@ -1,6 +1,16 @@
-@startuml
 class Engine <<static>> {
+    - {static} <<readonly>> sounds : Dictionary<string, SoundPlayer>
+    - {static} <<readonly>> drawQueue : List<IDrawCommand>
+    - {static} window : GameForm
     + {static} IsWindowOpen : bool <<get>>
+    + {static} Window : Form <<get>>
+    - {static} <<readonly>> pressedKeys : HashSet<Keys>
+    - {static} <<readonly>> handledKeys : HashSet<Keys>
+    - {static} <<readonly>> releasedKeys : HashSet<Keys>
+    - {static} <<readonly>> handledReleasedKeys : HashSet<Keys>
+    - {static} <<readonly>> debugMessages : List<string>
+    - {static} <<readonly>> debugFont : Font
+    - {static} <<readonly>> debugBrush : Brush
     + {static} Initialize(title:string, width:int, height:int, fullscreen:bool) : void
     + {static} UpdateWindow() : void
     + {static} PlaySound(path:string) : void
@@ -15,28 +25,3 @@ class Engine <<static>> {
     + {static} DebugLog(message:string) : void
     + {static} ClearDebug() : void
 }
-class "Dictionary`2"<T1,T2> {
-}
-class "List`1"<T> {
-}
-class "HashSet`1"<T> {
-}
-class GameForm {
-    + GameForm()
-    # <<override>> OnPaint(e:PaintEventArgs) : void
-}
-Engine o-> "sounds<string,SoundPlayer>" "Dictionary`2"
-Engine o-> "drawQueue<IDrawCommand>" "List`1"
-Engine --> "window" GameForm
-Engine --> "Window" Form
-Engine o-> "pressedKeys<Keys>" "HashSet`1"
-Engine o-> "handledKeys<Keys>" "HashSet`1"
-Engine o-> "releasedKeys<Keys>" "HashSet`1"
-Engine o-> "handledReleasedKeys<Keys>" "HashSet`1"
-Engine o-> "debugMessages<string>" "List`1"
-Engine o-> "debugFont" Font
-Engine o-> "debugBrush" Brush
-Engine +-- GameForm
-Form <|-- GameForm
-GameForm o-> "ClearColor" Color
-@enduml

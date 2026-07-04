@@ -3,36 +3,38 @@ using System.Drawing;
 using System.IO;
 using System.Text.Json;
 using EngineGDI.Src;
+using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 using SweeperRpg.Src.UI;
 
 namespace SweeperRpg.Src
 {
-    public delegate void LevelEventLose();
-    public delegate void LevelEventWin();
+    public class LevelWinEvent : Event { }
 
     public class LevelManager : InteractiveNode
     {
-        public event LevelEventLose OnLose;
-        public event LevelEventWin OnWin;
-
+        [PlantUmlIgnoreAssociation]
         private readonly Dictionary<int, LevelData> levels = [];
 
         public Renderer Renderer { get; }
-        private readonly Player player = new(x: 0, y: 0);
+        private readonly Player player;
+
+        [PlantUmlIgnoreAssociation]
         private static readonly List<Enemy> enemies = [];
+
+        [PlantUmlIgnoreAssociation]
         public static List<Enemy> ActiveEnemies => enemies.FindAll(static enemy => enemy.IsAlive());
-        private static readonly Grid grid = new();
+        private readonly Grid grid;
+        private readonly LevelUI ui;
 
-        private LevelUI ui;
-
-        public static readonly LevelManager Instance = new();
-
-        private LevelManager()
+        public LevelManager(Font font, EventBus bus)
         {
-            player.OnWillMove += PlayerWillMoveHandler;
-            player.OnDeath += PlayerDeathHandler;
-            grid.OnWin += CheckVictoryCondition;
+            player = new(bus: bus, x: 0, y: 0);
+            grid = new(bus: bus);
+            ui = new LevelUI(font: font, bus: bus);
+
+            bus.Subscribe<PlayerMoveEvent>(handler: PlayerWillMoveHandler);
         }
 
         private LevelData LoadLevel(int level)
@@ -63,20 +65,14 @@ namespace SweeperRpg.Src
             }
         }
 
-        private void PlayerDeathHandler()
+        private void PlayerWillMoveHandler(PlayerMoveEvent data)
         {
-            OnLose();
-        }
-
-        private void PlayerWillMoveHandler(Point position)
-        {
-            if (grid.PlayerCanMove(position: position))
+            if (grid.PlayerCanMove(position: data.Position))
             {
-                player.Move(position);
+                player.Move(newPosition: data.Position);
                 grid.CheckIfPlayerWon(player: player);
 
                 RunCollisions();
-                CheckVictoryCondition();
             }
         }
 
@@ -91,11 +87,6 @@ namespace SweeperRpg.Src
             }
         }
 
-        private void CheckVictoryCondition()
-        {
-            OnWin();
-        }
-
         public void StartLevel(int level)
         {
             enemies.Clear();
@@ -104,11 +95,6 @@ namespace SweeperRpg.Src
             grid.GenerateLevel(level: currentLevel, enemies: enemies, player: player);
 
             ui.SetLevel(level);
-        }
-
-        public void Init(Font font)
-        {
-            ui = new LevelUI(font: font, player: player);
         }
 
         public override void Input()

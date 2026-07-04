@@ -1,14 +1,10 @@
-@startuml
-enum CellType {
-    NULL,
-    ENEMY,
-    COIN,
-    START,
-    END,
-}
 class Cell {
+    + type : CellType <<get>> <<set>>
     + id : string <<get>> <<set>>
+    + kind : EnemyKind? <<get>> <<set>> = null
     + currency : int <<get>> <<set>>
+    - rect : Rectangle
+    - state : State
     + SetData(level:LevelData, columnId:int, rowId:int, fillColumns:int, fillRows:int) : void
     + StartOpening() : void
     + FinishOpening(sender:object, e:EventArgs) : void
@@ -17,18 +13,7 @@ class Cell {
     + Draw() : void
     + DrawAfter() : void
 }
-enum State {
-    INIT= 'I',
-    OPENING= 'O',
-    OPEN= 'N',
-}
 IDynamicNode <|-- Cell
-Cell o-> "type" CellType
-Cell o-> "kind" EnemyKind
-Cell --> "rect" Rectangle
 Cell --> "transform" Transform
-Cell o-> "state" State
 Cell --> "level" LevelData
 Cell o-> "animation" PeelingCellAnimation
-Cell +-- State
-@enduml

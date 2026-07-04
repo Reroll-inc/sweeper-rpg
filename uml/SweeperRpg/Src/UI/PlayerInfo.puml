@@ -1,10 +1,10 @@
-@startuml
 class PlayerInfo {
-    + Input() : void
-    + Draw() : void
+    - Hp : int = 0
+    - <<readonly>> font : Font
+    + PlayerInfo(font:Font, bus:EventBus)
+    - HandlePlayerDmg(data:PlayerDmgEvent) : void
+    - HandlePlayerReset(data:PlayerResetEvent) : void
+    + <<override>> Draw() : void
 }
-ICanvaElement <|-- PlayerInfo
-PlayerInfo o-> "player" Player
-PlayerInfo o-> "font" Font
-PlayerInfo o-> "Renderer" Renderer
-@enduml
+CanvaElement <|-- PlayerInfo
+PlayerInfo o-> "renderer" Renderer

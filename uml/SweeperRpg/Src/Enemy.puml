@@ -1,15 +1,7 @@
-@startuml
-enum EnemyKind {
-    GOBLIN_ROGUE,
-    GOBLIN_ARCHER,
-    GOBLIN_MAGE,
-    GOBLINBARBARIC,
-    GOBLIN_BOSS_1,
-    GOBLIN_BOSS_2,
-    GOBLIN_BOSS_3,
-}
 class Enemy {
+    - <<readonly>> tile : Image
     + Damage : int <<get>>
+    - state : State
     + Enemy(x:int, y:int, kind:EnemyKind)
     + Defeat() : void
     + IsAlive() : bool
@@ -17,26 +9,7 @@ class Enemy {
     + Clone(x:int, y:int) : Enemy
     + Draw() : void
 }
-enum State {
-    ALIVE,
-    DEAD,
-}
-class DataManager <<static>> {
-}
-class EnemyData {
-    + damage : int <<get>> <<set>>
-}
-class "Dictionary`2"<T1,T2> {
-}
 IStaticNode <|-- Enemy
 Enemy --> "Transform" Transform
-Enemy --> "tile" Image
-Enemy o-> "state" State
 Enemy --> "Collisioner" Collisioner
-Enemy --> "Renderer" Renderer
-Enemy +-- State
-Enemy +-- DataManager
-DataManager o-> "enemyData<EnemyKind,EnemyData>" "Dictionary`2"
-Enemy +-- EnemyData
-EnemyData --> "point" Point
-@enduml
+Enemy --> "renderer" Renderer

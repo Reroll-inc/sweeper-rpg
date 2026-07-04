@@ -3,24 +3,44 @@ using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
 using EngineGDI.Src.Drawing;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace EngineGDI.Src
 {
     public static class Engine
     {
+        [PlantUmlIgnoreAssociation]
         private static readonly Dictionary<string, SoundPlayer> sounds = [];
+
+        [PlantUmlIgnoreAssociation]
         private static readonly List<IDrawCommand> drawQueue = [];
+
+        [PlantUmlIgnoreAssociation]
         private static GameForm window;
         public static bool IsWindowOpen { get; private set; }
+
+        [PlantUmlIgnoreAssociation]
         public static Form Window => window;
 
+        [PlantUmlIgnoreAssociation]
         private static readonly HashSet<Keys> pressedKeys = [];
+
+        [PlantUmlIgnoreAssociation]
         private static readonly HashSet<Keys> handledKeys = [];
+
+        [PlantUmlIgnoreAssociation]
         private static readonly HashSet<Keys> releasedKeys = [];
+
+        [PlantUmlIgnoreAssociation]
         private static readonly HashSet<Keys> handledReleasedKeys = [];
 
+        [PlantUmlIgnoreAssociation]
         private static readonly List<string> debugMessages = [];
+
+        [PlantUmlIgnoreAssociation]
         private static readonly Font debugFont = new("Consolas", 10);
+
+        [PlantUmlIgnoreAssociation]
         private static readonly Brush debugBrush = Brushes.White;
 
         public static void Initialize(
@@ -163,8 +183,10 @@ namespace EngineGDI.Src
             debugMessages.Clear();
         }
 
+        [PlantUmlIgnore]
         private class GameForm : Form
         {
+            [PlantUmlIgnoreAssociation]
             public Color ClearColor = Color.Black;
 
             public GameForm()

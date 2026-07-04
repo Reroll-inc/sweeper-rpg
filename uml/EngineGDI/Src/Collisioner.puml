@@ -1,7 +1,5 @@
-@startuml
 class Collisioner {
+    - rect : Rectangle
     + UpdatePosition(transform:Transform) : void
     + CheckCollision(element:Collisioner) : bool
 }
-Collisioner o-> "rect" Rectangle
-@enduml

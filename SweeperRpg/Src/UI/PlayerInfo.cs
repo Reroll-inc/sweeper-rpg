@@ -1,30 +1,49 @@
 using System.Drawing;
 using EngineGDI.Src;
 using EngineGDI.Src.Drawing;
+using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src.UI
 {
-    public class PlayerInfo(Font font, Player player) : ICanvaElement
+    public class PlayerInfo : CanvaElement
     {
-        private readonly Player player = player;
-        private readonly Font font = font;
+        private int Hp = 0;
 
-        private Renderer Renderer { get; } =
-            new(
-                new DrawImageCommand(
-                    texture: player.Tile,
-                    transform: new(position: new(x: 30, y: 600), scale: new(2, 2))
-                )
-            );
+        [PlantUmlIgnoreAssociation]
+        private readonly Font font;
 
-        public void Input() { }
+        private readonly Renderer renderer = new(
+            new DrawImageCommand(
+                texture: TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2),
+                transform: new(position: new(x: 1, y: 19), scale: new(width: 2, height: 2))
+            )
+        );
 
-        public void Draw()
+        public PlayerInfo(Font font, EventBus bus)
         {
-            Renderer.Draw();
-            Engine.DrawText("Player", font, Brushes.White, new Point(120, 590));
-            Engine.DrawText($"HP: {player.Hp}", font, Brushes.White, new Point(120, 620));
+            this.font = font;
+
+            bus.Subscribe<PlayerDmgEvent>(handler: HandlePlayerDmg);
+            bus.Subscribe<PlayerResetEvent>(handler: HandlePlayerReset);
+        }
+
+        private void HandlePlayerDmg(PlayerDmgEvent data)
+        {
+            Hp = data.Hp - data.Dmg;
+        }
+
+        private void HandlePlayerReset(PlayerResetEvent data)
+        {
+            Hp = data.Hp;
+        }
+
+        public override void Draw()
+        {
+            renderer.Draw();
+            Engine.DrawText("Player", font, Brushes.White, new(x: 120, y: 590));
+            Engine.DrawText($"HP: {Hp}", font, Brushes.White, new(x: 120, y: 620));
         }
     }
 }

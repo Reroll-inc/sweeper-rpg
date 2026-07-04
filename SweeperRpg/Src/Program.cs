@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using EngineGDI.Src;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src
 {
@@ -9,6 +10,8 @@ namespace SweeperRpg.Src
     {
         // Delta time
         public static float deltaTime;
+
+        [PlantUmlIgnoreAssociation]
         private static DateTime lastFrameTime = DateTime.Now;
 
         // mostrar debug

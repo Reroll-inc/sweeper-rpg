@@ -3,10 +3,12 @@ using System.Drawing;
 using System.Text.Json.Serialization;
 using EngineGDI.Src;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 using SweeperRpg.Src.Animations;
 
 namespace SweeperRpg.Src
 {
+    [PlantUmlIgnore]
     public enum CellType
     {
         [JsonStringEnumMemberName("N")]
@@ -27,6 +29,7 @@ namespace SweeperRpg.Src
 
     public class Cell : IDynamicNode
     {
+        [PlantUmlIgnore]
         private enum State
         {
             INIT = 'I',
@@ -34,17 +37,21 @@ namespace SweeperRpg.Src
             OPEN = 'N',
         }
 
+        [PlantUmlIgnoreAssociation]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public CellType type { get; set; } = CellType.NULL;
         public string id { get; set; }
 
+        [PlantUmlIgnoreAssociation]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public EnemyKind? kind { get; set; } = null;
         public int currency { get; set; }
 
+        [PlantUmlIgnoreAssociation]
         private Rectangle rect;
         private Transform transform;
 
+        [PlantUmlIgnoreAssociation]
         private State state = State.OPENING;
         private LevelData level;
         private readonly PeelingCellAnimation animation = new();
@@ -54,7 +61,7 @@ namespace SweeperRpg.Src
             this.level = level;
 
             transform = new(position: new(x: columnId + fillColumns, y: rowId + fillRows));
-            rect = new(location: transform.PositionAndScale, size: transform.BaseUnit);
+            rect = new(location: transform.PositionAndScale, size: Transform.BaseUnit);
 
             animation.SetData(transform: transform);
 

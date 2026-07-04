@@ -3,7 +3,7 @@
   "tasks": [
     {
       "label": "Generate UML",
-      "command": "rm -r ./uml && dotnet puml-gen . ./uml -dir -allInOne -createAssociation -excludePaths **/bin,**/obj,**/Properties,Test",
+      "command": "rm -r ./uml && dotnet puml-gen . ./uml -dir -allInOne -createAssociation -addPackageTags -excludeUmlBeginEndTags -excludePaths **/bin,**/obj,**/Properties,Test",
       "type": "shell",
       "args": [],
       "problemMatcher": [],

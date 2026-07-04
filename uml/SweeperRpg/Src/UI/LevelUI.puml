@@ -1,11 +1,8 @@
-@startuml
 class LevelUI {
+    - <<readonly>> font : Font
     - level : int
     + SetLevel(level:int) : void
-    + Input() : void
-    + Draw() : void
+    + <<override>> Draw() : void
 }
-ICanvaElement <|-- LevelUI
+CanvaElement <|-- LevelUI
 LevelUI o-> "playerInfo" PlayerInfo
-LevelUI o-> "font" Font
-@enduml

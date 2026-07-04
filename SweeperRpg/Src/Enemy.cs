@@ -6,9 +6,11 @@ using System.Text.Json.Serialization;
 using EngineGDI.Src;
 using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src
 {
+    [PlantUmlIgnore]
     public enum EnemyKind
     {
         [JsonStringEnumMemberName("G_R")]
@@ -35,12 +37,14 @@ namespace SweeperRpg.Src
 
     public class Enemy : IStaticNode
     {
+        [PlantUmlIgnore]
         private enum State
         {
             ALIVE,
             DEAD,
         }
 
+        [PlantUmlIgnore]
         private static class DataManager
         {
             public static readonly Dictionary<EnemyKind, EnemyData> enemyData =
@@ -49,21 +53,27 @@ namespace SweeperRpg.Src
                 );
         }
 
+        [PlantUmlIgnore]
         private class EnemyData
         {
+            [PlantUmlIgnoreAssociation]
             [JsonConverter(typeof(PointJsonConverter))]
             public Point point { get; set; }
             public int damage { get; set; }
         }
 
         public Transform Transform { get; private set; }
+
+        [PlantUmlIgnoreAssociation]
         private readonly Image tile;
 
         public int Damage { get; }
+
+        [PlantUmlIgnoreAssociation]
         private State state = State.ALIVE;
 
         public Collisioner Collisioner { get; private set; }
-        private Renderer Renderer;
+        private Renderer renderer;
 
         public Enemy(int x, int y, EnemyKind kind)
         {
@@ -78,7 +88,7 @@ namespace SweeperRpg.Src
             );
             Transform = new(position: new(x: x, y: y));
             Collisioner = new Collisioner(transform: Transform);
-            Renderer = new(new DrawImageCommand(texture: tile, transform: Transform));
+            renderer = new(new DrawImageCommand(texture: tile, transform: Transform));
         }
 
         public void Defeat()
@@ -102,14 +112,14 @@ namespace SweeperRpg.Src
 
             clone.Transform = new(position: new(x: x, y: y));
             clone.Collisioner = new Collisioner(transform: clone.Transform);
-            clone.Renderer = new(new DrawImageCommand(texture: tile, transform: clone.Transform));
+            clone.renderer = new(new DrawImageCommand(texture: tile, transform: clone.Transform));
 
             return clone;
         }
 
         public void Draw()
         {
-            Renderer.Draw();
+            renderer.Draw();
         }
     }
 }

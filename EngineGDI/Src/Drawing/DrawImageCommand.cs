@@ -1,11 +1,13 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace EngineGDI.Src.Drawing
 {
     public class DrawImageCommand(Image texture, Transform transform) : IDrawCommand
     {
+        [PlantUmlIgnoreAssociation]
         public Image texture = texture;
         private readonly Transform transform = transform;
 

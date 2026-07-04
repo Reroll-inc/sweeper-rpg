@@ -1,16 +1,9 @@
-@startuml
 class DefeatScreen {
+    - result : DefeatResult
+    - <<readonly>> font : Font
     + EnableDefeat() : void
-    + Input() : void
-    + Draw() : void
+    + <<override>> Input() : void
+    + <<override>> Draw() : void
 }
-enum DefeatResult {
-    Retry,
-    MainMenu,
-}
-ICanvaElement <|-- DefeatScreen
-DefeatScreen o-> "Renderer" Renderer
-DefeatScreen o-> "result" DefeatResult
-DefeatScreen o-> "font" Font
-DefeatScreen +-- DefeatResult
-@enduml
+CanvaElement <|-- DefeatScreen
+DefeatScreen o-> "renderer" Renderer

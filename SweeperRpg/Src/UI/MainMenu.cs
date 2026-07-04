@@ -3,28 +3,32 @@ using System.Windows.Forms;
 using EngineGDI.Src;
 using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src.UI
 {
-    public class MainMenu(Font font) : ICanvaElement
+    public class MainMenu(Font font) : CanvaElement
     {
+        [PlantUmlIgnore]
         private enum MenuResult
         {
             Play,
             Exit,
         }
 
+        [PlantUmlIgnoreAssociation]
         private readonly Font font = font;
-        private readonly Renderer Renderer = new(
+        private readonly Renderer renderer = new(
             new DrawImageCommand(
                 texture: Image.FromFile("Assets/Imgs/retro_main_menu.png"),
                 transform: new(position: new(x: 0, y: 0))
             )
         );
 
+        [PlantUmlIgnoreAssociation]
         private MenuResult result = MenuResult.Play;
 
-        public void Input()
+        public override void Input()
         {
             if (Engine.OnKeyDown(Keys.W))
             {
@@ -52,9 +56,9 @@ namespace SweeperRpg.Src.UI
             }
         }
 
-        public void Draw()
+        public override void Draw()
         {
-            Renderer.Draw();
+            renderer.Draw();
 
             string playText = (result == MenuResult.Play) ? "> Play" : " Play";
             string exitText = (result == MenuResult.Exit) ? "> Exit" : " Exit";

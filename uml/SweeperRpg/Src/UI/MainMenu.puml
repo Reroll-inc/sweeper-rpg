@@ -1,15 +1,8 @@
-@startuml
 class MainMenu {
-    + Input() : void
-    + Draw() : void
+    - <<readonly>> font : Font
+    - result : MenuResult
+    + <<override>> Input() : void
+    + <<override>> Draw() : void
 }
-enum MenuResult {
-    Play,
-    Exit,
-}
-ICanvaElement <|-- MainMenu
-MainMenu o-> "font" Font
-MainMenu o-> "Renderer" Renderer
-MainMenu o-> "result" MenuResult
-MainMenu +-- MenuResult
-@enduml
+CanvaElement <|-- MainMenu
+MainMenu o-> "renderer" Renderer

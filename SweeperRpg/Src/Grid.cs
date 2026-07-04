@@ -2,16 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using EngineGDI.Src;
+using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src
 {
-    public class Grid : IDynamicNode
+    public class Grid(EventBus bus) : IDynamicNode
     {
-        public event LevelEventWin OnWin;
         public const int MAX_ROW = 16;
         public const int MAX_COLUMN = 32;
 
+        private readonly EventBus bus = bus;
         private LevelData level;
         private int lvlRows;
         private int lvlColumns;
@@ -105,7 +106,7 @@ namespace SweeperRpg.Src
 
             if (playerInCellType == CellType.END)
             {
-                OnWin();
+                bus.Publish<LevelWinEvent>(new());
             }
         }
 

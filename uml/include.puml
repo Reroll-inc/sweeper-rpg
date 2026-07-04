@@ -1,9 +1,8 @@
-@startuml
 class Collisioner {
+    - rect : Rectangle
     + UpdatePosition(transform:Transform) : void
     + CheckCollision(element:Collisioner) : bool
 }
-Collisioner o-> "rect" Rectangle
 class ColorJsonConverter {
     + <<override>> Read(reader:Utf8JsonReader, typeToConvert:System.Type, options:JsonSerializerOptions) : Color
     + <<override>> Write(writer:Utf8JsonWriter, value:Color, options:JsonSerializerOptions) : void
@@ -12,7 +11,18 @@ class "JsonConverter`1"<T> {
 }
 "JsonConverter`1" "<Color>" <|-- ColorJsonConverter
 class Engine <<static>> {
+    - {static} <<readonly>> sounds : Dictionary<string, SoundPlayer>
+    - {static} <<readonly>> drawQueue : List<IDrawCommand>
+    - {static} window : GameForm
     + {static} IsWindowOpen : bool <<get>>
+    + {static} Window : Form <<get>>
+    - {static} <<readonly>> pressedKeys : HashSet<Keys>
+    - {static} <<readonly>> handledKeys : HashSet<Keys>
+    - {static} <<readonly>> releasedKeys : HashSet<Keys>
+    - {static} <<readonly>> handledReleasedKeys : HashSet<Keys>
+    - {static} <<readonly>> debugMessages : List<string>
+    - {static} <<readonly>> debugFont : Font
+    - {static} <<readonly>> debugBrush : Brush
     + {static} Initialize(title:string, width:int, height:int, fullscreen:bool) : void
     + {static} UpdateWindow() : void
     + {static} PlaySound(path:string) : void
@@ -27,30 +37,6 @@ class Engine <<static>> {
     + {static} DebugLog(message:string) : void
     + {static} ClearDebug() : void
 }
-class "Dictionary`2"<T1,T2> {
-}
-class "List`1"<T> {
-}
-class "HashSet`1"<T> {
-}
-class GameForm {
-    + GameForm()
-    # <<override>> OnPaint(e:PaintEventArgs) : void
-}
-Engine o-> "sounds<string,SoundPlayer>" "Dictionary`2"
-Engine o-> "drawQueue<IDrawCommand>" "List`1"
-Engine --> "window" GameForm
-Engine --> "Window" Form
-Engine o-> "pressedKeys<Keys>" "HashSet`1"
-Engine o-> "handledKeys<Keys>" "HashSet`1"
-Engine o-> "releasedKeys<Keys>" "HashSet`1"
-Engine o-> "handledReleasedKeys<Keys>" "HashSet`1"
-Engine o-> "debugMessages<string>" "List`1"
-Engine o-> "debugFont" Font
-Engine o-> "debugBrush" Brush
-Engine +-- GameForm
-Form <|-- GameForm
-GameForm o-> "ClearColor" Color
 class PointJsonConverter {
     + <<override>> Read(reader:Utf8JsonReader, typeToConvert:System.Type, options:JsonSerializerOptions) : Point
     + <<override>> Write(writer:Utf8JsonWriter, value:Point, options:JsonSerializerOptions) : void
@@ -67,22 +53,19 @@ class TileMap {
     + {static} LoadSprite(path:string, row:int, column:int) : Bitmap
 }
 class Transform {
+    + {static} <<readonly>> BaseUnit : Size
+    + Position : Point
     + Rotation : float
-}
-Transform o-> "Position" Point
-Transform o-> "BaseUnit" Size
-Transform o-> "Scale" Size
-Transform --> "PositionAndScale" Point
-enum CellType {
-    NULL,
-    ENEMY,
-    COIN,
-    START,
-    END,
+    + Scale : Size
+    + PositionAndScale : Point <<get>>
 }
 class Cell {
+    + type : CellType <<get>> <<set>>
     + id : string <<get>> <<set>>
+    + kind : EnemyKind? <<get>> <<set>> = null
     + currency : int <<get>> <<set>>
+    - rect : Rectangle
+    - state : State
     + SetData(level:LevelData, columnId:int, rowId:int, fillColumns:int, fillRows:int) : void
     + StartOpening() : void
     + FinishOpening(sender:object, e:EventArgs) : void
@@ -91,31 +74,14 @@ class Cell {
     + Draw() : void
     + DrawAfter() : void
 }
-enum State {
-    INIT= 'I',
-    OPENING= 'O',
-    OPEN= 'N',
-}
 IDynamicNode <|-- Cell
-Cell o-> "type" CellType
-Cell o-> "kind" EnemyKind
-Cell --> "rect" Rectangle
 Cell --> "transform" Transform
-Cell o-> "state" State
 Cell --> "level" LevelData
 Cell o-> "animation" PeelingCellAnimation
-Cell +-- State
-enum EnemyKind {
-    GOBLIN_ROGUE,
-    GOBLIN_ARCHER,
-    GOBLIN_MAGE,
-    GOBLINBARBARIC,
-    GOBLIN_BOSS_1,
-    GOBLIN_BOSS_2,
-    GOBLIN_BOSS_3,
-}
 class Enemy {
+    - <<readonly>> tile : Image
     + Damage : int <<get>>
+    - state : State
     + Enemy(x:int, y:int, kind:EnemyKind)
     + Defeat() : void
     + IsAlive() : bool
@@ -123,38 +89,20 @@ class Enemy {
     + Clone(x:int, y:int) : Enemy
     + Draw() : void
 }
-enum State {
-    ALIVE,
-    DEAD,
-}
-class DataManager <<static>> {
-}
-class EnemyData {
-    + damage : int <<get>> <<set>>
-}
-class "Dictionary`2"<T1,T2> {
-}
 IStaticNode <|-- Enemy
 Enemy --> "Transform" Transform
-Enemy --> "tile" Image
-Enemy o-> "state" State
 Enemy --> "Collisioner" Collisioner
-Enemy --> "Renderer" Renderer
-Enemy +-- State
-Enemy +-- DataManager
-DataManager o-> "enemyData<EnemyKind,EnemyData>" "Dictionary`2"
-Enemy +-- EnemyData
-EnemyData --> "point" Point
+Enemy --> "renderer" Renderer
 class EnemyFactory {
+    - <<readonly>> EnemyPrototypes : Dictionary<EnemyKind, Enemy>
     - EnemyFactory()
     + {static} Create(x:int, y:int, kind:EnemyKind) : Enemy
     - RecreatePrototypes() : void
 }
-class "Dictionary`2"<T1,T2> {
-}
-EnemyFactory o-> "EnemyPrototypes<EnemyKind,Enemy>" "Dictionary`2"
 EnemyFactory o-> "Instance" EnemyFactory
 class GameManager {
+    - state : GameState
+    - <<readonly>> font : Font
     - level : int
     - maxLvls : int
     - GameManager()
@@ -162,31 +110,21 @@ class GameManager {
     + OnPlay() : void
     + OnRetry() : void
     + OnExit() : void
-    - HandleLose() : void
-    + HandleVictory() : void
+    - HandleLose(data:PlayerDiedEvent) : void
+    + HandleVictory(data:LevelWinEvent) : void
     + NextLevel() : void
     + OnMainMenu() : void
     + Input() : void
     + Update(deltaTime:float) : void
     + Draw() : void
 }
-enum GameState {
-    MAIN_MENU,
-    PLAYING_LEVEL,
-    VICTORY,
-    DEFEAT,
-    QUIT,
-}
 IDynamicNode <|-- GameManager
-GameManager o-> "state" GameState
 GameManager o-> "Instance" GameManager
-GameManager o-> "font" Font
-GameManager o-> "levelManager" LevelManager
+GameManager --> "levelManager" LevelManager
 GameManager --> "defeat" DefeatScreen
 GameManager --> "victory" VictoryScreen
-GameManager +-- GameState
+GameManager o-> "bus" EventBus
 class Grid {
-    +  <<event>> OnWin : LevelEventWin 
     + <<const>> MAX_ROW : int = 16
     + <<const>> MAX_COLUMN : int = 32
     - lvlRows : int
@@ -202,57 +140,53 @@ class Grid {
     + DrawAfter() : void
 }
 IDynamicNode <|-- Grid
+Grid o-> "bus" EventBus
 Grid --> "level" LevelData
-class LevelDataProps {
-}
 class LevelData {
+    + props : LevelDataProps <<get>> <<set>>
+    + grid : List<List<Cell>> <<get>> <<set>>
     + Reset() : void
 }
-class "List`1"<T> {
+class LevelWinEvent {
 }
-LevelDataProps --> "start" Color
-LevelDataProps --> "end" Color
-LevelDataProps --> "basic" Color
-LevelDataProps --> "lineMesh" Color
-LevelDataProps --> "treasure" Color
-LevelDataProps --> "background" Color
-LevelData --> "props" LevelDataProps
-LevelData --> "grid<List<Cell>>" "List`1"
 class LevelManager {
-    +  <<event>> OnLose : LevelEventLose 
-    +  <<event>> OnWin : LevelEventWin 
-    - LevelManager()
+    - <<readonly>> levels : Dictionary<int, LevelData>
+    - {static} <<readonly>> enemies : List<Enemy>
+    + {static} ActiveEnemies : List<Enemy> <<get>>
+    + LevelManager(font:Font, bus:EventBus)
     - LoadLevel(level:int) : LevelData
     + ResetLevel() : void
-    - PlayerDeathHandler() : void
-    - PlayerWillMoveHandler(position:Point) : void
+    - PlayerWillMoveHandler(data:PlayerMoveEvent) : void
     - RunCollisions() : void
-    - CheckVictoryCondition() : void
     + StartLevel(level:int) : void
-    + Init(font:Font) : void
     + <<override>> Input() : void
     + <<override>> Update(deltaTime:float) : void
     + <<override>> Draw() : void
 }
-class "Dictionary`2"<T1,T2> {
-}
-class "List`1"<T> {
-}
+Event <|-- LevelWinEvent
 InteractiveNode <|-- LevelManager
-LevelManager o-> "levels<int,LevelData>" "Dictionary`2"
 LevelManager --> "Renderer" Renderer
-LevelManager o-> "player" Player
-LevelManager o-> "enemies<Enemy>" "List`1"
-LevelManager --> "ActiveEnemies<Enemy>" "List`1"
-LevelManager o-> "grid" Grid
+LevelManager --> "player" Player
+LevelManager --> "grid" Grid
 LevelManager --> "ui" LevelUI
-LevelManager o-> "Instance" LevelManager
+class PlayerMoveEvent {
+    + <<readonly>> Position : Point
+}
+class PlayerDmgEvent {
+    + <<readonly>> Hp : int
+    + <<readonly>> Dmg : int
+}
+class PlayerResetEvent {
+    + <<readonly>> Hp : int
+}
+class PlayerDiedEvent {
+}
 class Player {
-    +  <<event>> OnWillMove : PlayerEventWillMove 
-    +  <<event>> OnDeath : PlayerEventIsDead 
+    - start : Point
+    + Tile : Image <<get>>
     - <<readonly>> maxHealth : int = 8
     + Hp : int <<get>>
-    + Player(x:int, y:int)
+    + Player(bus:EventBus, x:int, y:int)
     + SetStart(x:int, y:int) : void
     + Reset() : void
     + TakeDamage(damage:int) : void
@@ -262,14 +196,18 @@ class Player {
     + <<override>> Input() : void
     + <<override>> Draw() : void
 }
+Event <|-- PlayerMoveEvent
+Event <|-- PlayerDmgEvent
+Event <|-- PlayerResetEvent
+Event <|-- PlayerDiedEvent
 InteractiveNode <|-- Player
-Player --> "start" Point
-Player --> "Tile" Image
 Player --> "Collisioner" Collisioner
 Player --> "Transform" Transform
-Player --> "Renderer" Renderer
+Player --> "renderer" Renderer
+Player --> "bus" EventBus
 class Program <<static>> {
     + {static} deltaTime : float
+    - {static} lastFrameTime : DateTime
     + {static} showDebug : bool = true
     + {static} currentMsg : string = ""
     + {static} SCREEN_WIDTH : int = 1024
@@ -280,35 +218,43 @@ class Program <<static>> {
     - {static} Update() : void
     - {static} Render() : void
 }
-Program o-> "lastFrameTime" DateTime
 Program o-> "gameManager" GameManager
 class DrawImageCommand {
+    + texture : Image
     + Draw(e:PaintEventArgs) : void
 }
 IDrawCommand <|-- DrawImageCommand
-DrawImageCommand o-> "texture" Image
 DrawImageCommand o-> "transform" Transform
 class DrawRectCommand {
+    + rect : Rectangle
+    + pen : Pen
+    + brush : Brush
     + Draw(e:PaintEventArgs) : void
 }
 IDrawCommand <|-- DrawRectCommand
-DrawRectCommand --> "rect" Rectangle
-DrawRectCommand --> "pen" Pen
-DrawRectCommand --> "brush" Brush
 class DrawTextCommand {
     + text : string
+    + font : Font
+    + brush : Brush
+    + position : Point
     + Draw(e:PaintEventArgs) : void
 }
 IDrawCommand <|-- DrawTextCommand
-DrawTextCommand --> "font" Font
-DrawTextCommand --> "brush" Brush
-DrawTextCommand --> "position" Point
 interface IDrawCommand {
     + Draw(e:PaintEventArgs) : void
 }
-interface ICanvaElement {
-    + Input() : void
-    + Draw() : void
+abstract class Event {
+    + Timestamp : DateTime <<get>>
+}
+class EventBus {
+    - <<readonly>> subscribers : Dictionary<Type, List<object>>
+    + Subscribe(handler:Action<T>) : void
+    + Unsubscribe(handler:Action<T>) : void
+    + Publish(eventData:T) : void
+}
+abstract class CanvaElement {
+    + <<virtual>> Input() : void
+    + {abstract} Draw() : void
 }
 interface IDynamicNode {
     + Update(deltaTime:float) : void
@@ -334,61 +280,45 @@ class PeelingCellAnimation {
 IDrawCommand <|-- PeelingCellAnimation
 PeelingCellAnimation --> "transform" Transform
 class DefeatScreen {
+    - result : DefeatResult
+    - <<readonly>> font : Font
     + EnableDefeat() : void
-    + Input() : void
-    + Draw() : void
+    + <<override>> Input() : void
+    + <<override>> Draw() : void
 }
-enum DefeatResult {
-    Retry,
-    MainMenu,
-}
-ICanvaElement <|-- DefeatScreen
-DefeatScreen o-> "Renderer" Renderer
-DefeatScreen o-> "result" DefeatResult
-DefeatScreen o-> "font" Font
-DefeatScreen +-- DefeatResult
+CanvaElement <|-- DefeatScreen
+DefeatScreen o-> "renderer" Renderer
 class LevelUI {
+    - <<readonly>> font : Font
     - level : int
     + SetLevel(level:int) : void
-    + Input() : void
-    + Draw() : void
+    + <<override>> Draw() : void
 }
-ICanvaElement <|-- LevelUI
+CanvaElement <|-- LevelUI
 LevelUI o-> "playerInfo" PlayerInfo
-LevelUI o-> "font" Font
 class MainMenu {
-    + Input() : void
-    + Draw() : void
+    - <<readonly>> font : Font
+    - result : MenuResult
+    + <<override>> Input() : void
+    + <<override>> Draw() : void
 }
-enum MenuResult {
-    Play,
-    Exit,
-}
-ICanvaElement <|-- MainMenu
-MainMenu o-> "font" Font
-MainMenu o-> "Renderer" Renderer
-MainMenu o-> "result" MenuResult
-MainMenu +-- MenuResult
+CanvaElement <|-- MainMenu
+MainMenu o-> "renderer" Renderer
 class PlayerInfo {
-    + Input() : void
-    + Draw() : void
+    - Hp : int = 0
+    - <<readonly>> font : Font
+    + PlayerInfo(font:Font, bus:EventBus)
+    - HandlePlayerDmg(data:PlayerDmgEvent) : void
+    - HandlePlayerReset(data:PlayerResetEvent) : void
+    + <<override>> Draw() : void
 }
-ICanvaElement <|-- PlayerInfo
-PlayerInfo o-> "player" Player
-PlayerInfo o-> "font" Font
-PlayerInfo o-> "Renderer" Renderer
+CanvaElement <|-- PlayerInfo
+PlayerInfo o-> "renderer" Renderer
 class VictoryScreen {
-    + Input() : void
-    + Draw() : void
+    - <<readonly>> font : Font
+    - option : Option
+    + <<override>> Input() : void
+    + <<override>> Draw() : void
 }
-enum Option {
-    Next,
-    MainMenu,
-}
-ICanvaElement <|-- VictoryScreen
-VictoryScreen o-> "backgroundImg" Image
-VictoryScreen o-> "font" Font
-VictoryScreen o-> "option" Option
-VictoryScreen o-> "Renderer" Renderer
-VictoryScreen +-- Option
-@enduml
+CanvaElement <|-- VictoryScreen
+VictoryScreen o-> "renderer" Renderer

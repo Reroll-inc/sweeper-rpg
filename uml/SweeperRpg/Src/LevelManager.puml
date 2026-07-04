@@ -1,31 +1,22 @@
-@startuml
+class LevelWinEvent {
+}
 class LevelManager {
-    +  <<event>> OnLose : LevelEventLose 
-    +  <<event>> OnWin : LevelEventWin 
-    - LevelManager()
+    - <<readonly>> levels : Dictionary<int, LevelData>
+    - {static} <<readonly>> enemies : List<Enemy>
+    + {static} ActiveEnemies : List<Enemy> <<get>>
+    + LevelManager(font:Font, bus:EventBus)
     - LoadLevel(level:int) : LevelData
     + ResetLevel() : void
-    - PlayerDeathHandler() : void
-    - PlayerWillMoveHandler(position:Point) : void
+    - PlayerWillMoveHandler(data:PlayerMoveEvent) : void
     - RunCollisions() : void
-    - CheckVictoryCondition() : void
     + StartLevel(level:int) : void
-    + Init(font:Font) : void
     + <<override>> Input() : void
     + <<override>> Update(deltaTime:float) : void
     + <<override>> Draw() : void
 }
-class "Dictionary`2"<T1,T2> {
-}
-class "List`1"<T> {
-}
+Event <|-- LevelWinEvent
 InteractiveNode <|-- LevelManager
-LevelManager o-> "levels<int,LevelData>" "Dictionary`2"
 LevelManager --> "Renderer" Renderer
-LevelManager o-> "player" Player
-LevelManager o-> "enemies<Enemy>" "List`1"
-LevelManager --> "ActiveEnemies<Enemy>" "List`1"
-LevelManager o-> "grid" Grid
+LevelManager --> "player" Player
+LevelManager --> "grid" Grid
 LevelManager --> "ui" LevelUI
-LevelManager o-> "Instance" LevelManager
-@enduml
