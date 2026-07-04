@@ -7,17 +7,39 @@ using EngineGDI.Src.Nodes;
 
 namespace SweeperRpg.Src
 {
-    public class Grid(EventBus bus) : IDynamicNode
+    public class Grid : IDynamicNode
     {
         public const int MAX_ROW = 16;
         public const int MAX_COLUMN = 32;
 
-        private readonly EventBus bus = bus;
+        private readonly EventBus bus;
         private LevelData level;
         private int lvlRows;
         private int lvlColumns;
         private int fillRows;
         private int fillColumns;
+
+        public Grid(EventBus bus)
+        {
+            this.bus = bus;
+
+            bus.Subscribe<PlayerResetEvent>(handler: PlayerResetHandler);
+            bus.Subscribe<PlayerMoveEvent>(handler: PlayerMoveHandler);
+        }
+
+        private void PlayerResetHandler(PlayerResetEvent data)
+        {
+            level.AnimateOnReset(
+                position: new(x: data.Position.X - fillColumns, y: data.Position.Y - fillRows)
+            );
+        }
+
+        private void PlayerMoveHandler(PlayerMoveEvent data)
+        {
+            level.AnimateOnPlayerMove(
+                position: new(x: data.Position.X - fillColumns, y: data.Position.Y - fillRows)
+            );
+        }
 
         public void GenerateLevel(LevelData level, List<Enemy> enemies, Player player)
         {
@@ -130,10 +152,10 @@ namespace SweeperRpg.Src
                     Engine.DrawRect(
                         rect: new Rectangle(
                             location: new Point(x: columnId * 32, y: rowId * 32),
-                            size: new Size(width: 32, height: 32)
+                            size: Transform.BaseUnit
                         ),
-                        pen: new Pen(level.props.background),
-                        brush: new SolidBrush(level.props.background)
+                        pen: new Pen(level.props.behind),
+                        brush: new SolidBrush(level.props.behind)
                     );
                 }
             }

@@ -34,7 +34,7 @@ namespace SweeperRpg.Src
             grid = new(bus: bus);
             ui = new LevelUI(font: font, bus: bus);
 
-            bus.Subscribe<PlayerMoveEvent>(handler: PlayerWillMoveHandler);
+            bus.Subscribe<PlayerWantToMoveEvent>(handler: PlayerWillMoveHandler);
         }
 
         private LevelData LoadLevel(int level)
@@ -56,8 +56,9 @@ namespace SweeperRpg.Src
 
         public void ResetLevel()
         {
-            player.Reset();
             grid.Reset();
+
+            player.Reset();
 
             foreach (Enemy enemy in enemies)
             {
@@ -65,7 +66,7 @@ namespace SweeperRpg.Src
             }
         }
 
-        private void PlayerWillMoveHandler(PlayerMoveEvent data)
+        private void PlayerWillMoveHandler(PlayerWantToMoveEvent data)
         {
             if (grid.PlayerCanMove(position: data.Position))
             {

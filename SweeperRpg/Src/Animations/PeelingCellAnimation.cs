@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -7,17 +6,21 @@ using EngineGDI.Src.Drawing;
 
 namespace SweeperRpg.Src.Animations
 {
+    public delegate void PeelingEnd();
+
     public class PeelingCellAnimation : IDrawCommand
     {
-        public event EventHandler OnFinish;
+        public event PeelingEnd OnFinish;
         private float progress;
-        private readonly float sec = 1.5f;
+        private readonly float sec = 0.8f;
 
         private Transform transform;
+        private Color color;
 
-        public void SetData(Transform transform)
+        public void SetData(Transform transform, Color color)
         {
             this.transform = transform;
+            this.color = color;
         }
 
         public void Reset()
@@ -31,7 +34,7 @@ namespace SweeperRpg.Src.Animations
 
             if (progress > 100)
             {
-                OnFinish?.Invoke(this, EventArgs.Empty);
+                OnFinish();
             }
         }
 
@@ -75,7 +78,7 @@ namespace SweeperRpg.Src.Animations
             e.Graphics.SetClip(path);
 
             e.Graphics.FillRectangle(
-                new SolidBrush(Color.Green),
+                new SolidBrush(color),
                 new Rectangle(location: transform.PositionAndScale, size: Transform.BaseUnit)
             );
 

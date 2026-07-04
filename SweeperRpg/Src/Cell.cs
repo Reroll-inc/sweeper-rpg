@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Text.Json.Serialization;
 using EngineGDI.Src;
+using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Nodes;
 using PlantUmlClassDiagramGenerator.Attributes;
 using SweeperRpg.Src.Animations;
@@ -32,7 +33,7 @@ namespace SweeperRpg.Src
         [PlantUmlIgnore]
         private enum State
         {
-            INIT = 'I',
+            CLOSED = 'I',
             OPENING = 'O',
             OPEN = 'N',
         }
@@ -52,9 +53,9 @@ namespace SweeperRpg.Src
         private Transform transform;
 
         [PlantUmlIgnoreAssociation]
-        private State state = State.OPENING;
+        private State state = State.CLOSED;
         private LevelData level;
-        private readonly PeelingCellAnimation animation = new();
+        private readonly PeelingCellAnimation peelingAnimation = new();
 
         public void SetData(LevelData level, int columnId, int rowId, int fillColumns, int fillRows)
         {
@@ -63,27 +64,29 @@ namespace SweeperRpg.Src
             transform = new(position: new(x: columnId + fillColumns, y: rowId + fillRows));
             rect = new(location: transform.PositionAndScale, size: Transform.BaseUnit);
 
-            animation.SetData(transform: transform);
+            peelingAnimation.SetData(transform: transform, color: level.props.foreground);
 
-            animation.OnFinish += FinishOpening;
+            peelingAnimation.OnFinish += FinishOpening;
         }
 
         public void StartOpening()
         {
-            state = State.OPENING;
+            if (state == State.CLOSED)
+            {
+                state = State.OPENING;
+            }
         }
 
-        public void FinishOpening(object sender, EventArgs e)
+        public void FinishOpening()
         {
             state = State.OPEN;
         }
 
         public void Reset()
         {
-            // TODO: This should reset to INIT
-            state = State.OPENING;
+            state = State.CLOSED;
 
-            animation.Reset();
+            peelingAnimation.Reset();
         }
 
         public void Update(float deltaTime)
@@ -91,9 +94,9 @@ namespace SweeperRpg.Src
             switch (state)
             {
                 case State.OPENING:
-                    animation.Update(deltaTime: deltaTime);
+                    peelingAnimation.Update(deltaTime: deltaTime);
                     break;
-                case State.INIT:
+                case State.CLOSED:
                     break;
                 case State.OPEN:
                     break;
@@ -138,7 +141,7 @@ namespace SweeperRpg.Src
             Engine.DrawRect(
                 rect: rect,
                 pen: new Pen(level.props.lineMesh),
-                brush: new SolidBrush(level.props.basic)
+                brush: new SolidBrush(level.props.background)
             );
         }
 
@@ -147,13 +150,14 @@ namespace SweeperRpg.Src
             switch (state)
             {
                 case State.OPENING:
-                    Engine.DrawACommand(animation);
+                    Engine.DrawACommand(peelingAnimation);
                     break;
-                case State.INIT:
-                    break;
-                case State.OPEN:
-                    break;
-                default:
+                case State.CLOSED:
+                    Engine.DrawRect(
+                        rect: rect,
+                        pen: new Pen(level.props.lineMesh),
+                        brush: new SolidBrush(level.props.foreground)
+                    );
                     break;
             }
         }

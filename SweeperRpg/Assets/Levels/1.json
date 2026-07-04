@@ -3,9 +3,10 @@
     "start": "#A72BFF",
     "end": "#7600D1",
     "treasure": "#CBA406",
-    "basic": "#4B9936",
     "lineMesh": "#851854",
-    "background": "#AFA564"
+    "behind": "#AFA564",
+    "background": "#4B9936",
+    "foreground": "#447836"
   },
   "grid": [
     [

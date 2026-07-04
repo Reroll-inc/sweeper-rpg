@@ -14,15 +14,22 @@ namespace SweeperRpg.Src
         public readonly Point Position = position;
     }
 
+    public class PlayerWantToMoveEvent(Point position) : Event
+    {
+        [PlantUmlIgnoreAssociation]
+        public readonly Point Position = position;
+    }
+
     public class PlayerDmgEvent(int hp, int dmg) : Event
     {
         public readonly int Hp = hp;
         public readonly int Dmg = dmg;
     }
 
-    public class PlayerResetEvent(int hp) : Event
+    public class PlayerResetEvent(Point position, int hp) : Event
     {
         public readonly int Hp = hp;
+        public readonly Point Position = position;
     }
 
     public class PlayerDiedEvent : Event { }
@@ -72,7 +79,7 @@ namespace SweeperRpg.Src
 
             Collisioner.UpdatePosition(transform: Transform);
 
-            bus.Publish<PlayerResetEvent>(new(hp: Hp));
+            bus.Publish<PlayerResetEvent>(new(position: Transform.Position, hp: Hp));
         }
 
         public void TakeDamage(int damage)
@@ -98,6 +105,8 @@ namespace SweeperRpg.Src
             Transform.Position.Y = newPosition.Y;
 
             Collisioner.UpdatePosition(transform: Transform);
+
+            bus.Publish<PlayerMoveEvent>(new(position: newPosition));
         }
 
         public bool TryCollide(Enemy enemy)
@@ -141,7 +150,7 @@ namespace SweeperRpg.Src
 
             if (changed)
             {
-                bus.Publish<PlayerMoveEvent>(new(position: newPosition));
+                bus.Publish<PlayerWantToMoveEvent>(new(position: newPosition));
             }
         }
 
