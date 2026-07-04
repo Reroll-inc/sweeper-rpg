@@ -23,8 +23,10 @@ dotnet tool restore
 - VSCode: execute related task.
 
 ```sh
-dotnet puml-gen .\\EngineGDI\\Src .\\uml -dir -allInOne -createAssociation
+dotnet puml-gen . ./uml -dir -allInOne -createAssociation -addPackageTags -excludeUmlBeginEndTags -excludePaths **/bin,**/obj,**/Properties,Test
 ```
+
+![UML Diagram](docs/include.svg)
 
 ## Coverage
 
