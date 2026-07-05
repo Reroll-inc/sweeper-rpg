@@ -9,8 +9,8 @@ namespace SweeperRpg.Src
 {
     public class Grid : IDynamicNode
     {
-        public const int MAX_ROW = 16;
-        public const int MAX_COLUMN = 32;
+        public readonly int MAX_ROW = (int)Math.Ceiling((double)512 / Transform.BaseUnit.Height);
+        public readonly int MAX_COLUMN = (int)Math.Ceiling((double)1024 / Transform.BaseUnit.Width);
 
         private readonly EventBus bus;
         private LevelData level;
@@ -51,7 +51,7 @@ namespace SweeperRpg.Src
             if (lvlRows > MAX_ROW || lvlColumns > MAX_COLUMN)
             {
                 throw new Exception(
-                    $"Level size is [{lvlRows},{lvlColumns}] which is bigger than [16,32]"
+                    $"Level size is [{lvlRows},{lvlColumns}] which is bigger than [{MAX_ROW},{MAX_COLUMN}]"
                 );
             }
 
@@ -151,7 +151,10 @@ namespace SweeperRpg.Src
                 {
                     Engine.DrawRect(
                         rect: new Rectangle(
-                            location: new Point(x: columnId * 32, y: rowId * 32),
+                            location: new Point(
+                                x: columnId * Transform.BaseUnit.Width,
+                                y: rowId * Transform.BaseUnit.Height
+                            ),
                             size: Transform.BaseUnit
                         ),
                         pen: new Pen(level.props.behind),

@@ -37,6 +37,8 @@ namespace SweeperRpg.Src
 
     public class Enemy : IStaticNode
     {
+        private static readonly Font dmgFont = new("Assets/Fonts/pixel.ttf", 10);
+
         [PlantUmlIgnore]
         private enum State
         {
@@ -86,7 +88,7 @@ namespace SweeperRpg.Src
                 row: data.point.X,
                 column: data.point.Y
             );
-            Transform = new(position: new(x: x, y: y));
+            Transform = new(position: new(x: x, y: y), offset: new(4, -8));
             Collisioner = new Collisioner(transform: Transform);
             renderer = new(new DrawImageCommand(texture: tile, transform: Transform));
         }
@@ -110,7 +112,8 @@ namespace SweeperRpg.Src
         {
             Enemy clone = (Enemy)MemberwiseClone();
 
-            clone.Transform = new(position: new(x: x, y: y));
+            // TODO: clonar el transform en vez de recrearlo
+            clone.Transform = new(position: new(x: x, y: y), offset: new(4, -8));
             clone.Collisioner = new Collisioner(transform: clone.Transform);
             clone.renderer = new(new DrawImageCommand(texture: tile, transform: clone.Transform));
 
@@ -120,6 +123,15 @@ namespace SweeperRpg.Src
         public void Draw()
         {
             renderer.Draw();
+            Engine.DrawText(
+                text: Damage.ToString(),
+                font: dmgFont,
+                brush: new SolidBrush(Color.Azure),
+                position: new(
+                    Transform.PositionAndScale.X + (Damage > 9 ? 6 : 12),
+                    Transform.PositionAndScale.Y + 32
+                )
+            );
         }
     }
 }
