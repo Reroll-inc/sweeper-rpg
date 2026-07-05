@@ -12,6 +12,7 @@ namespace SweeperRpg.Src
         public readonly int MAX_ROW = (int)Math.Ceiling((double)512 / Transform.BaseUnit.Height);
         public readonly int MAX_COLUMN = (int)Math.Ceiling((double)1024 / Transform.BaseUnit.Width);
 
+        private readonly EnemyFactory enemyFactory;
         private readonly EventBus bus;
         private LevelData level;
         private int lvlRows;
@@ -22,9 +23,11 @@ namespace SweeperRpg.Src
         public Grid(EventBus bus)
         {
             this.bus = bus;
+            enemyFactory = new(bus: bus);
 
             bus.Subscribe<PlayerResetEvent>(handler: PlayerResetHandler);
             bus.Subscribe<PlayerMoveEvent>(handler: PlayerMoveHandler);
+            bus.Subscribe<EnemyDeadEvent>(handler: EnemyDeadHandler);
         }
 
         private void PlayerResetHandler(PlayerResetEvent data)
@@ -38,6 +41,17 @@ namespace SweeperRpg.Src
         {
             level.AnimateOnPlayerMove(
                 position: new(x: data.Position.X - fillColumns, y: data.Position.Y - fillRows)
+            );
+        }
+
+        private void EnemyDeadHandler(EnemyDeadEvent data)
+        {
+            Point position = data.Enemy.Transform.Position;
+
+            level.AddDmgToCellsAround(
+                dmg: -data.Enemy.Damage,
+                columnId: position.X - fillColumns,
+                rowId: position.Y - fillRows
             );
         }
 
@@ -81,13 +95,19 @@ namespace SweeperRpg.Src
                         case CellType.COIN:
                             break;
                         case CellType.ENEMY:
-                            enemies.Add(
-                                EnemyFactory.Create(
-                                    x: columnId + fillColumns,
-                                    y: rowId + fillRows,
-                                    kind: cell.kind.Value
-                                )
+                            Enemy enemy = enemyFactory.Create(
+                                x: columnId + fillColumns,
+                                y: rowId + fillRows,
+                                kind: cell.kind.Value
                             );
+                            enemies.Add(item: enemy);
+
+                            level.AddDmgToCellsAround(
+                                dmg: enemy.Damage,
+                                columnId: columnId,
+                                rowId: rowId
+                            );
+
                             break;
                         case CellType.START:
                             player.SetStart(x: columnId + fillColumns, y: rowId + fillRows);

@@ -29,6 +29,8 @@ namespace SweeperRpg.Src
 
     public class Cell : IDynamicNode
     {
+        private static readonly Font dmgFont = new("Assets/Fonts/pixel.ttf", 12);
+
         [PlantUmlIgnore]
         private enum State
         {
@@ -55,6 +57,7 @@ namespace SweeperRpg.Src
         private State state = State.CLOSED;
         private LevelData level;
         private readonly PeelingCellAnimation peelingAnimation = new();
+        private int dmgAround = 0;
 
         public void SetData(LevelData level, int columnId, int rowId, int fillColumns, int fillRows)
         {
@@ -66,6 +69,11 @@ namespace SweeperRpg.Src
             peelingAnimation.SetData(transform: transform, color: level.props.foreground);
 
             peelingAnimation.OnFinish += FinishOpening;
+        }
+
+        public void AddDmgAround(int dmg)
+        {
+            dmgAround += dmg;
         }
 
         public void StartOpening()
@@ -142,6 +150,19 @@ namespace SweeperRpg.Src
                 pen: new Pen(level.props.lineMesh),
                 brush: new SolidBrush(level.props.background)
             );
+
+            if (dmgAround > 0)
+            {
+                Engine.DrawText(
+                    text: dmgAround.ToString(),
+                    font: dmgFont,
+                    brush: new SolidBrush(Color.Azure),
+                    position: new(
+                        transform.PositionAndScale.X + (dmgAround > 9 ? 8 : 16),
+                        transform.PositionAndScale.Y + 12
+                    )
+                );
+            }
         }
 
         public void DrawAfter()

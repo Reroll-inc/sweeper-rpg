@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using EngineGDI.Src.Events;
 using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src
@@ -9,25 +10,23 @@ namespace SweeperRpg.Src
         [PlantUmlIgnoreAssociation]
         private readonly Dictionary<EnemyKind, Enemy> EnemyPrototypes = [];
 
-        private static EnemyFactory Instance { get; } = new();
-
-        private EnemyFactory()
+        public EnemyFactory(EventBus bus)
         {
-            RecreatePrototypes();
+            RecreatePrototypes(bus: bus);
         }
 
-        public static Enemy Create(int x, int y, EnemyKind kind)
+        public Enemy Create(int x, int y, EnemyKind kind)
         {
-            _ = Instance.EnemyPrototypes.TryGetValue(kind, out Enemy enemy);
+            _ = EnemyPrototypes.TryGetValue(kind, out Enemy enemy);
 
             return enemy.Clone(x: x, y: y);
         }
 
-        private void RecreatePrototypes()
+        private void RecreatePrototypes(EventBus bus)
         {
             foreach (EnemyKind kind in Enum.GetValues<EnemyKind>())
             {
-                EnemyPrototypes.Add(kind, new Enemy(0, 0, kind));
+                EnemyPrototypes.Add(key: kind, value: new(x: 0, y: 0, kind: kind, bus: bus));
             }
         }
     }

@@ -89,6 +89,7 @@ namespace SweeperRpg.Src
         public void HandleVictory(LevelWinEvent data)
         {
             state = GameState.VICTORY;
+            victory.EnableVictory();
         }
 
         public void NextLevel()

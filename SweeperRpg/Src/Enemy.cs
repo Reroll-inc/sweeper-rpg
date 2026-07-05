@@ -5,11 +5,17 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using EngineGDI.Src;
 using EngineGDI.Src.Drawing;
+using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
 using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src
 {
+    public class EnemyDeadEvent(Enemy enemy) : Event
+    {
+        public readonly Enemy Enemy = enemy;
+    }
+
     [PlantUmlIgnore]
     public enum EnemyKind
     {
@@ -76,10 +82,12 @@ namespace SweeperRpg.Src
 
         public Collisioner Collisioner { get; private set; }
         private Renderer renderer;
+        private readonly EventBus bus;
 
-        public Enemy(int x, int y, EnemyKind kind)
+        public Enemy(int x, int y, EnemyKind kind, EventBus bus)
         {
             _ = DataManager.enemyData.TryGetValue(kind, out EnemyData data);
+            this.bus = bus;
 
             Damage = data.damage;
 
@@ -96,6 +104,7 @@ namespace SweeperRpg.Src
         public void Defeat()
         {
             state = State.DEAD;
+            bus.Publish<EnemyDeadEvent>(new(enemy: this));
         }
 
         public bool IsAlive()

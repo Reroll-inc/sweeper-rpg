@@ -57,7 +57,6 @@ namespace SweeperRpg.Src
         public void ResetLevel()
         {
             grid.Reset();
-
             player.Reset();
 
             foreach (Enemy enemy in enemies)

@@ -50,6 +50,61 @@ namespace SweeperRpg.Src
             }
         }
 
+        public void AddDmgToCellsAround(int dmg, int columnId, int rowId)
+        {
+            int left = columnId - 1;
+            int right = columnId + 1;
+            int top = rowId - 1;
+            int bottom = rowId + 1;
+
+            // 1. Left
+            if (left >= 0)
+            {
+                grid[rowId][left].AddDmgAround(dmg: dmg);
+
+                // 2. Top left
+                if (top >= 0)
+                {
+                    grid[top][left].AddDmgAround(dmg: dmg);
+                }
+            }
+
+            // 3. Top
+            if (top >= 0)
+            {
+                grid[top][columnId].AddDmgAround(dmg: dmg);
+
+                // 4. Top right
+                if (right < grid.Count)
+                {
+                    grid[top][right].AddDmgAround(dmg: dmg);
+                }
+            }
+
+            // 5. Right
+            if (right < grid.Count)
+            {
+                grid[rowId][right].AddDmgAround(dmg: dmg);
+
+                // 6. Bottom right
+                if (bottom < grid[0].Count)
+                {
+                    grid[bottom][right].AddDmgAround(dmg: dmg);
+                }
+            }
+
+            // 7. Bottom
+            if (bottom < grid[0].Count)
+            {
+                grid[bottom][columnId].AddDmgAround(dmg: dmg);
+
+                if (left >= 0)
+                {
+                    grid[bottom][left].AddDmgAround(dmg: dmg);
+                }
+            }
+        }
+
         public void AnimateOnReset(Point position)
         {
             grid[position.Y][position.X].StartOpening();

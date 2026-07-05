@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using EngineGDI.Src;
@@ -28,6 +29,11 @@ namespace SweeperRpg.Src.UI
                 transform: new(position: new(x: 0, y: 0))
             )
         );
+
+        public void EnableVictory()
+        {
+            option = Option.Next;
+        }
 
         public override void Input()
         {
