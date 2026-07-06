@@ -1,4 +1,5 @@
 using System.Drawing;
+using EngineGDI.Src.Events;
 using Moq;
 using SweeperRpg.Src;
 using Xunit;
@@ -7,42 +8,46 @@ namespace Test
 {
     public class PlayerTest
     {
+        private static readonly EventBus bus = new();
+
         [Fact]
         public void ShouldDieAndNotify()
         {
-            Mock<PlayerEventIsDead> isDeadHandler = new();
+            Mock<Action<PlayerDiedEvent>> PlayerDiedHandler = new();
 
-            isDeadHandler.Setup(d => d());
+            bus.Subscribe(PlayerDiedHandler.Object);
 
-            Player player = new(x: 1, y: 1);
-            player.OnDeath += isDeadHandler.Object;
+            Player player = new(x: 1, y: 1, bus: bus);
 
             Assert.True(player.Hp > 0);
 
             player.TakeDamage(player.Hp + 1);
 
-            isDeadHandler.Verify(d => d(), Times.Once);
+            PlayerDiedHandler.Verify(handler => handler(It.IsAny<PlayerDiedEvent>()), Times.Once);
+
+            bus.Unsubscribe(PlayerDiedHandler.Object);
         }
 
         [Fact]
         public void ShouldNotDieOn0Hp()
         {
-            Mock<PlayerEventIsDead> isDeadHandler = new();
+            Mock<Action<PlayerDiedEvent>> PlayerDiedHandler = new();
 
-            isDeadHandler.Setup(d => d());
+            bus.Subscribe(PlayerDiedHandler.Object);
 
-            Player player = new(x: 1, y: 1);
-            player.OnDeath += isDeadHandler.Object;
+            Player player = new(x: 1, y: 1, bus: bus);
 
             player.TakeDamage(player.Hp);
 
-            isDeadHandler.Verify(d => d(), Times.Never);
+            PlayerDiedHandler.Verify(handler => handler(It.IsAny<PlayerDiedEvent>()), Times.Never);
+
+            bus.Unsubscribe(PlayerDiedHandler.Object);
         }
 
         [Fact]
         public void ShouldChangePositionOnMove()
         {
-            Player player = new(x: 1, y: 1);
+            Player player = new(x: 1, y: 1, bus: bus);
 
             player.Move(new Point(x: 2, y: 3));
 
@@ -57,24 +62,28 @@ namespace Test
 
         private void ShouldNotifyWillToMove()
         {
-            Mock<PlayerEventWillMove> willMoveHandler = new();
+            Mock<Action<PlayerWantToMoveEvent>> PlayerWantToMoveHandler = new();
 
-            willMoveHandler.Setup(d => d(It.IsAny<Point>()));
+            bus.Subscribe(PlayerWantToMoveHandler.Object);
 
-            Player player = new(x: 1, y: 1);
-            player.OnWillMove += willMoveHandler.Object;
+            Player player = new(x: 1, y: 1, bus: bus);
 
             // TODO: create a movement controller to separate the engine
             // input logic from user movement actions.
 
-            willMoveHandler.Verify(d => d(It.IsAny<Point>()), Times.Once);
+            PlayerWantToMoveHandler.Verify(
+                handler => handler(It.IsAny<PlayerWantToMoveEvent>()),
+                Times.Once
+            );
+
+            bus.Unsubscribe(PlayerWantToMoveHandler.Object);
         }
 
         [Fact]
         public void ShouldReduceHpAndKillEnemyOnCollide()
         {
-            Enemy enemy = new(x: 1, y: 1, EnemyKind.GOBLIN_MAGE);
-            Player player = new(x: 1, y: 1);
+            Enemy enemy = new(x: 1, y: 1, kind: EnemyKind.GOBLIN_MAGE, bus: bus);
+            Player player = new(x: 1, y: 1, bus: bus);
             int OldHp = player.Hp;
 
             bool didCollide = player.TryCollide(enemy: enemy);

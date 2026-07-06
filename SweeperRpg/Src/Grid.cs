@@ -108,15 +108,15 @@ namespace SweeperRpg.Src
                                 rowId: rowId
                             );
 
-                            break;
+                            cell.SetEnemy(enemy: enemy);
+
+                            continue;
                         case CellType.START:
                             player.SetStart(x: columnId + fillColumns, y: rowId + fillRows);
                             continue;
                         case CellType.END:
                             continue;
                         case CellType.NULL:
-                            break;
-                        default:
                             break;
                     }
                 }
@@ -130,12 +130,10 @@ namespace SweeperRpg.Src
 
         public bool PlayerCanMove(Point position)
         {
-            return (
-                position.X >= fillColumns
+            return position.X >= fillColumns
                 && position.X <= (fillColumns + lvlColumns - 1)
                 && position.Y >= fillRows
-                && position.Y <= (fillRows + lvlRows - 1)
-            );
+                && position.Y <= (fillRows + lvlRows - 1);
         }
 
         public void CheckIfPlayerWon(Player player)

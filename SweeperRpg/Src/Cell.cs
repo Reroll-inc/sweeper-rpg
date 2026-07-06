@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using System.Text.Json.Serialization;
 using EngineGDI.Src;
@@ -58,6 +57,7 @@ namespace SweeperRpg.Src
         private LevelData level;
         private readonly PeelingCellAnimation peelingAnimation = new();
         private int dmgAround = 0;
+        private Enemy enemy = null;
 
         public void SetData(LevelData level, int columnId, int rowId, int fillColumns, int fillRows)
         {
@@ -69,6 +69,11 @@ namespace SweeperRpg.Src
             peelingAnimation.SetData(transform: transform, color: level.props.foreground);
 
             peelingAnimation.OnFinish += FinishOpening;
+        }
+
+        public void SetEnemy(Enemy enemy)
+        {
+            this.enemy = enemy;
         }
 
         public void AddDmgAround(int dmg)
@@ -151,7 +156,7 @@ namespace SweeperRpg.Src
                 brush: new SolidBrush(level.props.background)
             );
 
-            if (dmgAround > 0)
+            if ((enemy == null || !enemy.IsAlive()) && dmgAround > 0)
             {
                 Engine.DrawText(
                     text: dmgAround.ToString(),
