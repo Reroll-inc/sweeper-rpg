@@ -39,17 +39,17 @@ namespace SweeperRpg.Src
 
         private LevelData LoadLevel(int level)
         {
-            if (levels.TryGetValue(key: level, out LevelData currentLevel))
+            if (levels.TryGetValue(key: level, value: out LevelData currentLevel))
             {
                 currentLevel.Reset();
 
                 return currentLevel;
             }
 
-            string jsonContent = File.ReadAllText($"Assets/Levels/{level}.json");
-            currentLevel = JsonSerializer.Deserialize<LevelData>(jsonContent);
+            string jsonContent = File.ReadAllText(path: $"Assets/Levels/{level}.json");
+            currentLevel = JsonSerializer.Deserialize<LevelData>(json: jsonContent);
 
-            levels.Add(level, currentLevel);
+            levels.Add(key: level, value: currentLevel);
 
             return currentLevel;
         }
@@ -80,7 +80,7 @@ namespace SweeperRpg.Src
         {
             foreach (Enemy enemy in ActiveEnemies)
             {
-                if (player.TryCollide(enemy))
+                if (player.TryCollide(enemy: enemy))
                 {
                     return;
                 }
@@ -90,11 +90,11 @@ namespace SweeperRpg.Src
         public void StartLevel(int level)
         {
             enemies.Clear();
-            LevelData currentLevel = LoadLevel(level);
+            LevelData currentLevel = LoadLevel(level: level);
 
             grid.GenerateLevel(level: currentLevel, enemies: enemies, player: player);
 
-            ui.SetLevel(level);
+            ui.SetLevel(level: level);
         }
 
         public override void Input()

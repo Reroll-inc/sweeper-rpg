@@ -105,15 +105,65 @@ namespace SweeperRpg.Src
             }
         }
 
+        public void UpdateDmgToCellsAround(int dmg, int columnId, int rowId)
+        {
+            int left = columnId - 1;
+            int right = columnId + 1;
+            int top = rowId - 1;
+            int bottom = rowId + 1;
+
+            // 1. Left
+            if (left >= 0)
+            {
+                grid[rowId][left].UpdateDmgAround(dmg: dmg);
+
+                // 2. Top left
+                if (top >= 0)
+                {
+                    grid[top][left].UpdateDmgAround(dmg: dmg);
+                }
+            }
+
+            // 3. Top
+            if (top >= 0)
+            {
+                grid[top][columnId].UpdateDmgAround(dmg: dmg);
+
+                // 4. Top right
+                if (right < grid.Count)
+                {
+                    grid[top][right].UpdateDmgAround(dmg: dmg);
+                }
+            }
+
+            // 5. Right
+            if (right < grid.Count)
+            {
+                grid[rowId][right].UpdateDmgAround(dmg: dmg);
+
+                // 6. Bottom right
+                if (bottom < grid[0].Count)
+                {
+                    grid[bottom][right].UpdateDmgAround(dmg: dmg);
+                }
+            }
+
+            // 7. Bottom
+            if (bottom < grid[0].Count)
+            {
+                grid[bottom][columnId].UpdateDmgAround(dmg: dmg);
+
+                if (left >= 0)
+                {
+                    grid[bottom][left].UpdateDmgAround(dmg: dmg);
+                }
+            }
+        }
+
         public void AnimateOnReset(Point position)
         {
             grid[position.Y][position.X].StartOpening();
 
-            AnimateOnPlayerMove(position: position);
-        }
-
-        public void AnimateOnPlayerMove(Point position)
-        {
             int left = position.X - 1;
             int right = position.X + 1;
             int top = position.Y - 1;
@@ -165,6 +215,15 @@ namespace SweeperRpg.Src
                     grid[bottom][left].StartOpening();
                 }
             }
+        }
+
+        public void AnimateOnPlayerMove(Point position)
+        {
+            grid[position.Y][position.X].StartOpening();
+
+            // ¿Qué reglas debería haber al moverse en el tablero?
+            // ¿"abro" la celda y luego avanzo?
+            // ¿El final require que mate X enemigos?
         }
     }
 }

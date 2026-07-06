@@ -56,7 +56,8 @@ namespace SweeperRpg.Src
         private State state = State.CLOSED;
         private LevelData level;
         private readonly PeelingCellAnimation peelingAnimation = new();
-        private int dmgAround = 0;
+        private int dmgAround;
+        private int dmgAroundRelative;
         private Enemy enemy = null;
 
         public void SetData(LevelData level, int columnId, int rowId, int fillColumns, int fillRows)
@@ -69,6 +70,9 @@ namespace SweeperRpg.Src
             peelingAnimation.SetData(transform: transform, color: level.props.foreground);
 
             peelingAnimation.OnFinish += FinishOpening;
+
+            dmgAround = 0;
+            dmgAroundRelative = 0;
         }
 
         public void SetEnemy(Enemy enemy)
@@ -79,6 +83,12 @@ namespace SweeperRpg.Src
         public void AddDmgAround(int dmg)
         {
             dmgAround += dmg;
+            dmgAroundRelative = dmgAround;
+        }
+
+        public void UpdateDmgAround(int dmg)
+        {
+            dmgAroundRelative -= dmg;
         }
 
         public void StartOpening()
@@ -99,6 +109,7 @@ namespace SweeperRpg.Src
             state = State.CLOSED;
 
             peelingAnimation.Reset();
+            dmgAroundRelative = dmgAround;
         }
 
         public void Update(float deltaTime)
@@ -156,14 +167,14 @@ namespace SweeperRpg.Src
                 brush: new SolidBrush(level.props.background)
             );
 
-            if ((enemy == null || !enemy.IsAlive()) && dmgAround > 0)
+            if ((enemy == null || !enemy.IsAlive()) && dmgAroundRelative > 0)
             {
                 Engine.DrawText(
-                    text: dmgAround.ToString(),
+                    text: dmgAroundRelative.ToString(),
                     font: dmgFont,
                     brush: new SolidBrush(Color.Azure),
                     position: new(
-                        transform.PositionAndScale.X + (dmgAround > 9 ? 8 : 16),
+                        transform.PositionAndScale.X + (dmgAroundRelative > 9 ? 8 : 16),
                         transform.PositionAndScale.Y + 12
                     )
                 );

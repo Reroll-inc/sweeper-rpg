@@ -48,8 +48,8 @@ namespace SweeperRpg.Src
         {
             Point position = data.Enemy.Transform.Position;
 
-            level.AddDmgToCellsAround(
-                dmg: -data.Enemy.Damage,
+            level.UpdateDmgToCellsAround(
+                dmg: data.Enemy.Damage,
                 columnId: position.X - fillColumns,
                 rowId: position.Y - fillRows
             );
