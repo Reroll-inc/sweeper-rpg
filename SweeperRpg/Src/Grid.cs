@@ -197,8 +197,8 @@ namespace SweeperRpg.Src
         public void CheckIfPlayerWon(Player player)
         {
             CellType playerInCellType = level
-                .grid[player.Transform.Position.X - fillColumns][
-                    player.Transform.Position.Y - fillRows
+                .grid[player.Transform.Position.Y - fillRows][
+                    player.Transform.Position.X - fillColumns
                 ]
                 .type;
 

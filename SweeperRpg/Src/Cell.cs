@@ -49,8 +49,6 @@ namespace SweeperRpg.Src
         public EnemyKind? kind { get; set; } = null;
         public int currency { get; set; }
 
-        [PlantUmlIgnoreAssociation]
-        private Rectangle rect;
         private Transform transform;
 
         [PlantUmlIgnoreAssociation]
@@ -80,12 +78,16 @@ namespace SweeperRpg.Src
                     (float)Transform.BaseUnit.Height / TileMap.Size
                 )
             );
-            rect = new(location: transform.PositionAndScale, size: Transform.BaseUnit);
-
+            Point backgroundPoint = type switch
+            {
+                CellType.START => level.props.start,
+                CellType.END => level.props.end,
+                _ => level.props.background,
+            };
             Image background = TileMap.LoadSprite(
                 path: "Assets/32rogues/tiles.png",
-                column: level.props.background.X,
-                row: level.props.background.Y
+                column: backgroundPoint.X,
+                row: backgroundPoint.Y
             );
             renderer = new(new DrawImageCommand(texture: background, transform: transform));
 
@@ -149,37 +151,6 @@ namespace SweeperRpg.Src
 
         public void Draw()
         {
-            switch (type)
-            {
-                case CellType.COIN:
-                    Engine.DrawRect(
-                        rect: rect,
-                        pen: new Pen(level.props.lineMesh),
-                        brush: new SolidBrush(level.props.treasure)
-                    );
-                    return;
-                case CellType.START:
-                    Engine.DrawRect(
-                        rect: rect,
-                        pen: new Pen(level.props.lineMesh),
-                        brush: new SolidBrush(level.props.start)
-                    );
-                    return;
-                case CellType.END:
-                    Engine.DrawRect(
-                        rect: rect,
-                        pen: new Pen(level.props.lineMesh),
-                        brush: new SolidBrush(level.props.end)
-                    );
-                    return;
-                case CellType.NULL:
-                    break;
-                case CellType.ENEMY:
-                    break;
-                default:
-                    break;
-            }
-
             renderer.Draw();
 
             if ((enemy == null || !enemy.IsAlive()) && dmgAroundRelative > 0)

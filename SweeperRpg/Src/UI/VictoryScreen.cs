@@ -23,6 +23,8 @@ namespace SweeperRpg.Src.UI
         [PlantUmlIgnoreAssociation]
         private Option option = Option.Next;
 
+        private bool isCompleted = false;
+
         private readonly Renderer renderer = new(
             new DrawImageCommand(
                 texture: Image.FromFile("Assets/Imgs/victory_Placeholder.png"),
@@ -30,21 +32,45 @@ namespace SweeperRpg.Src.UI
             )
         );
 
-        public void EnableVictory()
+        private readonly Renderer WinRenderer = new(
+            new DrawImageCommand(
+                texture: Image.FromFile("Assets/Imgs/you-win.png"),
+                transform: new(
+                    position: new(x: 0, y: 0),
+                    scale: new(Program.SCREEN_HEIGHT / 1000f, Program.SCREEN_HEIGHT / 1000f),
+                    offset: new(x: Program.SCREEN_HEIGHT / 5, y: 0)
+                )
+            )
+        );
+        private readonly Renderer WinBackgroundRenderer = new(
+            new DrawRectCommand()
+            {
+                rect = new(0, 0, Program.SCREEN_WIDTH, Program.SCREEN_HEIGHT),
+                pen = new(color: Color.FromArgb(red: 25, green: 26, blue: 56)),
+                brush = new SolidBrush(color: Color.FromArgb(red: 25, green: 26, blue: 56)),
+            }
+        );
+
+        public void EnableVictory(bool isCompleted)
         {
-            option = Option.Next;
+            this.isCompleted = isCompleted;
+
+            option = isCompleted ? Option.MainMenu : Option.Next;
         }
 
         public override void Input()
         {
-            if (Engine.OnKeyDown(Keys.W))
+            if (!isCompleted)
             {
-                option = option == Option.Next ? Option.MainMenu : Option.Next;
-            }
+                if (Engine.OnKeyDown(Keys.W))
+                {
+                    option = option == Option.Next ? Option.MainMenu : Option.Next;
+                }
 
-            if (Engine.OnKeyDown(Keys.S))
-            {
-                option = option == Option.Next ? Option.MainMenu : Option.Next;
+                if (Engine.OnKeyDown(Keys.S))
+                {
+                    option = option == Option.Next ? Option.MainMenu : Option.Next;
+                }
             }
 
             if (Engine.OnKeyDown(Keys.Enter))
@@ -65,6 +91,13 @@ namespace SweeperRpg.Src.UI
 
         public override void Draw()
         {
+            if (isCompleted)
+            {
+                WinBackgroundRenderer.Draw();
+                WinRenderer.Draw();
+
+                return;
+            }
             renderer.Draw();
 
             string retryText = (option == Option.Next) ? "> Next level" : " Next Level";

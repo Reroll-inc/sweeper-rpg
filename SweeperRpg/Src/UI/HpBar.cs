@@ -64,7 +64,7 @@ namespace SweeperRpg.Src.UI
         private void HandlePlayerDmg(PlayerDmgEvent data)
         {
             Hp = data.Hp - data.Dmg;
-            HpTransform.Scale.Width = Scale.Width * Hp / BaseHp;
+            HpTransform.Scale.Width = Scale.Width * (float)Hp / BaseHp;
         }
 
         private void HandlePlayerReset(PlayerResetEvent data)

@@ -7,8 +7,8 @@ namespace SweeperRpg.Src
     [PlantUmlIgnore]
     public class LevelDataProps
     {
-        public Color start { get; set; }
-        public Color end { get; set; }
+        public Point start { get; set; }
+        public Point end { get; set; }
         public Color lineMesh { get; set; }
         public Color treasure { get; set; }
 
@@ -29,9 +29,9 @@ namespace SweeperRpg.Src
 
         public void Reset()
         {
-            foreach (List<Cell> column in grid)
+            foreach (List<Cell> row in grid)
             {
-                foreach (Cell cell in column)
+                foreach (Cell cell in row)
                 {
                     cell.Reset();
                 }
@@ -40,9 +40,9 @@ namespace SweeperRpg.Src
 
         public void Reload()
         {
-            foreach (List<Cell> column in grid)
+            foreach (List<Cell> row in grid)
             {
-                foreach (Cell cell in column)
+                foreach (Cell cell in row)
                 {
                     cell.Reload();
                 }
@@ -74,26 +74,26 @@ namespace SweeperRpg.Src
                 grid[top][columnId].AddDmgAround(dmg: dmg);
 
                 // 4. Top right
-                if (right < grid.Count)
+                if (right < grid[0].Count)
                 {
                     grid[top][right].AddDmgAround(dmg: dmg);
                 }
             }
 
             // 5. Right
-            if (right < grid.Count)
+            if (right < grid[0].Count)
             {
                 grid[rowId][right].AddDmgAround(dmg: dmg);
 
                 // 6. Bottom right
-                if (bottom < grid[0].Count)
+                if (bottom < grid.Count)
                 {
                     grid[bottom][right].AddDmgAround(dmg: dmg);
                 }
             }
 
             // 7. Bottom
-            if (bottom < grid[0].Count)
+            if (bottom < grid.Count)
             {
                 grid[bottom][columnId].AddDmgAround(dmg: dmg);
 
@@ -129,26 +129,26 @@ namespace SweeperRpg.Src
                 grid[top][columnId].UpdateDmgAround(dmg: dmg);
 
                 // 4. Top right
-                if (right < grid.Count)
+                if (right < grid[0].Count)
                 {
                     grid[top][right].UpdateDmgAround(dmg: dmg);
                 }
             }
 
             // 5. Right
-            if (right < grid.Count)
+            if (right < grid[0].Count)
             {
                 grid[rowId][right].UpdateDmgAround(dmg: dmg);
 
                 // 6. Bottom right
-                if (bottom < grid[0].Count)
+                if (bottom < grid.Count)
                 {
                     grid[bottom][right].UpdateDmgAround(dmg: dmg);
                 }
             }
 
             // 7. Bottom
-            if (bottom < grid[0].Count)
+            if (bottom < grid.Count)
             {
                 grid[bottom][columnId].UpdateDmgAround(dmg: dmg);
 
@@ -186,26 +186,26 @@ namespace SweeperRpg.Src
                 grid[top][position.X].StartOpening();
 
                 // 4. Top right
-                if (right < grid.Count)
+                if (right < grid[0].Count)
                 {
                     grid[top][right].StartOpening();
                 }
             }
 
             // 5. Right
-            if (right < grid.Count)
+            if (right < grid[0].Count)
             {
                 grid[position.Y][right].StartOpening();
 
                 // 6. Bottom right
-                if (bottom < grid[0].Count)
+                if (bottom < grid.Count)
                 {
                     grid[bottom][right].StartOpening();
                 }
             }
 
             // 7. Bottom
-            if (bottom < grid[0].Count)
+            if (bottom < grid.Count)
             {
                 grid[bottom][position.X].StartOpening();
 
@@ -223,6 +223,58 @@ namespace SweeperRpg.Src
             // ¿Qué reglas debería haber al moverse en el tablero?
             // ¿"abro" la celda y luego avanzo?
             // ¿El final require que mate X enemigos?
+
+            int left = position.X - 1;
+            int right = position.X + 1;
+            int top = position.Y - 1;
+            int bottom = position.Y + 1;
+
+            // 1. Left
+            if (left >= 0)
+            {
+                grid[position.Y][left].StartOpening();
+
+                // 2. Top left
+                if (top >= 0)
+                {
+                    grid[top][left].StartOpening();
+                }
+            }
+
+            // 3. Top
+            if (top >= 0)
+            {
+                grid[top][position.X].StartOpening();
+
+                // 4. Top right
+                if (right < grid[0].Count)
+                {
+                    grid[top][right].StartOpening();
+                }
+            }
+
+            // 5. Right
+            if (right < grid[0].Count)
+            {
+                grid[position.Y][right].StartOpening();
+
+                // 6. Bottom right
+                if (bottom < grid.Count)
+                {
+                    grid[bottom][right].StartOpening();
+                }
+            }
+
+            // 7. Bottom
+            if (bottom < grid.Count)
+            {
+                grid[bottom][position.X].StartOpening();
+
+                if (left >= 0)
+                {
+                    grid[bottom][left].StartOpening();
+                }
+            }
         }
     }
 }

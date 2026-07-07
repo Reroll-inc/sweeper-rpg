@@ -1,7 +1,7 @@
 {
   "props": {
-    "start": "#A72BFF",
-    "end": "#7600D1",
+    "start": "8,16",
+    "end": "7,16",
     "treasure": "#CBA406",
     "lineMesh": "#5C7854",
     "behind": ["0,12", "1,12", "2,12", "3,12"],

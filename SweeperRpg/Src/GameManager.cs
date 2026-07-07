@@ -122,7 +122,7 @@ namespace SweeperRpg.Src
         public void HandleVictory(LevelWinEvent data)
         {
             state = GameState.VICTORY;
-            victory.EnableVictory();
+            victory.EnableVictory(level == maxLvls);
         }
 
         public void NextLevel()
