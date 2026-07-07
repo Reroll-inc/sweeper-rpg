@@ -93,8 +93,8 @@ namespace SweeperRpg.Src
 
             tile = TileMap.LoadSprite(
                 path: "Assets/32rogues/monsters.png",
-                row: data.point.X,
-                column: data.point.Y
+                column: data.point.Y,
+                row: data.point.X
             );
             Transform = new(position: new(x: x, y: y), offset: new(4, -8));
             Collisioner = new Collisioner(transform: Transform);
@@ -138,7 +138,7 @@ namespace SweeperRpg.Src
                 brush: new SolidBrush(Color.Azure),
                 position: new(
                     Transform.PositionAndScale.X + (Damage > 9 ? 6 : 12),
-                    Transform.PositionAndScale.Y + 32
+                    Transform.PositionAndScale.Y + TileMap.Size
                 )
             );
         }

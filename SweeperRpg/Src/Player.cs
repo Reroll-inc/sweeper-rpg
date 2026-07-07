@@ -54,7 +54,7 @@ namespace SweeperRpg.Src
         public Player(EventBus bus, int x, int y)
         {
             this.bus = bus;
-            Tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2);
+            Tile = TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", column: 2, row: 2);
             Transform = new(position: new Point(x, y));
             renderer = new(command: new DrawImageCommand(texture: Tile, transform: Transform));
             Collisioner = new Collisioner(transform: Transform);

@@ -5,8 +5,8 @@
     "treasure": "#CBA406",
     "lineMesh": "#5C7854",
     "behind": "#65CFC7",
-    "background": "#e6c90e",
-    "foreground": "#574d0e"
+    "background": "0,2",
+    "foreground": "0,3"
   },
   "grid": [
     [

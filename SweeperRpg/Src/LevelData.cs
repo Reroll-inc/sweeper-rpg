@@ -24,8 +24,8 @@ namespace SweeperRpg.Src
         [JsonConverter(typeof(ColorJsonConverter))]
         public Color behind { get; set; }
 
-        [JsonConverter(typeof(ColorJsonConverter))]
-        public Color background { get; set; }
+        [JsonConverter(typeof(PointJsonConverter))]
+        public Point background { get; set; }
 
         [JsonConverter(typeof(ColorJsonConverter))]
         public Color foreground { get; set; }

@@ -16,7 +16,7 @@ namespace SweeperRpg.Src.UI
 
         private readonly Renderer renderer = new(
             new DrawImageCommand(
-                texture: TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", row: 2, column: 2),
+                texture: TileMap.LoadSprite(path: "Assets/32rogues/rogues.png", column: 2, row: 2),
                 transform: new(position: new(x: 1, y: 19), scale: new(width: 2, height: 2))
             )
         );

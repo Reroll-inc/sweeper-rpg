@@ -8,12 +8,12 @@ namespace EngineGDI.Src
         [PlantUmlIgnoreAssociation]
         public static int Size { get; } = 32;
 
-        public static Bitmap LoadSprite(string path, int row, int column)
+        public static Bitmap LoadSprite(string path, int column, int row)
         {
-            using Bitmap sourceImage = new(path);
-            Rectangle cropRect = new(column * Size, row * Size, Size, Size);
+            using Bitmap sourceImage = new(filename: path);
+            Rectangle cropRect = new(x: column * Size, y: row * Size, width: Size, height: Size);
 
-            return sourceImage.Clone(cropRect, sourceImage.PixelFormat);
+            return sourceImage.Clone(rect: cropRect, format: sourceImage.PixelFormat);
         }
     }
 }

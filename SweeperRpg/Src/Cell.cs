@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Text.Json.Serialization;
 using EngineGDI.Src;
+using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Nodes;
 using PlantUmlClassDiagramGenerator.Attributes;
 using SweeperRpg.Src.Animations;
@@ -59,6 +60,7 @@ namespace SweeperRpg.Src
         private int dmgAround;
         private int dmgAroundRelative;
         private Enemy enemy = null;
+        private Renderer renderer;
 
         public void SetData(LevelData level, int columnId, int rowId, int fillColumns, int fillRows)
         {
@@ -66,6 +68,24 @@ namespace SweeperRpg.Src
 
             transform = new(position: new(x: columnId + fillColumns, y: rowId + fillRows));
             rect = new(location: transform.PositionAndScale, size: Transform.BaseUnit);
+
+            Image tile = TileMap.LoadSprite(
+                path: "Assets/32rogues/tiles.png",
+                column: level.props.background.X,
+                row: level.props.background.Y
+            );
+            renderer = new(
+                new DrawImageCommand(
+                    texture: tile,
+                    transform: new(
+                        position: new(x: columnId + fillColumns, y: rowId + fillRows),
+                        scale: new(
+                            (float)Transform.BaseUnit.Width / TileMap.Size,
+                            (float)Transform.BaseUnit.Height / TileMap.Size
+                        )
+                    )
+                )
+            );
 
             peelingAnimation.SetData(transform: transform, color: level.props.foreground);
 
@@ -161,11 +181,7 @@ namespace SweeperRpg.Src
                     break;
             }
 
-            Engine.DrawRect(
-                rect: rect,
-                pen: new Pen(level.props.lineMesh),
-                brush: new SolidBrush(level.props.background)
-            );
+            renderer.Draw();
 
             if ((enemy == null || !enemy.IsAlive()) && dmgAroundRelative > 0)
             {
