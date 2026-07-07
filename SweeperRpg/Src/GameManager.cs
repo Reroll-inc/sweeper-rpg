@@ -1,4 +1,6 @@
+using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Windows.Forms;
 using EngineGDI.Src.Events;
@@ -30,28 +32,59 @@ namespace SweeperRpg.Src
         public static GameManager Instance { get; } = new();
 
         [PlantUmlIgnoreAssociation]
-        private readonly Font font = new("Assets/Fonts/pixel.ttf", 16);
+        private readonly PrivateFontCollection fontCollection;
+
+        [PlantUmlIgnoreAssociation]
+        private readonly Font font;
         private readonly LevelManager levelManager;
         private readonly UI.MainMenu mainMenu;
         private readonly DefeatScreen defeat;
         private readonly VictoryScreen victory;
         private readonly EventBus bus = new();
+        private readonly LevelUI levelUi;
 
         private int level;
         private int maxLvls;
 
         private GameManager()
         {
-            mainMenu = new UI.MainMenu(font: font);
-            defeat = new DefeatScreen(font: font);
-            victory = new VictoryScreen(font: font);
+            fontCollection = new();
+            LoadCustomFont();
+            font = GetCustomFont(16);
+            mainMenu = new(font: font);
+            defeat = new(font: font);
+            victory = new(font: font);
+            levelUi = new(font: font, bus: bus);
 
             ReadLevelCount();
 
-            levelManager = new(font: font, bus: bus);
+            levelManager = new(bus: bus);
 
             bus.Subscribe<LevelWinEvent>(handler: HandleVictory);
             bus.Subscribe<PlayerDiedEvent>(handler: HandleLose);
+        }
+
+        private void LoadCustomFont()
+        {
+            string path = "Assets/Fonts/pixel.ttf";
+
+            try
+            {
+                fontCollection.AddFontFile(path);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading font: {ex.Message}");
+            }
+        }
+
+        public Font GetCustomFont(float size)
+        {
+            if (fontCollection.Families.Length > 0)
+            {
+                return new Font(fontCollection.Families[0], size);
+            }
+            return new Font("Arial", size); // Fallback to Arial
         }
 
         private void ReadLevelCount()
@@ -166,6 +199,7 @@ namespace SweeperRpg.Src
                     break;
                 case GameState.PLAYING_LEVEL:
                     levelManager.Draw();
+                    levelUi.Draw();
                     break;
                 case GameState.VICTORY:
                     victory.Draw();

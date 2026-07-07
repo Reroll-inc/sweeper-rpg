@@ -35,9 +35,6 @@ namespace EngineGDI.Src
         private static readonly HashSet<Keys> handledReleasedKeys = [];
 
         [PlantUmlIgnoreAssociation]
-        private static readonly List<string> debugMessages = [];
-
-        [PlantUmlIgnoreAssociation]
         private static readonly Font debugFont = new("Consolas", 10);
 
         [PlantUmlIgnoreAssociation]
@@ -173,16 +170,6 @@ namespace EngineGDI.Src
             return OnKeyDown(key);
         }
 
-        public static void DebugLog(string message)
-        {
-            debugMessages.Add(message);
-        }
-
-        public static void ClearDebug()
-        {
-            debugMessages.Clear();
-        }
-
         [PlantUmlIgnore]
         private class GameForm : Form
         {
@@ -205,12 +192,6 @@ namespace EngineGDI.Src
                     cmd.Draw(e);
                 }
 
-                float debugY = 10;
-                foreach (string msg in debugMessages)
-                {
-                    e.Graphics.DrawString(msg, debugFont, debugBrush, 10, debugY);
-                    debugY += debugFont.Height + 2;
-                }
                 drawQueue.Clear();
             }
         }

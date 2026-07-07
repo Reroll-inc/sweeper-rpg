@@ -14,10 +14,6 @@ namespace SweeperRpg.Src
         [PlantUmlIgnoreAssociation]
         private static DateTime lastFrameTime = DateTime.Now;
 
-        // mostrar debug
-        public static bool showDebug = true;
-        public static string currentMsg = "";
-
         public static int SCREEN_WIDTH = 1024;
         public static int SCREEN_HEIGHT = 720;
 
@@ -52,13 +48,6 @@ namespace SweeperRpg.Src
 
                 #region Engine Window Control
                 Engine.Clear(Color.Black);
-                currentMsg = deltaTime.ToString();
-                // mensajes de debug
-                if (showDebug)
-                {
-                    Engine.ClearDebug();
-                    Engine.DebugLog(currentMsg);
-                }
                 Engine.Window.Invalidate();
                 #endregion
             }

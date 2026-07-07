@@ -1,16 +1,19 @@
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Text.Json;
 using EngineGDI.Src;
 using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
 using PlantUmlClassDiagramGenerator.Attributes;
-using SweeperRpg.Src.UI;
 
 namespace SweeperRpg.Src
 {
     public class LevelWinEvent : Event { }
+
+    public class ChangeLevelEvent(int level) : Event
+    {
+        public readonly int Level = level;
+    }
 
     public class LevelManager : InteractiveNode
     {
@@ -26,13 +29,14 @@ namespace SweeperRpg.Src
         [PlantUmlIgnoreAssociation]
         public static List<Enemy> ActiveEnemies => enemies.FindAll(static enemy => enemy.IsAlive());
         private readonly Grid grid;
-        private readonly LevelUI ui;
+        private readonly EventBus bus;
 
-        public LevelManager(Font font, EventBus bus)
+        public LevelManager(EventBus bus)
         {
+            this.bus = bus;
+
             player = new(bus: bus, x: 0, y: 0);
             grid = new(bus: bus);
-            ui = new LevelUI(font: font, bus: bus);
 
             bus.Subscribe<PlayerWantToMoveEvent>(handler: PlayerWillMoveHandler);
         }
@@ -94,7 +98,7 @@ namespace SweeperRpg.Src
 
             grid.GenerateLevel(level: currentLevel, enemies: enemies, player: player);
 
-            ui.SetLevel(level: level);
+            bus.Publish<ChangeLevelEvent>(new(level: level));
         }
 
         public override void Input()
@@ -120,8 +124,6 @@ namespace SweeperRpg.Src
             player.Draw();
 
             grid.DrawAfter();
-
-            ui.Draw();
         }
     }
 }

@@ -9,8 +9,10 @@ namespace SweeperRpg.Src
 {
     public class Grid : IDynamicNode
     {
-        public readonly int MAX_ROW = (int)Math.Ceiling((double)512 / Transform.BaseUnit.Height);
-        public readonly int MAX_COLUMN = (int)Math.Ceiling((double)1024 / Transform.BaseUnit.Width);
+        public readonly int MAX_ROW = (int)
+            Math.Ceiling((double)Program.SCREEN_HEIGHT / Transform.BaseUnit.Height);
+        public readonly int MAX_COLUMN = (int)
+            Math.Ceiling((double)Program.SCREEN_WIDTH / Transform.BaseUnit.Width);
 
         private readonly EnemyFactory enemyFactory;
         private readonly EventBus bus;
