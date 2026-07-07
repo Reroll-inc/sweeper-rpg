@@ -51,7 +51,11 @@ namespace SweeperRpg.Src
             }
 
             string jsonContent = File.ReadAllText(path: $"Assets/Levels/{level}.json");
-            currentLevel = JsonSerializer.Deserialize<LevelData>(json: jsonContent);
+
+            currentLevel = JsonSerializer.Deserialize<LevelData>(
+                json: jsonContent,
+                options: JsonConfiguration.Options
+            );
 
             levels.Add(key: level, value: currentLevel);
 

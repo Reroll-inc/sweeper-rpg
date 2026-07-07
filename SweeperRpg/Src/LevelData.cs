@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text.Json.Serialization;
-using EngineGDI.Src;
 using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src
@@ -9,25 +7,15 @@ namespace SweeperRpg.Src
     [PlantUmlIgnore]
     public class LevelDataProps
     {
-        [JsonConverter(typeof(ColorJsonConverter))]
         public Color start { get; set; }
-
-        [JsonConverter(typeof(ColorJsonConverter))]
         public Color end { get; set; }
-
-        [JsonConverter(typeof(ColorJsonConverter))]
         public Color lineMesh { get; set; }
-
-        [JsonConverter(typeof(ColorJsonConverter))]
         public Color treasure { get; set; }
 
-        [JsonConverter(typeof(ColorJsonConverter))]
-        public Color behind { get; set; }
+        public List<Point> behind { get; set; }
 
-        [JsonConverter(typeof(PointJsonConverter))]
         public Point background { get; set; }
 
-        [JsonConverter(typeof(PointJsonConverter))]
         public Point foreground { get; set; }
     }
 

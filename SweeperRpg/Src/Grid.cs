@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using EngineGDI.Src;
+using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
 
@@ -21,6 +22,7 @@ namespace SweeperRpg.Src
         private int lvlColumns;
         private int fillRows;
         private int fillColumns;
+        private readonly List<Renderer> emptyCells = [];
 
         public Grid(EventBus bus)
         {
@@ -74,6 +76,8 @@ namespace SweeperRpg.Src
             fillRows = (MAX_ROW - lvlRows) / 2;
             fillColumns = (MAX_COLUMN - lvlColumns) / 2;
 
+            GenerateEmptyCells();
+
             for (int rowId = 0; rowId < level.grid.Count; rowId++)
             {
                 List<Cell> row = level.grid[rowId];
@@ -125,6 +129,58 @@ namespace SweeperRpg.Src
             }
         }
 
+        private void GenerateEmptyCells()
+        {
+            emptyCells.Clear();
+
+            if (fillColumns == 0 && fillRows == 0)
+            {
+                return;
+            }
+
+            Random random = new();
+
+            List<Image> backgrounds = level.props.behind.ConvertAll<Image>(
+                (point) =>
+                    TileMap.LoadSprite(
+                        path: "Assets/32rogues/tiles.png",
+                        column: point.X,
+                        row: point.Y
+                    )
+            );
+
+            for (int rowId = 0; rowId < MAX_ROW; rowId++)
+            {
+                for (int columnId = 0; columnId < MAX_COLUMN; columnId++)
+                {
+                    if (
+                        rowId >= fillRows
+                        && rowId < lvlRows + fillRows
+                        && columnId >= fillColumns
+                        && columnId < lvlColumns + fillColumns
+                    )
+                    {
+                        continue;
+                    }
+
+                    emptyCells.Add(
+                        new(
+                            command: new DrawImageCommand(
+                                texture: backgrounds[random.Next(backgrounds.Count)],
+                                transform: new(
+                                    position: new(x: columnId, y: rowId),
+                                    scale: new(
+                                        (float)Transform.BaseUnit.Width / TileMap.Size,
+                                        (float)Transform.BaseUnit.Height / TileMap.Size
+                                    )
+                                )
+                            )
+                        )
+                    );
+                }
+            }
+        }
+
         public void Reset()
         {
             level.Reset();
@@ -165,22 +221,9 @@ namespace SweeperRpg.Src
 
         public void Draw()
         {
-            for (int rowId = 0; rowId < MAX_ROW; rowId++)
+            foreach (Renderer emptyCell in emptyCells)
             {
-                for (int columnId = 0; columnId < MAX_COLUMN; columnId++)
-                {
-                    Engine.DrawRect(
-                        rect: new Rectangle(
-                            location: new Point(
-                                x: columnId * Transform.BaseUnit.Width,
-                                y: rowId * Transform.BaseUnit.Height
-                            ),
-                            size: Transform.BaseUnit
-                        ),
-                        pen: new Pen(level.props.behind),
-                        brush: new SolidBrush(level.props.behind)
-                    );
-                }
+                emptyCell.Draw();
             }
 
             // Draw game cells

@@ -4,7 +4,7 @@
     "end": "#7600D1",
     "treasure": "#CBA406",
     "lineMesh": "#851854",
-    "behind": "#AFA564",
+    "behind": ["0,13", "1,13", "2,13", "3,13"],
     "background": "0,0",
     "foreground": "0,1"
   },
