@@ -5,6 +5,7 @@ using EngineGDI.Src;
 using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src
 {
@@ -22,6 +23,8 @@ namespace SweeperRpg.Src
         private int lvlColumns;
         private int fillRows;
         private int fillColumns;
+
+        [PlantUmlIgnoreAssociation]
         private readonly List<Renderer> emptyCells = [];
 
         public Grid(EventBus bus)

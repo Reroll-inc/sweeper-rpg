@@ -2,6 +2,7 @@ class Transform {
     + {static} <<readonly>> BaseUnit : Size
     + Position : Point
     + Rotation : float
-    + Scale : Size
+    + Scale : SizeF
+    + Offset : Point
     + PositionAndScale : Point <<get>>
 }

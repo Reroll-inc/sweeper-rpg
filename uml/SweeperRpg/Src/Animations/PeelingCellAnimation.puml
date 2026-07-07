@@ -1,11 +1,12 @@
 class PeelingCellAnimation {
-    +  <<event>> OnFinish : EventHandler 
+    +  <<event>> OnFinish : PeelingEnd 
     - progress : float
-    - <<readonly>> sec : float = 1.5f
-    + SetData(transform:Transform) : void
+    - <<readonly>> sec : float = 0.8f
+    + SetData(transform:Transform, point:Point) : void
     + Reset() : void
     + Update(deltaTime:float) : void
     + Draw(e:PaintEventArgs) : void
 }
 IDrawCommand <|-- PeelingCellAnimation
 PeelingCellAnimation --> "transform" Transform
+PeelingCellAnimation --> "BaseImageCmd" DrawImageCommand

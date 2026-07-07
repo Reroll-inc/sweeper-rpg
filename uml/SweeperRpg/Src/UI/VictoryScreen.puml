@@ -1,8 +1,12 @@
 class VictoryScreen {
     - <<readonly>> font : Font
     - option : Option
+    - isCompleted : bool = false
+    + EnableVictory(isCompleted:bool) : void
     + <<override>> Input() : void
     + <<override>> Draw() : void
 }
 CanvaElement <|-- VictoryScreen
 VictoryScreen o-> "renderer" Renderer
+VictoryScreen o-> "WinRenderer" Renderer
+VictoryScreen o-> "WinBackgroundRenderer" Renderer

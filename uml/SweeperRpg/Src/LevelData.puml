@@ -2,4 +2,9 @@ class LevelData {
     + props : LevelDataProps <<get>> <<set>>
     + grid : List<List<Cell>> <<get>> <<set>>
     + Reset() : void
+    + Reload() : void
+    + AddDmgToCellsAround(dmg:int, columnId:int, rowId:int) : void
+    + UpdateDmgToCellsAround(dmg:int, columnId:int, rowId:int) : void
+    + AnimateOnReset(position:Point) : void
+    + AnimateOnPlayerMove(position:Point) : void
 }

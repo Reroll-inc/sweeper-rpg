@@ -1,9 +1,12 @@
 class GameManager {
     - state : GameState
+    - <<readonly>> fontCollection : PrivateFontCollection
     - <<readonly>> font : Font
     - level : int
     - maxLvls : int
     - GameManager()
+    - LoadCustomFont() : void
+    + GetCustomFont(size:float) : Font
     - ReadLevelCount() : void
     + OnPlay() : void
     + OnRetry() : void
@@ -22,3 +25,4 @@ GameManager --> "levelManager" LevelManager
 GameManager --> "defeat" DefeatScreen
 GameManager --> "victory" VictoryScreen
 GameManager o-> "bus" EventBus
+GameManager --> "levelUi" LevelUI

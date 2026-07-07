@@ -1,0 +1,3 @@
+class JsonConfiguration <<static>> {
+}
+JsonConfiguration o-> "Options" JsonSerializerOptions

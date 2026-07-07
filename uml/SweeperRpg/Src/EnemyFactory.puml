@@ -1,7 +1,6 @@
 class EnemyFactory {
     - <<readonly>> EnemyPrototypes : Dictionary<EnemyKind, Enemy>
-    - EnemyFactory()
-    + {static} Create(x:int, y:int, kind:EnemyKind) : Enemy
-    - RecreatePrototypes() : void
+    + EnemyFactory(bus:EventBus)
+    + Create(x:int, y:int, kind:EnemyKind) : Enemy
+    - RecreatePrototypes(bus:EventBus) : void
 }
-EnemyFactory o-> "Instance" EnemyFactory

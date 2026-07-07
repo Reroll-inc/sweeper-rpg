@@ -1,0 +1,10 @@
+class StageBar {
+    - level : int = 0
+    - <<readonly>> font : Font
+    + StageBar(font:Font, bus:EventBus)
+    - HandleLevelChange(data:ChangeLevelEvent) : void
+    + <<override>> Draw() : void
+}
+CanvaElement <|-- StageBar
+StageBar --> "textBoxRenderer" Renderer
+StageBar --> "transform" Transform

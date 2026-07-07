@@ -1,0 +1,60 @@
+name: Build and Publish to Itch.io
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.gitignore"
+
+jobs:
+  build-and-publish:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Project
+        run: dotnet build --configuration Release
+
+      - name: Create Distribution Package
+        run: |
+          $outputDir = "dist"
+          if (!(Test-Path $outputDir)) { New-Item -ItemType Directory -Path $outputDir }
+
+          # Copy main executable and dependencies
+          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\SweeperRpg.exe" "$outputDir\"
+          Copy-Item "EngineGDI\bin\Release\net10.0-windows\win-x64\*" "$outputDir\"
+
+          # Include required runtime files
+          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\*.dll" "$outputDir\"
+          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\*.json" "$outputDir\"
+
+          # Include assets
+          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\*.png" "$outputDir\"
+          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\*.wav" "$outputDir\"
+          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\*.ttf" "$outputDir\"
+
+      - name: Create ZIP Archive
+        run: |
+          Compress-Archive -Path "dist/*" -DestinationPath "sweeper-rpg-windows.zip"
+
+      - name: Publish to Itch.io
+        uses: josephbmanley/butler-publish-itchio-action@v1.2.0
+        with:
+          username: ${{ secrets.ITCH_IO_USERNAME }}
+          game: ${{ secrets.ITCH_IO_GAME_NAME }}
+          version: ${{ github.sha }}
+          file: sweeper-rpg-windows.zip
+          channel: windows
+          itch_io_api_key: ${{ secrets.ITCH_IO_API_KEY }}

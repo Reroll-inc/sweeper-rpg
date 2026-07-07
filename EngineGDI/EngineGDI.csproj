@@ -20,6 +20,13 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Include="**\*.png;**\*.wav;**\*.json;**\*.ttf" Exclude="bin\**;obj\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

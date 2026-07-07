@@ -1,0 +1,14 @@
+class HpBar {
+    - BaseHp : int = 0
+    - Hp : int = 0
+    - {static} Scale : Size
+    + HpBar(bus:EventBus)
+    - HandlePlayerDmg(data:PlayerDmgEvent) : void
+    - HandlePlayerReset(data:PlayerResetEvent) : void
+    + <<override>> Draw() : void
+}
+CanvaElement <|-- HpBar
+HpBar o-> "HpFrameRenderer" Renderer
+HpBar o-> "HpBaseRenderer" Renderer
+HpBar --> "HpRenderer" Renderer
+HpBar --> "HpTransform" Transform

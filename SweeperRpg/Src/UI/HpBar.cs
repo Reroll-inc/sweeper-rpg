@@ -3,6 +3,7 @@ using EngineGDI.Src;
 using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src.UI
 {
@@ -10,6 +11,8 @@ namespace SweeperRpg.Src.UI
     {
         private int BaseHp = 0;
         private int Hp = 0;
+
+        [PlantUmlIgnoreAssociation]
         private static Size Scale = new(width: 4, height: 4);
 
         private readonly Renderer HpFrameRenderer = new(

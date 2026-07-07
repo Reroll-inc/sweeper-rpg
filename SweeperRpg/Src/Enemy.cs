@@ -43,6 +43,7 @@ namespace SweeperRpg.Src
 
     public class Enemy : IStaticNode
     {
+        [PlantUmlIgnoreAssociation]
         private static readonly Font dmgFont = new("Assets/Fonts/pixel.ttf", 10);
 
         [PlantUmlIgnore]

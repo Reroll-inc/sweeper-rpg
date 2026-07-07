@@ -8,7 +8,6 @@ class Engine <<static>> {
     - {static} <<readonly>> handledKeys : HashSet<Keys>
     - {static} <<readonly>> releasedKeys : HashSet<Keys>
     - {static} <<readonly>> handledReleasedKeys : HashSet<Keys>
-    - {static} <<readonly>> debugMessages : List<string>
     - {static} <<readonly>> debugFont : Font
     - {static} <<readonly>> debugBrush : Brush
     + {static} Initialize(title:string, width:int, height:int, fullscreen:bool) : void
@@ -22,6 +21,4 @@ class Engine <<static>> {
     + {static} OnKeyUp(key:Keys) : bool
     + {static} IsKeyDown(key:Keys) : bool
     + {static} IsKeyPressed(key:Keys) : bool
-    + {static} DebugLog(message:string) : void
-    + {static} ClearDebug() : void
 }

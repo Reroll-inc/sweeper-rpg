@@ -1,12 +1,16 @@
 class PlayerMoveEvent {
     + <<readonly>> Position : Point
 }
+class PlayerWantToMoveEvent {
+    + <<readonly>> Position : Point
+}
 class PlayerDmgEvent {
     + <<readonly>> Hp : int
     + <<readonly>> Dmg : int
 }
 class PlayerResetEvent {
     + <<readonly>> Hp : int
+    + <<readonly>> Position : Point
 }
 class PlayerDiedEvent {
 }
@@ -26,6 +30,7 @@ class Player {
     + <<override>> Draw() : void
 }
 Event <|-- PlayerMoveEvent
+Event <|-- PlayerWantToMoveEvent
 Event <|-- PlayerDmgEvent
 Event <|-- PlayerResetEvent
 Event <|-- PlayerDiedEvent

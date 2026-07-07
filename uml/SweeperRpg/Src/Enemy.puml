@@ -1,15 +1,21 @@
+class EnemyDeadEvent {
+}
 class Enemy {
+    - {static} <<readonly>> dmgFont : Font
     - <<readonly>> tile : Image
     + Damage : int <<get>>
     - state : State
-    + Enemy(x:int, y:int, kind:EnemyKind)
+    + Enemy(x:int, y:int, kind:EnemyKind, bus:EventBus)
     + Defeat() : void
     + IsAlive() : bool
     + Reset() : void
     + Clone(x:int, y:int) : Enemy
     + Draw() : void
 }
+Event <|-- EnemyDeadEvent
+EnemyDeadEvent o-> "Enemy" Enemy
 IStaticNode <|-- Enemy
 Enemy --> "Transform" Transform
 Enemy --> "Collisioner" Collisioner
 Enemy --> "renderer" Renderer
+Enemy --> "bus" EventBus

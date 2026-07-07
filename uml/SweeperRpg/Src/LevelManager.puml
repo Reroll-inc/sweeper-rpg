@@ -1,13 +1,16 @@
 class LevelWinEvent {
 }
+class ChangeLevelEvent {
+    + <<readonly>> Level : int
+}
 class LevelManager {
     - <<readonly>> levels : Dictionary<int, LevelData>
     - {static} <<readonly>> enemies : List<Enemy>
     + {static} ActiveEnemies : List<Enemy> <<get>>
-    + LevelManager(font:Font, bus:EventBus)
+    + LevelManager(bus:EventBus)
     - LoadLevel(level:int) : LevelData
     + ResetLevel() : void
-    - PlayerWillMoveHandler(data:PlayerMoveEvent) : void
+    - PlayerWillMoveHandler(data:PlayerWantToMoveEvent) : void
     - RunCollisions() : void
     + StartLevel(level:int) : void
     + <<override>> Input() : void
@@ -15,8 +18,9 @@ class LevelManager {
     + <<override>> Draw() : void
 }
 Event <|-- LevelWinEvent
+Event <|-- ChangeLevelEvent
 InteractiveNode <|-- LevelManager
 LevelManager --> "Renderer" Renderer
 LevelManager --> "player" Player
 LevelManager --> "grid" Grid
-LevelManager --> "ui" LevelUI
+LevelManager --> "bus" EventBus

@@ -1,8 +1,6 @@
 class Program <<static>> {
     + {static} deltaTime : float
     - {static} lastFrameTime : DateTime
-    + {static} showDebug : bool = true
-    + {static} currentMsg : string = ""
     + {static} SCREEN_WIDTH : int = 1024
     + {static} SCREEN_HEIGHT : int = 720
     - {static} Main() : void

@@ -1,11 +1,17 @@
 class Grid {
-    + <<const>> MAX_ROW : int = 16
-    + <<const>> MAX_COLUMN : int = 32
+    + <<readonly>> MAX_ROW : int
+    + <<readonly>> MAX_COLUMN : int
     - lvlRows : int
     - lvlColumns : int
     - fillRows : int
     - fillColumns : int
+    - <<readonly>> emptyCells : List<Renderer>
+    + Grid(bus:EventBus)
+    - PlayerResetHandler(data:PlayerResetEvent) : void
+    - PlayerMoveHandler(data:PlayerMoveEvent) : void
+    - EnemyDeadHandler(data:EnemyDeadEvent) : void
     + GenerateLevel(level:LevelData, enemies:List<Enemy>, player:Player) : void
+    - GenerateEmptyCells() : void
     + Reset() : void
     + PlayerCanMove(position:Point) : bool
     + CheckIfPlayerWon(player:Player) : void
@@ -14,5 +20,6 @@ class Grid {
     + DrawAfter() : void
 }
 IDynamicNode <|-- Grid
-Grid o-> "bus" EventBus
+Grid --> "enemyFactory" EnemyFactory
+Grid --> "bus" EventBus
 Grid --> "level" LevelData

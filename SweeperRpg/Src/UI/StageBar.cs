@@ -3,6 +3,7 @@ using EngineGDI.Src;
 using EngineGDI.Src.Drawing;
 using EngineGDI.Src.Events;
 using EngineGDI.Src.Nodes;
+using PlantUmlClassDiagramGenerator.Attributes;
 
 namespace SweeperRpg.Src.UI
 {
@@ -14,6 +15,7 @@ namespace SweeperRpg.Src.UI
 
         private readonly Transform transform;
 
+        [PlantUmlIgnoreAssociation]
         private readonly Font font;
 
         public StageBar(Font font, EventBus bus)

@@ -19,6 +19,8 @@ namespace EngineGDI.Src
 
         [PlantUmlIgnoreAssociation]
         public SizeF Scale = scale ?? new(1, 1);
+
+        [PlantUmlIgnoreAssociation]
         public Point Offset = offset ?? new(0, 0);
 
         [PlantUmlIgnoreAssociation]

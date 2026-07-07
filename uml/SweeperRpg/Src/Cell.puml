@@ -1,13 +1,19 @@
 class Cell {
+    - {static} <<readonly>> dmgFont : Font
     + type : CellType <<get>> <<set>>
     + id : string <<get>> <<set>>
     + kind : EnemyKind? <<get>> <<set>> = null
     + currency : int <<get>> <<set>>
-    - rect : Rectangle
     - state : State
+    - dmgAround : int = 0
+    - dmgAroundRelative : int = 0
+    + Reload() : void
     + SetData(level:LevelData, columnId:int, rowId:int, fillColumns:int, fillRows:int) : void
+    + SetEnemy(enemy:Enemy) : void
+    + AddDmgAround(dmg:int) : void
+    + UpdateDmgAround(dmg:int) : void
     + StartOpening() : void
-    + FinishOpening(sender:object, e:EventArgs) : void
+    + FinishOpening() : void
     + Reset() : void
     + Update(deltaTime:float) : void
     + Draw() : void
@@ -16,4 +22,6 @@ class Cell {
 IDynamicNode <|-- Cell
 Cell --> "transform" Transform
 Cell --> "level" LevelData
-Cell o-> "animation" PeelingCellAnimation
+Cell o-> "peelingAnimation" PeelingCellAnimation
+Cell o-> "enemy" Enemy
+Cell --> "renderer" Renderer

@@ -20,7 +20,6 @@ class Engine <<static>> {
     - {static} <<readonly>> handledKeys : HashSet<Keys>
     - {static} <<readonly>> releasedKeys : HashSet<Keys>
     - {static} <<readonly>> handledReleasedKeys : HashSet<Keys>
-    - {static} <<readonly>> debugMessages : List<string>
     - {static} <<readonly>> debugFont : Font
     - {static} <<readonly>> debugBrush : Brush
     + {static} Initialize(title:string, width:int, height:int, fullscreen:bool) : void
@@ -34,9 +33,10 @@ class Engine <<static>> {
     + {static} OnKeyUp(key:Keys) : bool
     + {static} IsKeyDown(key:Keys) : bool
     + {static} IsKeyPressed(key:Keys) : bool
-    + {static} DebugLog(message:string) : void
-    + {static} ClearDebug() : void
 }
+class JsonConfiguration <<static>> {
+}
+JsonConfiguration o-> "Options" JsonSerializerOptions
 class PointJsonConverter {
     + <<override>> Read(reader:Utf8JsonReader, typeToConvert:System.Type, options:JsonSerializerOptions) : Point
     + <<override>> Write(writer:Utf8JsonWriter, value:Point, options:JsonSerializerOptions) : void
@@ -50,25 +50,33 @@ class Renderer {
 Renderer o-> "Command" IDrawCommand
 class TileMap {
     + {static} Size : int <<get>> = 32
-    + {static} LoadSprite(path:string, row:int, column:int) : Bitmap
+    + {static} LoadSprite(path:string, column:int, row:int) : Bitmap
+    + {static} LoadSprite(path:string, x:int, y:int, size:Size) : Bitmap
 }
 class Transform {
     + {static} <<readonly>> BaseUnit : Size
     + Position : Point
     + Rotation : float
-    + Scale : Size
+    + Scale : SizeF
+    + Offset : Point
     + PositionAndScale : Point <<get>>
 }
 class Cell {
+    - {static} <<readonly>> dmgFont : Font
     + type : CellType <<get>> <<set>>
     + id : string <<get>> <<set>>
     + kind : EnemyKind? <<get>> <<set>> = null
     + currency : int <<get>> <<set>>
-    - rect : Rectangle
     - state : State
+    - dmgAround : int = 0
+    - dmgAroundRelative : int = 0
+    + Reload() : void
     + SetData(level:LevelData, columnId:int, rowId:int, fillColumns:int, fillRows:int) : void
+    + SetEnemy(enemy:Enemy) : void
+    + AddDmgAround(dmg:int) : void
+    + UpdateDmgAround(dmg:int) : void
     + StartOpening() : void
-    + FinishOpening(sender:object, e:EventArgs) : void
+    + FinishOpening() : void
     + Reset() : void
     + Update(deltaTime:float) : void
     + Draw() : void
@@ -77,35 +85,45 @@ class Cell {
 IDynamicNode <|-- Cell
 Cell --> "transform" Transform
 Cell --> "level" LevelData
-Cell o-> "animation" PeelingCellAnimation
+Cell o-> "peelingAnimation" PeelingCellAnimation
+Cell o-> "enemy" Enemy
+Cell --> "renderer" Renderer
+class EnemyDeadEvent {
+}
 class Enemy {
+    - {static} <<readonly>> dmgFont : Font
     - <<readonly>> tile : Image
     + Damage : int <<get>>
     - state : State
-    + Enemy(x:int, y:int, kind:EnemyKind)
+    + Enemy(x:int, y:int, kind:EnemyKind, bus:EventBus)
     + Defeat() : void
     + IsAlive() : bool
     + Reset() : void
     + Clone(x:int, y:int) : Enemy
     + Draw() : void
 }
+Event <|-- EnemyDeadEvent
+EnemyDeadEvent o-> "Enemy" Enemy
 IStaticNode <|-- Enemy
 Enemy --> "Transform" Transform
 Enemy --> "Collisioner" Collisioner
 Enemy --> "renderer" Renderer
+Enemy --> "bus" EventBus
 class EnemyFactory {
     - <<readonly>> EnemyPrototypes : Dictionary<EnemyKind, Enemy>
-    - EnemyFactory()
-    + {static} Create(x:int, y:int, kind:EnemyKind) : Enemy
-    - RecreatePrototypes() : void
+    + EnemyFactory(bus:EventBus)
+    + Create(x:int, y:int, kind:EnemyKind) : Enemy
+    - RecreatePrototypes(bus:EventBus) : void
 }
-EnemyFactory o-> "Instance" EnemyFactory
 class GameManager {
     - state : GameState
+    - <<readonly>> fontCollection : PrivateFontCollection
     - <<readonly>> font : Font
     - level : int
     - maxLvls : int
     - GameManager()
+    - LoadCustomFont() : void
+    + GetCustomFont(size:float) : Font
     - ReadLevelCount() : void
     + OnPlay() : void
     + OnRetry() : void
@@ -124,14 +142,21 @@ GameManager --> "levelManager" LevelManager
 GameManager --> "defeat" DefeatScreen
 GameManager --> "victory" VictoryScreen
 GameManager o-> "bus" EventBus
+GameManager --> "levelUi" LevelUI
 class Grid {
-    + <<const>> MAX_ROW : int = 16
-    + <<const>> MAX_COLUMN : int = 32
+    + <<readonly>> MAX_ROW : int
+    + <<readonly>> MAX_COLUMN : int
     - lvlRows : int
     - lvlColumns : int
     - fillRows : int
     - fillColumns : int
+    - <<readonly>> emptyCells : List<Renderer>
+    + Grid(bus:EventBus)
+    - PlayerResetHandler(data:PlayerResetEvent) : void
+    - PlayerMoveHandler(data:PlayerMoveEvent) : void
+    - EnemyDeadHandler(data:EnemyDeadEvent) : void
     + GenerateLevel(level:LevelData, enemies:List<Enemy>, player:Player) : void
+    - GenerateEmptyCells() : void
     + Reset() : void
     + PlayerCanMove(position:Point) : bool
     + CheckIfPlayerWon(player:Player) : void
@@ -140,23 +165,32 @@ class Grid {
     + DrawAfter() : void
 }
 IDynamicNode <|-- Grid
-Grid o-> "bus" EventBus
+Grid --> "enemyFactory" EnemyFactory
+Grid --> "bus" EventBus
 Grid --> "level" LevelData
 class LevelData {
     + props : LevelDataProps <<get>> <<set>>
     + grid : List<List<Cell>> <<get>> <<set>>
     + Reset() : void
+    + Reload() : void
+    + AddDmgToCellsAround(dmg:int, columnId:int, rowId:int) : void
+    + UpdateDmgToCellsAround(dmg:int, columnId:int, rowId:int) : void
+    + AnimateOnReset(position:Point) : void
+    + AnimateOnPlayerMove(position:Point) : void
 }
 class LevelWinEvent {
+}
+class ChangeLevelEvent {
+    + <<readonly>> Level : int
 }
 class LevelManager {
     - <<readonly>> levels : Dictionary<int, LevelData>
     - {static} <<readonly>> enemies : List<Enemy>
     + {static} ActiveEnemies : List<Enemy> <<get>>
-    + LevelManager(font:Font, bus:EventBus)
+    + LevelManager(bus:EventBus)
     - LoadLevel(level:int) : LevelData
     + ResetLevel() : void
-    - PlayerWillMoveHandler(data:PlayerMoveEvent) : void
+    - PlayerWillMoveHandler(data:PlayerWantToMoveEvent) : void
     - RunCollisions() : void
     + StartLevel(level:int) : void
     + <<override>> Input() : void
@@ -164,12 +198,16 @@ class LevelManager {
     + <<override>> Draw() : void
 }
 Event <|-- LevelWinEvent
+Event <|-- ChangeLevelEvent
 InteractiveNode <|-- LevelManager
 LevelManager --> "Renderer" Renderer
 LevelManager --> "player" Player
 LevelManager --> "grid" Grid
-LevelManager --> "ui" LevelUI
+LevelManager --> "bus" EventBus
 class PlayerMoveEvent {
+    + <<readonly>> Position : Point
+}
+class PlayerWantToMoveEvent {
     + <<readonly>> Position : Point
 }
 class PlayerDmgEvent {
@@ -178,6 +216,7 @@ class PlayerDmgEvent {
 }
 class PlayerResetEvent {
     + <<readonly>> Hp : int
+    + <<readonly>> Position : Point
 }
 class PlayerDiedEvent {
 }
@@ -197,6 +236,7 @@ class Player {
     + <<override>> Draw() : void
 }
 Event <|-- PlayerMoveEvent
+Event <|-- PlayerWantToMoveEvent
 Event <|-- PlayerDmgEvent
 Event <|-- PlayerResetEvent
 Event <|-- PlayerDiedEvent
@@ -208,8 +248,6 @@ Player --> "bus" EventBus
 class Program <<static>> {
     + {static} deltaTime : float
     - {static} lastFrameTime : DateTime
-    + {static} showDebug : bool = true
-    + {static} currentMsg : string = ""
     + {static} SCREEN_WIDTH : int = 1024
     + {static} SCREEN_HEIGHT : int = 720
     - {static} Main() : void
@@ -269,16 +307,17 @@ interface IStaticNode {
     + Draw() : void
 }
 class PeelingCellAnimation {
-    +  <<event>> OnFinish : EventHandler 
+    +  <<event>> OnFinish : PeelingEnd 
     - progress : float
-    - <<readonly>> sec : float = 1.5f
-    + SetData(transform:Transform) : void
+    - <<readonly>> sec : float = 0.8f
+    + SetData(transform:Transform, point:Point) : void
     + Reset() : void
     + Update(deltaTime:float) : void
     + Draw(e:PaintEventArgs) : void
 }
 IDrawCommand <|-- PeelingCellAnimation
 PeelingCellAnimation --> "transform" Transform
+PeelingCellAnimation --> "BaseImageCmd" DrawImageCommand
 class DefeatScreen {
     - result : DefeatResult
     - <<readonly>> font : Font
@@ -288,14 +327,26 @@ class DefeatScreen {
 }
 CanvaElement <|-- DefeatScreen
 DefeatScreen o-> "renderer" Renderer
+class HpBar {
+    - BaseHp : int = 0
+    - Hp : int = 0
+    - {static} Scale : Size
+    + HpBar(bus:EventBus)
+    - HandlePlayerDmg(data:PlayerDmgEvent) : void
+    - HandlePlayerReset(data:PlayerResetEvent) : void
+    + <<override>> Draw() : void
+}
+CanvaElement <|-- HpBar
+HpBar o-> "HpFrameRenderer" Renderer
+HpBar o-> "HpBaseRenderer" Renderer
+HpBar --> "HpRenderer" Renderer
+HpBar --> "HpTransform" Transform
 class LevelUI {
-    - <<readonly>> font : Font
-    - level : int
-    + SetLevel(level:int) : void
     + <<override>> Draw() : void
 }
 CanvaElement <|-- LevelUI
 LevelUI o-> "playerInfo" PlayerInfo
+LevelUI o-> "stageBar" StageBar
 class MainMenu {
     - <<readonly>> font : Font
     - result : MenuResult
@@ -305,20 +356,29 @@ class MainMenu {
 CanvaElement <|-- MainMenu
 MainMenu o-> "renderer" Renderer
 class PlayerInfo {
-    - Hp : int = 0
-    - <<readonly>> font : Font
-    + PlayerInfo(font:Font, bus:EventBus)
-    - HandlePlayerDmg(data:PlayerDmgEvent) : void
-    - HandlePlayerReset(data:PlayerResetEvent) : void
     + <<override>> Draw() : void
 }
 CanvaElement <|-- PlayerInfo
-PlayerInfo o-> "renderer" Renderer
+PlayerInfo o-> "hpBar" HpBar
+class StageBar {
+    - level : int = 0
+    - <<readonly>> font : Font
+    + StageBar(font:Font, bus:EventBus)
+    - HandleLevelChange(data:ChangeLevelEvent) : void
+    + <<override>> Draw() : void
+}
+CanvaElement <|-- StageBar
+StageBar --> "textBoxRenderer" Renderer
+StageBar --> "transform" Transform
 class VictoryScreen {
     - <<readonly>> font : Font
     - option : Option
+    - isCompleted : bool = false
+    + EnableVictory(isCompleted:bool) : void
     + <<override>> Input() : void
     + <<override>> Draw() : void
 }
 CanvaElement <|-- VictoryScreen
 VictoryScreen o-> "renderer" Renderer
+VictoryScreen o-> "WinRenderer" Renderer
+VictoryScreen o-> "WinBackgroundRenderer" Renderer

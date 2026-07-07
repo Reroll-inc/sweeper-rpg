@@ -29,6 +29,8 @@ namespace SweeperRpg.Src
     public class PlayerResetEvent(Point position, int hp) : Event
     {
         public readonly int Hp = hp;
+
+        [PlantUmlIgnoreAssociation]
         public readonly Point Position = position;
     }
 
