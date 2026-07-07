@@ -96,8 +96,10 @@ jobs:
         run: |
           $butlerPath = "$env:USERPROFILE\.butler\butler.exe"
           $version = $env:GITHUB_REF -replace 'refs/tags/v', ''
-          Write-Host "Pushing to itch.io (stable): $version"
-          & $butlerPath push ./game-build.zip "$env:ITCH_USERNAME/$env:ITCH_GAME_ID:windows-stable" --userversion $version
+          $target = "${{ secrets.ITCH_USERNAME }}/${{ secrets.ITCH_GAME_ID }}:windows-stable"
+          Write-Host "Target: $target"
+          Write-Host "Version: $version"
+          & $butlerPath push ./game-build.zip $target --userversion $version
 
       - name: Push to itch.io (Beta Channel)
         if: github.ref == 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
@@ -106,8 +108,10 @@ jobs:
         run: |
           $butlerPath = "$env:USERPROFILE\.butler\butler.exe"
           $shortSha = $env:GITHUB_SHA.Substring(0, 7)
-          Write-Host "Pushing to itch.io (beta): beta-$shortSha"
-          & $butlerPath push ./game-build.zip "$env:ITCH_USERNAME/$env:ITCH_GAME_ID:windows-beta" --userversion "beta-$shortSha"
+          $target = "${{ secrets.ITCH_USERNAME }}/${{ secrets.ITCH_GAME_ID }}:windows-beta"
+          Write-Host "Target: $target"
+          Write-Host "Version: beta-$shortSha"
+          & $butlerPath push ./game-build.zip $target --userversion "beta-$shortSha"
 
       - name: Push to itch.io (Manual Trigger)
         if: github.event_name == 'workflow_dispatch'
@@ -115,8 +119,10 @@ jobs:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
         run: |
           $butlerPath = "$env:USERPROFILE\.butler\butler.exe"
-          Write-Host "Pushing to itch.io (manual): ${{ github.event.inputs.version }}"
-          & $butlerPath push ./game-build.zip "$env:ITCH_USERNAME/$env:ITCH_GAME_ID:windows-manual" --userversion "${{ github.event.inputs.version }}"
+          $target = "${{ secrets.ITCH_USERNAME }}/${{ secrets.ITCH_GAME_ID }}:windows-manual"
+          Write-Host "Target: $target"
+          Write-Host "Version: ${{ github.event.inputs.version }}"
+          & $butlerPath push ./game-build.zip $target --userversion "${{ github.event.inputs.version }}"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
