@@ -57,10 +57,17 @@ namespace SweeperRpg.Src
         private State state = State.CLOSED;
         private LevelData level;
         private readonly PeelingCellAnimation peelingAnimation = new();
-        private int dmgAround;
-        private int dmgAroundRelative;
+        private int dmgAround = 0;
+        private int dmgAroundRelative = 0;
         private Enemy enemy = null;
         private Renderer renderer;
+
+        public void Reload()
+        {
+            dmgAround = 0;
+
+            Reset();
+        }
 
         public void SetData(LevelData level, int columnId, int rowId, int fillColumns, int fillRows)
         {
@@ -85,9 +92,6 @@ namespace SweeperRpg.Src
             peelingAnimation.SetData(transform: transform, point: level.props.foreground);
 
             peelingAnimation.OnFinish += FinishOpening;
-
-            dmgAround = 0;
-            dmgAroundRelative = 0;
         }
 
         public void SetEnemy(Enemy enemy)

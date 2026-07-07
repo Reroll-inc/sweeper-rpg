@@ -45,7 +45,7 @@ namespace SweeperRpg.Src
         {
             if (levels.TryGetValue(key: level, value: out LevelData currentLevel))
             {
-                currentLevel.Reset();
+                currentLevel.Reload();
 
                 return currentLevel;
             }

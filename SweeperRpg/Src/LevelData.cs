@@ -50,6 +50,17 @@ namespace SweeperRpg.Src
             }
         }
 
+        public void Reload()
+        {
+            foreach (List<Cell> column in grid)
+            {
+                foreach (Cell cell in column)
+                {
+                    cell.Reload();
+                }
+            }
+        }
+
         public void AddDmgToCellsAround(int dmg, int columnId, int rowId)
         {
             int left = columnId - 1;
