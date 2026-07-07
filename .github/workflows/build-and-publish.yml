@@ -2,59 +2,102 @@ name: Build and Publish to Itch.io
 
 on:
   push:
-    branches:
-      - main
-    paths-ignore:
-      - "**/*.md"
-      - "**/*.gitignore"
+    branches: [main]
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (e.g., 1.0.0)"
+        required: true
+        default: "1.0.0"
+
+env:
+  GAME_NAME: "Sweeper RPG"
+  ITCH_USERNAME: ${{ secrets.ITCH_USERNAME }}
+  ITCH_GAME_ID: ${{ secrets.ITCH_GAME_ID }}
+  BUILD_CONFIGURATION: "Release"
 
 jobs:
   build-and-publish:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
 
-      - name: Restore Dependencies
+      - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build Project
-        run: dotnet build --configuration Release
+      - name: Build
+        run: dotnet build --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
 
-      - name: Create Distribution Package
+      - name: Publish
         run: |
-          $outputDir = "dist"
-          if (!(Test-Path $outputDir)) { New-Item -ItemType Directory -Path $outputDir }
+          dotnet publish ./SweeperRpg/SweeperRpg.csproj `
+            --configuration ${{ env.BUILD_CONFIGURATION }} `
+            --runtime win-x64 `
+            --self-contained true `
+            --output ./publish `
+            -p:Version=${{ github.event.inputs.version || '1.0.0' }} `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true
 
-          # Copy main executable and dependencies
-          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\SweeperRpg.exe" "$outputDir\"
-          Copy-Item "EngineGDI\bin\Release\net10.0-windows\win-x64\*" "$outputDir\"
-
-          # Include required runtime files
-          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\*.dll" "$outputDir\"
-          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\*.json" "$outputDir\"
-
-          # Include assets
-          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\*.png" "$outputDir\"
-          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\*.wav" "$outputDir\"
-          Copy-Item "SweeperRpg\bin\Release\net10.0-windows\win-x64\*.ttf" "$outputDir\"
-
-      - name: Create ZIP Archive
+      - name: Create ZIP archive
         run: |
-          Compress-Archive -Path "dist/*" -DestinationPath "sweeper-rpg-windows.zip"
+          Compress-Archive -Path ./publish/* -DestinationPath ./game-build.zip
 
-      - name: Publish to Itch.io
-        uses: josephbmanley/butler-publish-itchio-action@v1.2.0
+      - name: Setup Butler
+        run: |
+          $butlerPath = "$env:USERPROFILE\.butler"
+          if (!(Test-Path $butlerPath)) {
+            New-Item -ItemType Directory -Path $butlerPath -Force
+          }
+
+          $latestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/itchio/butler/releases/latest"
+          $asset = $latestRelease.assets | Where-Object { $_.name -like "*windows-amd64.zip" } | Select-Object -First 1
+
+          if ($asset) {
+            Invoke-WebRequest -Uri $asset.browser_download_url -OutFile "butler.zip"
+            Expand-Archive -Path "butler.zip" -DestinationPath $butlerPath -Force
+            Remove-Item "butler.zip"
+          } else {
+            Write-Error "Could not find Butler Windows binary"
+            exit 1
+          }
+
+      - name: Push to itch.io (Stable Channel)
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: |
+          $version = $env:GITHUB_REF -replace 'refs/tags/v', ''
+          & "$env:USERPROFILE\.butler\butler.exe" push ./game-build.zip "$env:ITCH_USERNAME/$env:ITCH_GAME_ID:windows-stable" --userversion $version
+
+      - name: Push to itch.io (Beta Channel)
+        if: github.ref == 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: |
+          $shortSha = $env:GITHUB_SHA.Substring(0, 7)
+          & "$env:USERPROFILE\.butler\butler.exe" push ./game-build.zip "$env:ITCH_USERNAME/$env:ITCH_GAME_ID:windows-beta" --userversion "beta-$shortSha"
+
+      - name: Push to itch.io (Manual Trigger)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: |
+          & "$env:USERPROFILE\.butler\butler.exe" push ./game-build.zip "$env:ITCH_USERNAME/$env:ITCH_GAME_ID:windows-manual" --userversion "${{ github.event.inputs.version }}"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
-          username: ${{ secrets.ITCH_IO_USERNAME }}
-          game: ${{ secrets.ITCH_IO_GAME_NAME }}
-          version: ${{ github.sha }}
-          file: sweeper-rpg-windows.zip
-          channel: windows
-          itch_io_api_key: ${{ secrets.ITCH_IO_API_KEY }}
+          name: game-build-${{ github.sha }}
+          path: ./game-build.zip
