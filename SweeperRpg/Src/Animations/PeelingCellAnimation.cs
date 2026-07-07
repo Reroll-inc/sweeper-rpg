@@ -15,12 +15,18 @@ namespace SweeperRpg.Src.Animations
         private readonly float sec = 0.8f;
 
         private Transform transform;
-        private Color color;
+        public DrawImageCommand BaseImageCmd { get; private set; }
 
-        public void SetData(Transform transform, Color color)
+        public void SetData(Transform transform, Point point)
         {
+            Image background = TileMap.LoadSprite(
+                path: "Assets/32rogues/tiles.png",
+                column: point.X,
+                row: point.Y
+            );
+            BaseImageCmd = new DrawImageCommand(texture: background, transform: transform);
+
             this.transform = transform;
-            this.color = color;
         }
 
         public void Reset()
@@ -77,10 +83,7 @@ namespace SweeperRpg.Src.Animations
 
             e.Graphics.SetClip(path);
 
-            e.Graphics.FillRectangle(
-                new SolidBrush(color),
-                new Rectangle(location: transform.PositionAndScale, size: Transform.BaseUnit)
-            );
+            BaseImageCmd.Draw(e);
 
             e.Graphics.Restore(state);
         }

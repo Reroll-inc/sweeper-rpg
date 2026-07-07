@@ -15,5 +15,14 @@ namespace EngineGDI.Src
 
             return sourceImage.Clone(rect: cropRect, format: sourceImage.PixelFormat);
         }
+
+        public static Bitmap LoadSprite(string path, int x, int y, Size size)
+        {
+            using Bitmap sourceImage = new(filename: path);
+
+            Rectangle cropRect = new(x: x, y: y, width: size.Width, height: size.Height);
+
+            return sourceImage.Clone(rect: cropRect, format: sourceImage.PixelFormat);
+        }
     }
 }

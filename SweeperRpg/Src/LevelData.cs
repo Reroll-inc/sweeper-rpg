@@ -27,8 +27,8 @@ namespace SweeperRpg.Src
         [JsonConverter(typeof(PointJsonConverter))]
         public Point background { get; set; }
 
-        [JsonConverter(typeof(ColorJsonConverter))]
-        public Color foreground { get; set; }
+        [JsonConverter(typeof(PointJsonConverter))]
+        public Point foreground { get; set; }
     }
 
     public class LevelData

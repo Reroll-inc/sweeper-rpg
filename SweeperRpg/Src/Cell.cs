@@ -66,28 +66,23 @@ namespace SweeperRpg.Src
         {
             this.level = level;
 
-            transform = new(position: new(x: columnId + fillColumns, y: rowId + fillRows));
+            transform = new(
+                position: new(x: columnId + fillColumns, y: rowId + fillRows),
+                scale: new(
+                    (float)Transform.BaseUnit.Width / TileMap.Size,
+                    (float)Transform.BaseUnit.Height / TileMap.Size
+                )
+            );
             rect = new(location: transform.PositionAndScale, size: Transform.BaseUnit);
 
-            Image tile = TileMap.LoadSprite(
+            Image background = TileMap.LoadSprite(
                 path: "Assets/32rogues/tiles.png",
                 column: level.props.background.X,
                 row: level.props.background.Y
             );
-            renderer = new(
-                new DrawImageCommand(
-                    texture: tile,
-                    transform: new(
-                        position: new(x: columnId + fillColumns, y: rowId + fillRows),
-                        scale: new(
-                            (float)Transform.BaseUnit.Width / TileMap.Size,
-                            (float)Transform.BaseUnit.Height / TileMap.Size
-                        )
-                    )
-                )
-            );
+            renderer = new(new DrawImageCommand(texture: background, transform: transform));
 
-            peelingAnimation.SetData(transform: transform, color: level.props.foreground);
+            peelingAnimation.SetData(transform: transform, point: level.props.foreground);
 
             peelingAnimation.OnFinish += FinishOpening;
 
@@ -205,11 +200,7 @@ namespace SweeperRpg.Src
                     Engine.DrawACommand(peelingAnimation);
                     break;
                 case State.CLOSED:
-                    Engine.DrawRect(
-                        rect: rect,
-                        pen: new Pen(level.props.lineMesh),
-                        brush: new SolidBrush(level.props.foreground)
-                    );
+                    Engine.DrawACommand(peelingAnimation.BaseImageCmd);
                     break;
             }
         }

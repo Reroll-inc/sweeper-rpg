@@ -26,6 +26,7 @@ namespace EngineGDI.Src.Drawing
                 width,
                 height
             );
+
             e.Graphics.InterpolationMode = prevInterpolation;
 
             e.Graphics.ResetTransform();
